@@ -1,1 +1,4 @@
-import app from './app.js';import {env} from './config/env.js';app.listen(env.port,()=>console.log('Bhatti backend listening on '+env.port));
+import app from './app.js';
+import {env,requireBackendEnv} from './config/env.js';
+requireBackendEnv();
+app.listen(env.port,()=>console.log('Bhatti backend listening on '+env.port));
