@@ -30,3 +30,7 @@ if (document.readyState === "loading") {
 } else {
   updateNavbar();
 }
+
+supabase.auth.onAuthStateChange(() => {
+  setTimeout(updateNavbar, 0);
+});
