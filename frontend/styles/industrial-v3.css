@@ -17,3 +17,15 @@ footer{width:100%;padding:55px 4%;background:#111514;color:#aeb6b0;border:0}foot
 @media(max-width:1050px){.site-header nav{display:none}.sync-pill{display:none}.hero{grid-template-columns:1fr}.hero-visual{min-height:460px}.product-grid{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:720px){.announcement span:nth-child(2){display:none}.site-header{height:68px}.nav-shell{width:94%;gap:8px}.menu-toggle{display:block!important}.brand{font-size:20px;margin-right:auto}.account-label{display:none}.hero-copy{padding:65px 6%;min-height:560px}.hero h1{font-size:58px}.hero-visual{min-height:400px}.benefits{grid-template-columns:1fr 1fr}.benefits>div{padding:18px}.category-grid{grid-template-columns:1fr}.product-grid{grid-template-columns:1fr 1fr}.shop-toolbar{align-items:stretch;flex-direction:column}.shop-tools{width:100%}.search-box{flex:1}.section{padding:65px 0}.section-intro{display:block}.section-intro>p{margin-top:20px}.newsletter form{display:block}.newsletter input,.newsletter .button{width:100%;border-radius:4px!important}.newsletter .button{margin-top:8px}.footer-top{grid-template-columns:1fr!important}}
 @media(max-width:480px){.product-grid{grid-template-columns:1fr}.benefits{grid-template-columns:1fr}.hero-products{grid-template-columns:1fr 1fr}.hero-products span{padding:12px 4px}.nav-icon{display:none}}
+
+/* Contrast/accessibility reinforcement */
+body,body *{text-shadow:none}
+.product,.product-body,.product-info,.category-card,.shop-toolbar,.filters,.search-box,.shop-tools select{color:var(--ink)}
+.product-body h3,.product-title-button h3,.product .price,.product .category,.product p{color:#151817!important}
+.product .category{font-weight:800}.product .stock.ok{color:#176447!important}.product .stock.low{color:#8a4b00!important}.product .stock.out{color:#b42318!important}
+.filters button,.sub-chip,.search-box input,.shop-tools select{color:#151817!important}.filters button.active,.filters button:hover,.sub-chip.active{color:#fff!important}
+.modal-card,.checkout-card,.account-main,.account-main *{color:#151817}.modal-card label,.modal-card p,.modal-card h2,.modal-card h3{color:#151817}.modal-card input,.modal-card textarea,.modal-card select{color:#151817!important}.modal-card input::placeholder,.modal-card textarea::placeholder{color:#6b746e!important;opacity:1}
+.account-rail,.account-rail *{color:#fff}.account-main .muted,.account-main small{color:#59625d!important}.account-card-item,.order-item,.account-card-item *,.order-item *{color:#151817}
+.button.quiet,.btn:not(.primary),.account-secondary{color:#151817!important;background:#fff!important;border-color:#aeb7b1!important}.button.quiet:hover,.btn:not(.primary):hover,.account-secondary:hover{background:#eef1ee!important}
+.site-header nav a,.nav-icon,.account-button,.bag-button,.sync-pill{color:#151817!important}.site-header nav a:hover{color:#e36b18!important}
+.catalogue-loading,.empty-state,.catalogue-loading p{color:#151817!important}
