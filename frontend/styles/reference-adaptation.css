@@ -25,3 +25,65 @@
 footer{background:var(--ink)!important}
 @media(max-width:900px){.hero-visual{min-height:500px}.category-grid{grid-template-columns:1fr 1fr;grid-template-rows:repeat(3,230px)}}
 @media(max-width:560px){.hero-visual{min-height:430px}.category-grid{display:flex;overflow:auto}.category-card{min-width:82%;height:390px}}
+
+
+/* FINAL RESPONSIVE BUG-FIX LAYER */
+html,body{max-width:100%;overflow-x:hidden}
+*,*::before,*::after{box-sizing:border-box}
+img{max-width:100%}
+button,a,input,select,textarea{max-width:100%}
+.announcement{width:100%;min-height:30px;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:7px 4.5%;background:#11110f;color:#eee7da;font-size:8px;letter-spacing:.16em;text-transform:uppercase;overflow:hidden}
+.nav-shell{width:100%;display:flex;align-items:center;gap:18px;min-width:0}
+.nav-actions{display:flex;align-items:center;gap:6px;margin-left:auto;flex-shrink:0}
+.nav-actions button,.nav-actions .sync-pill{white-space:nowrap}
+.sync-pill{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(17,17,15,.10);padding:10px 12px;border-radius:999px;background:rgba(255,255,255,.45);font-size:8px;letter-spacing:.08em;text-transform:uppercase}
+.sync-pill i{width:6px;height:6px;border-radius:50%;background:#486457;display:block;box-shadow:0 0 0 4px rgba(72,100,87,.12)}
+.button{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:13px 19px;border:1px solid rgba(17,17,15,.12);border-radius:999px;background:transparent;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
+.button.primary{background:#11110f;color:#fff;border-color:#11110f}
+.button.quiet{background:rgba(255,255,255,.5)}
+.hero-visual{position:relative;min-width:0;overflow:hidden;border-radius:34px}
+.hero-ribbon{position:absolute;z-index:5;left:9%;top:9%;font-size:8px;letter-spacing:.18em;color:#fff;padding:11px 14px;border:1px solid rgba(255,255,255,.25);border-radius:999px;background:rgba(17,17,15,.24);backdrop-filter:blur(10px)}
+.hero-art-word{position:absolute;z-index:2;left:10%;bottom:25%;font-size:clamp(42px,7vw,105px);line-height:.76;font-weight:900;letter-spacing:-.08em;color:rgba(255,255,255,.88)}
+.hero-art-word em{font-family:Georgia,serif;font-weight:500;color:#d8bf91}
+.hero-stamp{position:absolute;z-index:3;right:10%;bottom:18%;font-size:8px;line-height:1.5;letter-spacing:.2em;color:#fff;text-align:right}
+.hero-stamp b{color:#d8bf91}
+.product-image-button{display:block;width:100%;height:100%;padding:0;border:0;background:transparent;cursor:pointer;overflow:hidden;border-radius:inherit}
+.product-title-button{padding:0;border:0;background:transparent;text-align:left;cursor:pointer}
+.product-info .category{min-height:0;background:none;border:0;padding:0}
+.quick-view{position:absolute;right:12px;bottom:12px;border:0;border-radius:999px;padding:9px 12px;color:#fff;cursor:pointer}
+.heart{position:absolute;right:12px;top:12px;border:0;border-radius:50%;width:38px;height:38px;cursor:pointer}
+.catalogue-loading,.empty-state,.catalog-empty{grid-column:1/-1;padding:50px 20px;text-align:center;color:#77736a}
+.collection{overflow:hidden}
+@media(max-width:900px){
+ .announcement span:nth-child(2){display:none}
+ .site-header{width:94%;top:6px}
+ .nav-shell{gap:10px}
+ .site-header nav.open{display:flex}
+ .nav-actions .sync-pill{display:none}
+ .hero-visual{min-height:520px}
+ .product-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:560px){
+ .announcement{padding:7px 12px;font-size:7px}
+ .announcement span:nth-child(3){margin-left:auto}
+ .site-header{width:calc(100% - 16px);padding:0 8px 0 13px}
+ .brand{flex-shrink:0}
+ .account-label{display:none}
+ .nav-actions{gap:3px}
+ .nav-actions button{padding:8px 9px;font-size:9px}
+ .hero{width:calc(100% - 16px)}
+ .hero-copy{padding-left:4px;padding-right:4px}
+ .hero-visual{min-height:410px}
+ .hero-art-word{font-size:58px;bottom:30%}
+ .hero-products{left:7%;right:7%;bottom:7%}
+ .hero-products span{font-size:7px;padding:11px 5px}
+ .section{width:calc(100% - 16px)}
+ .category-grid{gap:10px}
+ .category-card{min-width:78%;height:330px}
+ .product-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 9px}
+ .product .pic{border-radius:18px}
+ .product-info{padding:11px 2px 0}
+ .product-title-button h3{font-size:13px;line-height:1.25}
+ .product-info .price{font-size:13px}
+ .product-info .add{width:100%;padding:9px 6px;font-size:8px}
+}
