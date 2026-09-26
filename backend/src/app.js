@@ -15,7 +15,9 @@ app.use(helmet({contentSecurityPolicy:false}));
 app.use(cors({
   origin:(origin,cb)=>{
     if(!origin || env.corsOrigin==='*') return cb(null,true);
-    const allowed=env.corsOrigin.split(',').map(x=>x.trim()).filter(Boolean);
+    const allowed=env.corsOrigin.split(',').map(x=>x.trim()).filter(Boolean).map(value=>{
+      try{return new URL(value).origin}catch{return value.replace(/\/$/,'')}
+    });
     return cb(null,allowed.includes(origin));
   },
   credentials:true
