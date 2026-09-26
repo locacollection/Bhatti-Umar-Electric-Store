@@ -14,6 +14,11 @@ export async function requireAuth(req,res,next){
 }
 
 export function requireAdmin(req,res,next){
-  if(req.profile?.role!=='admin') return res.status(403).json({error:'Admin access required'});
+  if(!['admin','super_admin'].includes(req.profile?.role)) return res.status(403).json({error:'Admin access required'});
+  next();
+}
+
+export function requireSuperAdmin(req,res,next){
+  if(req.profile?.role!=='super_admin') return res.status(403).json({error:'Super admin access required'});
   next();
 }
