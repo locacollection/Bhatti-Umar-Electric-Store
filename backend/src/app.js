@@ -1,27 +1,3 @@
-import express from 'express';
-import cors from 'cors';
-import helmet from 'helmet';
-import morgan from 'morgan';
-import productRoutes from './routes/product.routes.js';
-import accountRoutes from './routes/account.routes.js';
-import orderRoutes from './routes/order.routes.js';
-import reviewRoutes from './routes/review.routes.js';
-import newsletterRoutes from './routes/newsletter.routes.js';
-import adminRoutes from './routes/admin.routes.js';
-import {errorHandler} from './middleware/error.js';
-
-const app=express();
-app.disable('x-powered-by');
-app.use(helmet({crossOriginResourcePolicy:{policy:'cross-origin'}}));
-app.use(cors({origin:true,credentials:false}));
-app.use(express.json({limit:'1mb'}));
-app.use(morgan('combined'));
-app.get('/api/health',(req,res)=>res.json({ok:true,service:'bhatti-electric-backend',version:'2'}));
-app.use('/api/products',productRoutes);
-app.use('/api/account',accountRoutes);
-app.use('/api/orders',orderRoutes);
-app.use('/api/reviews',reviewRoutes);
-app.use('/api/newsletter',newsletterRoutes);
-app.use('/api/admin',adminRoutes);
-app.use(errorHandler);
-export default app;
+import 'dotenv/config';
+export const env={port:Number(process.env.PORT||4000),supabaseUrl:process.env.SUPABASE_URL||'',supabaseKey:process.env.SUPABASE_SERVICE_ROLE_KEY||''};
+export function requireBackendEnv(){if(!env.supabaseUrl||!env.supabaseKey) throw new Error('Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY');}
