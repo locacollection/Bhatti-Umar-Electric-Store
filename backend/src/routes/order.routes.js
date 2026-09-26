@@ -16,6 +16,20 @@ router.get('/me',requireAuth,async(req,res,next)=>{try{
   if(error) throw error; res.json({data:data||[]});
 }catch(e){next(e)}});
 
+router.post('/:id/action',requireAuth,async(req,res,next)=>{try{
+  const action=String(req.body.action||'');
+  if(!['cancel','return'].includes(action)) return res.status(400).json({error:'Unsupported order action'});
+  const {data:order,error:getError}=await supabase.from('orders').select('id,status').eq('id',req.params.id).eq('user_id',req.user.id).single();
+  if(getError) throw getError;
+  if(action==='cancel' && !['Pending','Confirmed'].includes(order.status)) return res.status(409).json({error:'This order can no longer be cancelled online'});
+  if(action==='return' && order.status!=='Delivered') return res.status(409).json({error:'Returns can be requested after delivery'});
+  const patch=action==='cancel'?{status:'Cancelled',cancelled_by:'Customer',cancel_reason:String(req.body.reason||'Customer requested').slice(0,120)}:{status:'Return Requested',cancelled_by:'Customer',cancel_reason:String(req.body.reason||'Return requested').slice(0,120)};
+  patch.internal_note=String(req.body.note||'').slice(0,500)||null;patch.updated_at=new Date().toISOString();
+  const {data,error}=await supabase.from('orders').update(patch).eq('id',order.id).select('*').single();if(error)throw error;
+  await supabase.from('audit_log').insert({actor_user_id:req.user.id,action:action==='cancel'?'customer_cancelled':'customer_return_requested',entity_type:'order',entity_id:order.id,metadata:patch});
+  res.json({data});
+}catch(e){next(e)}});
+
 router.get('/:id',requireAuth,async(req,res,next)=>{try{
   const {data,error}=await supabase.from('orders').select('*,order_items(*)').eq('id',req.params.id).eq('user_id',req.user.id).single();
   if(error) throw error; res.json({data});
