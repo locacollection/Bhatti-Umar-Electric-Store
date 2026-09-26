@@ -18,7 +18,7 @@ function orderProgress(order){
   const index=Math.max(0,steps.indexOf(order.status));
   const percent=order.status==='Delivered'?100:Math.round(index/(steps.length-1)*100);
   const action=latestOrderAction(order.id);
-  if(order.status==='Cancelled')return `<div class="order-exception is-cancelled"><b>Cancelled by ${BHATTI.escape((order.cancelled_by||'BHATTI').toLowerCase())}</b><span>${BHATTI.escape(order.cancellation_reason||'Cancellation details pending')}</span></div>`;
+  if(order.status==='Cancelled')return `<div class="order-exception is-cancelled"><b>Cancelled by ${BHATTI.escape((order.cancelled_by==='customer'?'you':(order.cancelled_by||'BHATTI')).toLowerCase())}</b><span>${BHATTI.escape(order.cancel_reason||'Cancellation details pending')}</span></div>`;
   if(order.status==='Return Requested')return `<div class="order-exception is-return-requested"><b>Return request received</b><span>${BHATTI.escape(action?.reason||'Our team will review your request shortly.')}</span></div>`;
   if(order.status==='Returned')return '<div class="order-exception is-returned"><b>Return recorded</b><span>Our team will contact you with the next step.</span></div>';
   return `<div class="order-progress"><div class="order-progress-track"><i style="width:${percent}%"></i></div><div><span>Order placed</span><span>${order.status==='Delivered'?'Delivered':BHATTI.escape(order.status||'Pending')}</span></div></div>`;
