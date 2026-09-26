@@ -1,0 +1,2 @@
+import {supabase} from '../config/supabase.js';
+export async function listProducts(){if(!supabase)return[];const {data,error}=await supabase.from('products').select('*').eq('active',true).order('name');if(error)throw error;return data||[]}
