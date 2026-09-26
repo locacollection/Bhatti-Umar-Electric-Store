@@ -30,7 +30,7 @@ router.patch('/orders/:id',async(req,res,next)=>{try{
 
 router.get('/customers',async(req,res,next)=>{try{const {data,error}=await supabase.from('profiles').select('id,full_name,phone,role,created_at').eq('role','customer').order('created_at',{ascending:false});if(error)throw error;res.json({data:data||[]})}catch(e){next(e)}});
 
-router.get('/reviews',async(req,res,next)=>{try{const {data,error}=await supabase.from('reviews').select('*,profiles(full_name,email:id),products(name,sku)').order('created_at',{ascending:false});if(error)throw error;res.json({data:data||[]})}catch(e){next(e)}});
+router.get('/reviews',async(req,res,next)=>{try{const {data,error}=await supabase.from('reviews').select('*,profiles(full_name),products(name,sku)').order('created_at',{ascending:false});if(error)throw error;res.json({data:data||[]})}catch(e){next(e)}});
 
 router.patch('/reviews/:id',async(req,res,next)=>{try{const status=['pending','approved','rejected'].includes(req.body.status)?req.body.status:'pending';const {data,error}=await supabase.from('reviews').update({status,updated_at:new Date().toISOString()}).eq('id',req.params.id).select('*').single();if(error)throw error;res.json({data})}catch(e){next(e)}});
 
