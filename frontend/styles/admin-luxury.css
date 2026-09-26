@@ -1,4 +1,4 @@
-/* BHATTI Studio — luxury operations interface */
+/* LOCA Studio — luxury operations interface */
 :root{
   --l-ink:#171411;
   --l-ink-soft:#28221d;
@@ -93,7 +93,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 @media(max-width:900px){.admin-create-form{grid-template-columns:1fr 1fr}.admin-create-actions{align-items:center}}
 @media(max-width:600px){.admin-create-form{grid-template-columns:1fr}.admin-create-actions{align-items:stretch;flex-direction:column}}
 
-/* Glass operations layer: consistent depth without changing the BHATTI palette. */
+/* Glass operations layer: consistent depth without changing the LOCA palette. */
 :root{--admin-glass:rgba(255,250,244,.68);--admin-glass-strong:rgba(255,250,244,.9);--admin-blur:20px;--admin-radius:18px}
 .top{background:rgba(23,20,17,.78)!important;backdrop-filter:blur(var(--admin-blur)) saturate(135%)}
 .sidebar{background:linear-gradient(180deg,rgba(33,28,24,.92),rgba(23,20,17,.88))!important;backdrop-filter:blur(var(--admin-blur))}
