@@ -491,3 +491,45 @@ footer{margin-top:80px;padding:70px 4.5%;background:#11110f;color:#f5efe3}
 .drawer{background:#f8f5ed}.modal-card{background:#fbf9f4!important}
 @media(max-width:900px){.site-header{width:94%}.hero,.benefits,.section,.contact,.newsletter,.promo{width:94%}.hero{padding-top:10px}.hero-copy{padding:65px 25px}.hero-art{min-height:520px}.category-grid{grid-template-columns:1fr 1fr;grid-template-rows:repeat(3,260px)}.product-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:560px){.site-header{height:64px;padding:0 9px 0 16px}.brand{font-size:18px}.header-actions button{padding:0 10px}.hero{width:94%}.hero-copy{padding:55px 10px 35px}.hero h1{font-size:59px}.hero-art{min-height:430px}.hero-art:after{font-size:250px}.section{padding:85px 0}.category-grid{display:flex;overflow:auto}.category-card{min-width:82%;height:360px}.promo{padding:45px 28px}.contact-card{padding:28px}}
+
+
+/* FINAL LOCA-STYLE STOREFRONT POLISH — 2026-09-27 */
+.product .pic{isolation:isolate;background:linear-gradient(145deg,#ded5c4,#9c9079 55%,#4d5b52);position:relative}
+.product .pic:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.08),transparent 45%,rgba(17,17,15,.10));pointer-events:none;z-index:3}
+.product .pic img{position:relative;z-index:2;display:block;width:100%;height:100%;object-fit:cover}
+.product-image-button{position:relative;z-index:2}
+.product .heart{z-index:5}
+.product .quick-view{z-index:5}
+.product-info .category-row{font-size:9px;letter-spacing:.08em;text-transform:uppercase}
+.product-info .category{font-weight:800}
+.product-info .stock{white-space:nowrap}
+.product-info .add{transition:all .2s ease}
+.product-info .add:hover{background:#11110f;color:#fff;border-color:#11110f}
+.category-card{isolation:isolate}
+.category-card:nth-child(1){background:linear-gradient(145deg,#1a2721,#5b665b)}
+.category-card:nth-child(2){background:linear-gradient(145deg,#2a2119,#9b7d50)}
+.category-card:nth-child(3){background:linear-gradient(145deg,#242a31,#66707a)}
+.category-card:nth-child(4){background:linear-gradient(145deg,#20251f,#586d5d)}
+.category-card:nth-child(5){background:linear-gradient(145deg,#30271f,#9c8060)}
+.category-card:nth-child(6){background:linear-gradient(145deg,#24282a,#777d78)}
+.category-card:after{content:"↗";position:absolute;right:24px;top:22px;width:42px;height:42px;border:1px solid rgba(255,255,255,.28);border-radius:50%;display:grid;place-items:center;font-size:18px;color:#fff;opacity:.8}
+.category-card span{font-size:9px;letter-spacing:.16em;text-transform:uppercase;opacity:.72}
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr}
+  .hero-art{min-height:520px}
+  .benefits{grid-template-columns:1fr 1fr}
+  .category-grid{grid-template-columns:1fr 1fr;grid-template-rows:repeat(3,260px)}
+  .product-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:560px){
+  .hero{width:94%}
+  .hero-copy{padding:52px 12px 30px}
+  .hero h1{font-size:58px}
+  .hero-art{min-height:430px}
+  .hero-products{grid-template-columns:1fr 1fr}
+  .benefits{width:94%}
+  .category-grid{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:8px}
+  .category-card{min-width:82%;height:360px;scroll-snap-align:start}
+  .product-grid{grid-template-columns:1fr 1fr;gap:28px 10px}
+  .product .pic{border-radius:22px}
+}
