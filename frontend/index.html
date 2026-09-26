@@ -26,24 +26,4 @@
 <div class="modal-layer" id="productModal"><div class="modal-card product-modal"><button class="close" data-close="productModal">×</button><div id="productDetail"></div></div></div>
 <div class="modal-layer" id="checkoutModal"><div class="modal-card"><button class="close" data-close="checkoutModal">×</button><p class="eyebrow">BHATTI / CHECKOUT</p><h2>Place your order.</h2><form id="checkoutForm"><label>Delivery address<textarea id="checkoutAddress" required placeholder="House, street, area"></textarea></label><div class="two-col"><label>City<input id="checkoutCity" required value="Kallar Syedan"></label><label>Phone<input id="checkoutPhone" required></label></div><label>Payment method<select id="checkoutPayment"><option>Cash on Delivery</option><option>Bank Transfer / Raast</option></select></label><label>Order note<textarea id="checkoutNote" placeholder="Optional"></textarea></label><div class="checkout-total"><span>Total</span><strong id="checkoutTotal">PKR 0</strong></div><button class="btn primary full">Place order ↗</button><p id="checkoutMessage"></p></form></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="./scripts/config.js"></script><script type="module" src="./scripts/app.js?v=20260926-authfix2"></script>
-<script>
-document.addEventListener('DOMContentLoaded',function(){
-  var account=document.getElementById('accountButton');
-  var auth=document.getElementById('authModal');
-  var accountModal=document.getElementById('accountModal');
-  if(account){
-    account.addEventListener('click',function(){
-      var loggedIn=false;
-      try{ loggedIn=!!window.supabase && !!window.supabase.auth && false; }catch(e){}
-      if(auth) auth.classList.add('open');
-      if(accountModal && loggedIn){auth.classList.remove('open');accountModal.classList.add('open');}
-    },true);
-  }
-  document.querySelectorAll('[data-close]').forEach(function(btn){
-    btn.addEventListener('click',function(){
-      var id=btn.getAttribute('data-close'),el=document.getElementById(id);
-      if(el) el.classList.remove('open');
-    },true);
-  });
-});
-</script></body></html>
+</body></html>
