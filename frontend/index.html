@@ -7,7 +7,7 @@
 <title>Bhatti Electric Store | Electrical Supply</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./styles/main.css?v=20260927-3"><link rel="stylesheet" href="./styles/reference-adaptation.css?v=20260927-3">
+<link rel="stylesheet" href="./styles/main.css?v=20260927-3"><link rel="stylesheet" href="./styles/reference-adaptation.css?v=20260927-3"><link rel="stylesheet" href="./styles/account-v2.css?v=20260927-1">
 </head>
 <body>
 <a class="skip-link" href="#products">Skip to collection</a>
@@ -123,13 +123,43 @@
 
 <div class="modal-layer" id="authModal"><div class="modal-card auth-card"><button class="close-button close" data-close="authModal">×</button><p class="eyebrow">BHATTI / ACCOUNT</p><h2 id="authTitle">Sign in.</h2><p id="authIntro" class="modal-intro">Sign in to save addresses and track orders.</p><form id="authForm"><label id="nameField" style="display:none"><span>Full name</span><input id="authName" autocomplete="name"></label><label><span>Email</span><input id="authEmail" type="email" required autocomplete="email"></label><label><span>Password</span><input id="authPassword" type="password" required minlength="6" autocomplete="current-password"></label><button class="button primary full-button" id="authSubmit">Sign in ↗</button></form><div class="auth-switch"><button id="authMode" class="text-button" type="button">Create a new account</button><button id="forgotPassword" class="text-button" type="button">Forgot password?</button><button id="resendConfirmation" class="text-button" type="button" style="display:none">Resend confirmation email</button></div><p id="authMessage"></p></div></div>
 
-<div class="modal-layer" id="accountModal"><div class="modal-card account-card"><button class="close-button close" data-close="accountModal">×</button><div class="modal-head"><div><p class="eyebrow">BHATTI / MY ACCOUNT</p><h2 id="accountName">Your account.</h2><p id="accountEmail" class="account-identity"></p></div><button id="signOut" class="button quiet">Sign out</button></div><div class="tabs"><button class="active" data-tab="profile">Profile</button><button data-tab="addresses">Addresses</button><button data-tab="orders">Orders</button></div><section data-panel="profile" class="account-panel active"><form id="profileForm"><label><span>Full name</span><input id="profileName" required></label><label><span>Phone / WhatsApp</span><input id="profilePhone"></label><label><span>Registered email</span><input id="profileEmail" readonly></label><button class="button primary">Save profile</button></form></section><section data-panel="addresses" class="account-panel"><div id="addressList"></div><form id="addressForm"><input id="addressId" type="hidden"><div class="two-col"><label><span>Label</span><input id="addressLabel" required placeholder="Home"></label><label><span>Recipient</span><input id="addressRecipient"></label></div><div class="two-col"><label><span>Phone</span><input id="addressPhone"></label><label><span>City</span><input id="addressCity" required value="Kallar Syedan"></label></div><label><span>Complete address</span><textarea id="addressText" required></textarea></label><label class="check-row"><input id="addressDefault" type="checkbox"><span>Default address</span></label><button class="button primary">Save address</button></form></section><section data-panel="orders" class="account-panel"><div id="myOrders"></div></section></div></div>
+<div class="account-system" id="accountSystem" aria-hidden="true">
+  <div class="account-backdrop" data-account-close></div>
+  <aside class="account-sheet" role="dialog" aria-modal="true" aria-labelledby="accountSystemTitle">
+    <button class="account-x" type="button" data-account-close aria-label="Close account">×</button>
+    <div class="account-shell">
+      <aside class="account-rail">
+        <div class="account-brand">BH⚡TTI <span>ACCOUNT</span></div>
+        <div class="account-welcome"><p>CLIENT AREA</p><h2 id="accountSystemTitle">Your Bhatti.</h2><span id="accountIdentity">Sign in to continue.</span></div>
+        <nav class="account-nav" id="accountNav">
+          <button class="active" data-account-view="overview">Overview</button><button data-account-view="profile">Profile</button><button data-account-view="addresses">Addresses</button><button data-account-view="orders">Orders</button>
+        </nav>
+        <button class="account-signout" id="accountSignOut" type="button" hidden>Sign out <span>↗</span></button>
+      </aside>
+      <section class="account-main">
+        <div class="account-mobile-head"><span>BH⚡TTI / ACCOUNT</span><button type="button" data-account-close>Close</button></div>
+        <section class="account-view active" data-account-panel="overview">
+          <div class="account-hero"><div><p class="account-kicker">MY ACCOUNT</p><h1 id="accountHeroTitle">Welcome back.</h1><p id="accountHeroText">One place for your profile, delivery addresses and every Bhatti order.</p></div><div class="account-mark">⚡</div></div>
+          <div class="account-stat-grid"><button class="account-stat" data-go-view="orders"><span>ORDERS</span><strong id="statOrders">0</strong><small>Purchase history</small></button><button class="account-stat" data-go-view="addresses"><span>ADDRESSES</span><strong id="statAddresses">0</strong><small>Saved delivery points</small></button><button class="account-stat" data-go-view="profile"><span>PROFILE</span><strong id="statProfile">—</strong><small>Customer details</small></button></div>
+          <div class="account-note"><span>BHATTI STANDARD</span><p>Built for contractors, homes and projects. Your account keeps the practical details ready for the next order.</p></div>
+        </section>
+        <section class="account-view" data-account-panel="profile"><div class="account-heading"><div><p class="account-kicker">01 / PROFILE</p><h2>Customer details.</h2><p>Keep your name and WhatsApp number current for delivery updates.</p></div></div>
+          <form class="account-form" id="v2ProfileForm"><label><span>Full name</span><input id="v2FullName" autocomplete="name" required maxlength="120"></label><label><span>Phone / WhatsApp</span><input id="v2Phone" autocomplete="tel" maxlength="40" placeholder="+92 300 0000000"></label><label><span>Email address</span><input id="v2Email" readonly></label><div class="account-form-actions"><button class="account-primary" type="submit">Save changes <span>↗</span></button><p id="v2ProfileMessage"></p></div></form>
+        </section>
+        <section class="account-view" data-account-panel="addresses"><div class="account-heading"><div><p class="account-kicker">02 / DELIVERY</p><h2>Your addresses.</h2><p>Save multiple delivery locations and choose a default for faster checkout.</p></div><button class="account-secondary" id="v2NewAddress" type="button">+ New address</button></div>
+          <div class="account-address-layout"><div id="v2AddressList" class="account-list"></div><form class="account-form address-form" id="v2AddressForm"><input id="v2AddressId" type="hidden"><div class="form-title"><span id="v2AddressMode">NEW ADDRESS</span><button type="button" id="v2CancelAddress">Clear</button></div><div class="account-two"><label><span>Label</span><input id="v2AddressLabel" required placeholder="Home"></label><label><span>Recipient</span><input id="v2Recipient"></label></div><div class="account-two"><label><span>Phone</span><input id="v2AddressPhone"></label><label><span>City</span><input id="v2City" required></label></div><label><span>Complete address</span><textarea id="v2AddressText" required rows="4"></textarea></label><label class="account-check"><input id="v2Default" type="checkbox"><span>Make this my default address</span></label><div class="account-form-actions"><button class="account-primary" type="submit">Save address <span>↗</span></button><p id="v2AddressMessage"></p></div></form></div>
+        </section>
+        <section class="account-view" data-account-panel="orders"><div class="account-heading"><div><p class="account-kicker">03 / ORDER BOOK</p><h2>Your orders.</h2><p>Track recent purchases, payment status and delivered items.</p></div></div><div id="v2OrderList" class="account-list order-list"></div></section>
+      </section>
+    </div>
+  </aside>
+</div>
 
 <div class="modal-layer" id="checkoutModal"><div class="checkout-card"><div class="modal-head"><div><p class="eyebrow">BHATTI / CHECKOUT</p><h2>Make it yours.</h2></div><button class="close-button close" data-close="checkoutModal">×</button></div><form id="checkoutForm"><section class="checkout-section"><div class="section-label"><span>01</span><div><b>Delivery</b><small>Where should we send it?</small></div></div><label><span>Address</span><textarea id="checkoutAddress" required placeholder="House, street, area"></textarea></label><div class="two-col"><label><span>City</span><input id="checkoutCity" required value="Kallar Syedan"></label><label><span>Phone</span><input id="checkoutPhone" required></label></div></section><section class="checkout-section"><div class="section-label"><span>02</span><div><b>Payment</b><small>Choose how you want to pay.</small></div></div><label><span>Payment method</span><select id="checkoutPayment"><option>Cash on Delivery</option><option>Bank Transfer / Raast</option></select></label></section><div class="checkout-summary"><span>Order total</span><strong id="checkoutTotal">PKR 0</strong></div><button class="button primary checkout-submit">Place order <span>↗</span></button><p id="checkoutMessage"></p></form></div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./scripts/config.js"></script>
-<script type="module" src="./scripts/app.js?v=20260927-3"></script>
+<script type="module" src="./scripts/app.js?v=20260927-3"></script><script src="./scripts/account-v2.js?v=20260927-1"></script>
 <script>
 document.getElementById('footerAccount')?.addEventListener('click',e=>{e.preventDefault();window.openAccount?.()});
 document.getElementById('footerBag')?.addEventListener('click',e=>{e.preventDefault();window.openCart?.()});
