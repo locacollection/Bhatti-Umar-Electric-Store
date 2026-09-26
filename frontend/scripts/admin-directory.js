@@ -22,6 +22,17 @@
     panel.innerHTML = '<div class="section-head"><div><p class="kicker">Access control</p><h2>Admins Desk</h2><p class="muted" id="adminsMessage">Administrators and studio access.</p></div><div class="toolbar-actions"><button class="btn btn-primary" type="button" id="addAdmin">＋ Invite account</button><button class="btn alt" type="button" id="refreshAdmins">↻ Refresh</button></div></div><form id="addAdminForm" class="admin-create-form" hidden><div class="field"><label for="newAdminEmail">Email address</label><input id="newAdminEmail" type="email" required autocomplete="off" placeholder="person@example.com"></div><div class="field"><label for="newAdminRole">Role</label><select id="newAdminRole"><option value="admin">Admin</option><option value="user">User</option></select></div><div class="admin-create-actions"><button class="btn btn-primary" type="submit">Send invitation</button><button class="btn alt" type="button" id="cancelAddAdmin">Cancel</button></div><p id="addAdminMessage" role="status"></p></form><div class="tablewrap"><table><thead><tr><th>ADMIN ID</th><th>EMAIL</th><th>JOINED DATE</th><th>ACTIONS</th></tr></thead><tbody id="adminsBody"></tbody></table></div>';
     usersPanel.parentNode.insertBefore(panel, usersPanel.nextSibling);
 
+    async function refreshRoleOptions(){
+      const roleSelect=document.getElementById('newAdminRole');
+      if(!roleSelect)return;
+      const {data:{user}}=await db.auth.getUser();
+      if(!user)return;
+      const {data:profile}=await db.from('profiles').select('role').eq('id',user.id).maybeSingle();
+      if(profile?.role==='super_admin' && !roleSelect.querySelector('option[value="super_admin"]')){
+        roleSelect.insertAdjacentHTML('beforeend','<option value="super_admin">Super Admin</option>');
+      }
+    }
+
     tab.addEventListener('click', () => {
       document.querySelectorAll('.side-nav .tab').forEach(item => item.classList.remove('active'));
       tab.classList.add('active');
@@ -30,7 +41,7 @@
       loadAdmins();
     });
     document.getElementById('refreshAdmins').addEventListener('click', loadAdmins);
-    document.getElementById('addAdmin').addEventListener('click', () => { document.getElementById('addAdminForm').hidden = false; document.getElementById('newAdminName').focus(); });
+    document.getElementById('addAdmin').addEventListener('click', async () => { document.getElementById('addAdminForm').hidden = false; await refreshRoleOptions(); document.getElementById('newAdminEmail').focus(); });
     document.getElementById('cancelAddAdmin').addEventListener('click', () => { document.getElementById('addAdminForm').hidden = true; });
     document.getElementById('addAdminForm').addEventListener('submit', createAdmin);
     document.querySelectorAll('.side-nav .tab:not(#adminsTab)').forEach(item => item.addEventListener('click', () => { panel.style.display = 'none'; }));
