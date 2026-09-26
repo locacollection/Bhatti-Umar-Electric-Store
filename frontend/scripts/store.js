@@ -18,14 +18,14 @@ BHATTI.safeImage=value=>{
 };
 
 BHATTI.productCard=function(p){
-  const escape=BHATTI.escape,id=Number(p.id),discount=p.old&&p.old>p.price?Math.round((p.old-p.price)/p.old*100):0,admin=BHATTI.profile?.role==='admin';
+  const escape=BHATTI.escape,id=String(p.id),discount=p.old&&p.old>p.price?Math.round((p.old-p.price)/p.old*100):0,admin=BHATTI.profile?.role==='admin';
   return `<article class="product" data-description="${escape(p.description||'')}">
     <div class="pic">
-      <button class="product-image-button" type="button" onclick="openProduct(${id})" aria-label="View ${escape(p.name)} details">
+      <button class="product-image-button" type="button" onclick="openProduct('${id}')" aria-label="View ${escape(p.name)} details">
         <img loading="lazy" src="${escape(BHATTI.safeImage(p.image))}" alt="${escape(p.name)}" onerror="this.onerror=null;this.src='assets/product-placeholder.svg'">
       </button>
       <div class="product-badges">${p.new?'<span class="badge new-badge">New arrival</span>':''}${discount>0?`<span class="badge sale-badge">SAVE ${discount}%</span>`:''}</div>
-      ${admin?`<button class="heart admin-edit-product" type="button" aria-label="Edit ${escape(p.name)}" onclick="openAdminProductEditor(${id})">✎</button>`:`<button class="heart" type="button" aria-label="Add ${escape(p.name)} to bag" onclick="add(${id})">＋</button>`}
+      ${admin?`<button class="heart admin-edit-product" type="button" aria-label="Edit ${escape(p.name)}" onclick="openAdminProductEditor('${id}')">✎</button>`:`<button class="heart" type="button" aria-label="Add ${escape(p.name)} to bag" onclick="add(${id})">＋</button>`}
       <button class="quick-view" type="button" onclick="openProduct(${id})">Quick view</button>
     </div>
     <div class="product-info">
@@ -92,7 +92,7 @@ function featuredProducts(){
 function initStoreUI(){
   const filters=document.getElementById('filters');
   if(filters){
-    const configured=window.BHATTI.CATEGORY_TAXONOMY||[{id:'All',label:'All',subcategories:[]},{id:'Women',label:'Women',subcategories:[]},{id:'Men',label:'Men',subcategories:[]},{id:'Footwear',label:'Footwear',subcategories:[]},{id:'Accessories',label:'Accessories',subcategories:[]}];
+    const configured=window.BHATTI.CATEGORY_TAXONOMY||[{id:'All',label:'All',subcategories:[]},{id:'Lighting',label:'Lighting',subcategories:[]},{id:'Wiring',label:'Wiring',subcategories:[]},{id:'Wires & Cables',label:'Wires & Cables',subcategories:[]},{id:'Conduit & PVC',label:'Conduit & PVC',subcategories:[]},{id:'Switches & Sockets',label:'Switches & Sockets',subcategories:[]},{id:'Circuit Protection',label:'Circuit Protection',subcategories:[]},{id:'Protection',label:'Protection',subcategories:[]},{id:'Fans',label:'Fans',subcategories:[]}];
     const taxonomy=configured.some(item=>item.id==='Sale')?configured:[...configured,{id:'Sale',label:'Sale',subcategories:[]}];
     let activeMain='All';
     if(BHATTI.filter!=='All')activeMain=BHATTI.filter.includes(' - ')?BHATTI.filter.split(' - ')[0].trim():BHATTI.filter;
