@@ -1,5 +1,5 @@
 import {Router} from 'express';
-import {requireAuth,requireAdmin} from '../middleware/auth.js';
+import {requireAuth,requireAdmin,requireSuperAdmin} from '../middleware/auth.js';
 import {supabase} from '../config/supabase.js';
 const router=Router(); router.use(requireAuth,requireAdmin);
 
@@ -41,5 +41,46 @@ router.post('/products',async(req,res,next)=>{try{const b=req.body;const {data,e
 router.patch('/products/:id',async(req,res,next)=>{try{const b=req.body;const patch={};for(const k of ['name','category','description','sku','image_url'])if(b[k]!==undefined)patch[k]=String(b[k]).slice(0,k==='description'?1000:160);if(b.price!==undefined)patch.price=Math.max(0,Number(b.price)||0);if(b.active!==undefined)patch.active=Boolean(b.active);patch.updated_at=new Date().toISOString();const {data,error}=await supabase.from('products').update(patch).eq('id',req.params.id).select('*').single();if(error)throw error;if(b.quantity!==undefined||b.reorder_level!==undefined){const row={};if(b.quantity!==undefined)row.quantity=Math.max(0,Number(b.quantity)||0);if(b.reorder_level!==undefined)row.reorder_level=Math.max(0,Number(b.reorder_level)||0);row.updated_at=new Date().toISOString();await supabase.from('inventory').upsert({product_id:req.params.id,...row},{onConflict:'product_id'})}res.json({data})}catch(e){next(e)}});
 
 router.delete('/products/:id',async(req,res,next)=>{try{const {error}=await supabase.from('products').update({active:false,updated_at:new Date().toISOString()}).eq('id',req.params.id);if(error)throw error;res.status(204).end()}catch(e){next(e)}});
+
+/* Super-admin staff management. Passwords are handled only by Supabase Auth. */
+router.get('/staff',requireSuperAdmin,async(req,res,next)=>{try{
+ const {data,error}=await supabase.from('profiles').select('id,full_name,phone,role,created_at').in('role',['admin','super_admin']).order('created_at',{ascending:false});
+ if(error)throw error;res.json({data:data||[]});
+}catch(e){next(e)}});
+
+router.post('/staff',requireSuperAdmin,async(req,res,next)=>{try{
+ const email=String(req.body.email||'').trim().toLowerCase();
+ const password=String(req.body.password||'');
+ const full_name=String(req.body.full_name||'').trim().slice(0,120);
+ if(!email||!password||password.length<10)return res.status(400).json({error:'Email and a password of at least 10 characters are required.'});
+ const role='admin';
+ const {data,error}=await supabase.auth.admin.createUser({email,password,email_confirm:true,user_metadata:{full_name}});
+ if(error)throw error;
+ const {data:profile,error:profileError}=await supabase.from('profiles').update({full_name,role,updated_at:new Date().toISOString()}).eq('id',data.user.id).select('id,full_name,phone,role,created_at').single();
+ if(profileError)throw profileError;
+ await supabase.from('audit_log').insert({actor_user_id:req.user.id,action:'staff_created',entity_type:'profile',entity_id:profile.id,metadata:{role,email}});
+ res.status(201).json({data:profile});
+}catch(e){next(e)}});
+
+router.patch('/staff/:id',requireSuperAdmin,async(req,res,next)=>{try{
+ if(req.params.id===req.user.id)return res.status(400).json({error:'Use a separate super-admin account for staff administration.'});
+ const requestedRole=req.body.role;
+ if(!['admin','super_admin'].includes(requestedRole))return res.status(400).json({error:'Invalid staff role.'});
+ if(requestedRole==='super_admin')return res.status(403).json({error:'A super admin cannot promote another account to super admin from this panel.'});
+ const {data,error}=await supabase.from('profiles').update({role:'admin',updated_at:new Date().toISOString()}).eq('id',req.params.id).in('role',['admin','super_admin']).select('id,full_name,phone,role,created_at').single();
+ if(error)throw error;
+ await supabase.from('audit_log').insert({actor_user_id:req.user.id,action:'staff_role_updated',entity_type:'profile',entity_id:data.id,metadata:{role:data.role}});
+ res.json({data});
+}catch(e){next(e)}});
+
+router.delete('/staff/:id',requireSuperAdmin,async(req,res,next)=>{try{
+ if(req.params.id===req.user.id)return res.status(400).json({error:'You cannot remove your own account.'});
+ const {data:target}=await supabase.from('profiles').select('id,role').eq('id',req.params.id).maybeSingle();
+ if(!target||!['admin','super_admin'].includes(target.role))return res.status(404).json({error:'Staff account not found.'});
+ if(target.role==='super_admin')return res.status(403).json({error:'Super admin accounts cannot be removed from this panel.'});
+ const {error}=await supabase.auth.admin.deleteUser(req.params.id);if(error)throw error;
+ await supabase.from('audit_log').insert({actor_user_id:req.user.id,action:'staff_removed',entity_type:'profile',entity_id:req.params.id,metadata:{role:'admin'}});
+ res.status(204).end();
+}catch(e){next(e)}});
 
 export default router;
