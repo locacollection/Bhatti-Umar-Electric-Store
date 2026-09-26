@@ -3,16 +3,25 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import productRoutes from './routes/product.routes.js';
-import { errorHandler } from './middleware/error.js';
+import accountRoutes from './routes/account.routes.js';
+import orderRoutes from './routes/order.routes.js';
+import reviewRoutes from './routes/review.routes.js';
+import newsletterRoutes from './routes/newsletter.routes.js';
+import adminRoutes from './routes/admin.routes.js';
+import {errorHandler} from './middleware/error.js';
 
-const app = express();
-app.use(helmet());
-app.use(cors());
-app.use(express.json());
+const app=express();
+app.disable('x-powered-by');
+app.use(helmet({crossOriginResourcePolicy:{policy:'cross-origin'}}));
+app.use(cors({origin:true,credentials:false}));
+app.use(express.json({limit:'1mb'}));
 app.use(morgan('combined'));
-
-app.get('/api/health', (req, res) => res.json({ ok: true, service: 'bhatti-electric-backend' }));
-app.use('/api/products', productRoutes);
+app.get('/api/health',(req,res)=>res.json({ok:true,service:'bhatti-electric-backend',version:'2'}));
+app.use('/api/products',productRoutes);
+app.use('/api/account',accountRoutes);
+app.use('/api/orders',orderRoutes);
+app.use('/api/reviews',reviewRoutes);
+app.use('/api/newsletter',newsletterRoutes);
+app.use('/api/admin',adminRoutes);
 app.use(errorHandler);
-
 export default app;
