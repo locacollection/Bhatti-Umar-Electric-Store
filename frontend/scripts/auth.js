@@ -1,6 +1,6 @@
 window.BHATTI=window.BHATTI||{};
 
-const BHATTI_PUBLIC_SITE_URL='https://locacollection.github.io/locacollection1/';
+const BHATTI_PUBLIC_SITE_URL=new URL('./',window.location.href).href;
 const BHATTI_EMAIL_CONFIRMATION_URL=new URL('verify.html',BHATTI_PUBLIC_SITE_URL).href;
 const BHATTI_PENDING_EMAIL_KEY='loca_pending_verification_email';
 let verificationCooldownTimer=null;
@@ -268,11 +268,11 @@ async function saveProfile(event){
 
 async function saveContactInfo(event){
   event.preventDefault();
-  const button=document.getElementById('contactSave'),phone=document.getElementById('contactPhone').value.trim(),contact_email=document.getElementById('contactEmail').value.trim();
-  if(!phone||!contact_email){BHATTI.notice({eyebrow:'Contact info',title:'Complete your contact details.',message:'Add a valid delivery email and phone or WhatsApp number.',tone:'error',action:'Review details'});return;}
+  const button=document.getElementById('contactSave'),phone=document.getElementById('contactPhone').value.trim();
+  if(!phone){BHATTI.notice({eyebrow:'Contact info',title:'Complete your contact details.',message:'Add a phone or WhatsApp number for delivery contact.',tone:'error',action:'Review details'});return;}
   button.disabled=true;button.textContent='Saving…';
   try{
-    const{data,error}=await BHATTI.db.from('profiles').update({phone,contact_email,updated_at:new Date().toISOString()}).eq('id',BHATTI.currentUser.id).select('*').single();
+    const{data,error}=await BHATTI.db.from('profiles').update({phone,updated_at:new Date().toISOString()}).eq('id',BHATTI.currentUser.id).select('*').single();
     if(error)throw error;
     BHATTI.profile=data;populateProfileForm();showInlineMessage('contactMessage','Contact information saved.');
   }catch(error){BHATTI.notice({eyebrow:'Contact info',title:'Contact details were not saved.',message:error.message||'Please try again.',tone:'error',action:'Review details'});}
