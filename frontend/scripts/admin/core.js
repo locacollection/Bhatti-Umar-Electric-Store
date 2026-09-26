@@ -1,4 +1,3 @@
-document.getElementById("login")?.style.setProperty("display","none");
 const storeBridge=document.querySelector('.store-link[href="index.html"]');if(storeBridge){storeBridge.href='admin-store.html';storeBridge.removeAttribute('target');}
 const requestedProductId=new URLSearchParams(window.location.search).get('editProduct');if(requestedProductId){const editTimer=setInterval(()=>{const editButton=document.querySelector(`[data-edit="${CSS.escape(requestedProductId)}"]`);if(editButton){document.querySelector('.tab[data-tab="products"]')?.click();editButton.click();clearInterval(editTimer)}},100);setTimeout(()=>clearInterval(editTimer),10000)}
 const SUPABASE_URL=(window.BHATTI&&window.BHATTI.SUPABASE_URL)||"https://qvvrjogeqranowfseivh.supabase.co";
@@ -15,7 +14,13 @@ function orderStatusBadge(value){const label=value||"Pending";return `<span clas
 function paymentStatusBadge(value){const label=value||"Unpaid";return `<span class="status-chip payment-${workflowSlug(label)}">${esc(label)}</span>`;}
 function adminNotify(message,{title="Studio update",tone="success",duration=4200}={}){const region=document.getElementById("adminToastRegion");if(!region)return;const toast=document.createElement("div");toast.className="admin-toast"+(tone==="error"?" is-error":"");const copy=document.createElement("div"),heading=document.createElement("b"),body=document.createElement("span"),close=document.createElement("button");heading.textContent=title;body.textContent=message;close.type="button";close.setAttribute("aria-label","Dismiss message");close.textContent="×";copy.append(heading,body);toast.append(copy,close);const remove=()=>{toast.style.opacity="0";toast.style.transform="translateX(18px)";setTimeout(()=>toast.remove(),220)};close.addEventListener("click",remove);region.appendChild(toast);setTimeout(remove,duration);}
 function confirmAction({eyebrow="Please confirm",title="Continue?",message="",confirmLabel="Continue"}={}){const dialog=document.getElementById("adminConfirmDialog");if(!dialog)return Promise.resolve(false);if(dialog.open)dialog.close("cancel");document.getElementById("adminConfirmEyebrow").textContent=eyebrow;document.getElementById("adminConfirmTitle").textContent=title;document.getElementById("adminConfirmMessage").textContent=message;document.getElementById("adminConfirmButton").textContent=confirmLabel;dialog.returnValue="cancel";return new Promise(resolve=>{const cancel=document.getElementById("adminConfirmCancel"),confirm=document.getElementById("adminConfirmButton");cancel.onclick=()=>dialog.close("cancel");confirm.onclick=()=>dialog.close("confirm");dialog.addEventListener("cancel",event=>{event.preventDefault();dialog.close("cancel")},{once:true});dialog.addEventListener("close",()=>resolve(dialog.returnValue==="confirm"),{once:true});dialog.showModal();setTimeout(()=>cancel.focus(),30);});}
-async function isCurrentUserAdmin(){const {data:{user},error}=await db.auth.getUser();if(error||!user)return false;const result=await db.rpc("is_admin");if(result.error)throw result.error;return result.data===true;}
+async function isCurrentUserAdmin(){
+  const {data:{user},error}=await db.auth.getUser();
+  if(error||!user)return false;
+  const {data:profile,error:profileError}=await db.from("profiles").select("role").eq("id",user.id).maybeSingle();
+  if(profileError)throw profileError;
+  return ["admin","super_admin"].includes(profile?.role);
+}
 function login(){return false;}
 async function logout(){await db.auth.signOut();location.reload();}
 async function load(){
