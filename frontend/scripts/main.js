@@ -28,7 +28,7 @@ function renderReviewCards(){
     return `<article class="review-card">
       ${starRating(review.rating)}
       <blockquote>“${BHATTI.escape(review.body)}”</blockquote>
-      <div><strong>${BHATTI.escape(review.display_name)}</strong><span>${BHATTI.escape(product?.name||'BHATTI purchase')} · Verified delivery</span></div>
+      <div><strong>${BHATTI.escape(review.display_name||'BHATTI customer')}</strong><span>${BHATTI.escape(product?.name||'BHATTI purchase')} · Verified delivery</span></div>
     </article>`;
   }).join('');
 }
@@ -37,7 +37,7 @@ async function loadApprovedReviews(){
   if(reviewsLoading)return;
   reviewsLoading=true;
   try{
-    const{data,error}=await BHATTI.db.from('product_reviews').select('id,product_id,display_name,rating,body,created_at').eq('approved',true).order('created_at',{ascending:false}).limit(24);
+    const{data,error}=await BHATTI.db.from('reviews').select('id,product_id,rating,body,created_at,user_id').eq('status','approved').order('created_at',{ascending:false}).limit(24);
     if(error)throw error;
     approvedReviews=data||[];
     renderReviewCards();
@@ -72,7 +72,7 @@ function renderRelatedProducts(product){
   const products=(BHATTI.products||[]).filter(item=>String(item.id)!==String(product.id));
   const sameCategory=products.filter(item=>item.cat===product.cat);
   const related=[...sameCategory,...products].filter((item,index,list)=>list.findIndex(candidate=>String(candidate.id)===String(item.id))===index).slice(0,3);
-  box.innerHTML=related.map(item=>`<button type="button" onclick="openProduct(${Number(item.id)})"><img src="${BHATTI.escape(BHATTI.safeImage(item.image))}" alt=""><span><b>${BHATTI.escape(item.name)}</b><small>${BHATTI.money(item.price)}</small></span></button>`).join('')||'<small>More pieces are being prepared.</small>';
+  box.innerHTML=related.map(item=>`<button type="button" onclick="openProduct('${item.id}')"><img src="${BHATTI.escape(BHATTI.safeImage(item.image))}" alt=""><span><b>${BHATTI.escape(item.name)}</b><small>${BHATTI.money(item.price)}</small></span></button>`).join('')||'<small>More pieces are being prepared.</small>';
 }
 
 function openProduct(productId){
@@ -162,9 +162,8 @@ async function submitProductReview(event){
     await BHATTI.ensureProfile();
     const displayName=BHATTI.profile?.full_name||BHATTI.currentUser.user_metadata?.full_name||BHATTI.currentUser.email?.split('@')[0]||'BHATTI customer';
     const{error}=await BHATTI.db.from('product_reviews').insert({
-      product_id:Number(activeProduct.id),
+      product_id:activeProduct.id,
       user_id:BHATTI.currentUser.id,
-      display_name:displayName,
       rating:Number(document.getElementById('productReviewRating').value),
       body:document.getElementById('productReviewBody').value.trim()
     });
