@@ -437,3 +437,57 @@ body:before{opacity:.16}
 footer{width:min(1460px,92%);padding:42px 2%}
 @media(max-width:950px){.hero{grid-template-columns:1fr}.hero-art{min-height:520px}.category-grid{grid-template-columns:repeat(2,1fr)}.product-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:620px){.topline{height:28px}.site-header{height:72px;border-radius:25px}.hero{width:calc(100% - 20px)}.hero-copy{padding:54px 24px;border-radius:30px}.hero h1{font-size:57px}.hero-art{min-height:420px;border-radius:30px}.hero-art:after{font-size:245px}.hero-products{bottom:8%;left:8%;right:8%}.section{padding:82px 10px}.category-grid,.product-grid,.review-grid{grid-template-columns:1fr 1fr}.category{min-height:205px;padding:20px}.category strong{margin-top:35px}.promo,.contact,.newsletter{width:calc(100% - 20px);border-radius:28px}.promo>div{padding:60px 26px}.promo-art{min-height:330px}.promo-art strong{font-size:75px}.contact{padding:62px 25px}.contact-card a:not(.btn),.contact-card strong{font-size:20px}}
+\n
+/* LOCA LUXURY STOREFRONT — customer-facing redesign */
+:root{--bg:#f3efe6;--paper:#fbf9f4;--ink:#11110f;--muted:#77736a;--line:rgba(17,17,15,.12);--accent:#a57a38;--forest:#24463b}
+body{background:#f3efe6!important;color:#11110f;letter-spacing:-.01em}
+body:before{opacity:.16}
+.topline{height:30px;padding:0 4.5%;background:#11110f;color:#e9e3d7;font-size:8px;letter-spacing:.22em}
+.site-header{top:12px;width:91%;height:76px;margin:12px auto 0;padding:0 14px 0 24px;border:1px solid rgba(255,255,255,.8);border-radius:100px;background:rgba(251,249,244,.72);box-shadow:0 18px 60px rgba(34,28,18,.08);backdrop-filter:blur(28px)}
+.brand{font-size:22px;letter-spacing:-.06em}.brand small{font-size:6px;letter-spacing:.34em;color:#a57a38}
+.site-header nav{gap:32px}.site-header nav a{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#4f4c45}
+.header-actions button{height:42px;padding:0 16px;background:rgba(255,255,255,.46);font-size:10px;letter-spacing:.04em}
+.hero{width:91%;max-width:1500px;min-height:720px;padding:18px 0 0;grid-template-columns:.84fr 1.16fr;gap:14px}
+.hero-copy{padding:clamp(50px,7vw,105px);border:0;border-radius:34px;background:transparent;box-shadow:none;align-items:flex-start}
+.hero-copy .eyebrow{font-size:9px;letter-spacing:.25em}
+.hero h1{font-size:clamp(64px,8vw,122px);line-height:.82;letter-spacing:-.075em;margin:24px 0}
+.hero h1 em{color:#24463b}
+.hero-copy>p:not(.eyebrow){font-size:15px;max-width:450px;line-height:1.8;color:#767168}
+.actions{margin:25px 0 8px}.btn{padding:13px 20px;font-size:10px;letter-spacing:.08em;text-transform:uppercase}
+.hero-meta{margin-top:54px;font-size:8px;letter-spacing:.18em}
+.hero-art{min-height:650px;border-radius:34px;background:linear-gradient(135deg,#cdbd9e 0%,#8e7754 42%,#262b25 100%);box-shadow:0 30px 90px rgba(34,28,18,.16)}
+.hero-art:before{inset:20px;border:1px solid rgba(255,255,255,.48);border-radius:28px;background:linear-gradient(145deg,rgba(255,255,255,.28),rgba(255,255,255,.02))}
+.hero-art:after{font-size:390px;color:rgba(255,255,255,.18);text-shadow:none}
+.hero-symbol{width:88px;height:88px;right:12%;top:13%;background:rgba(255,255,255,.2);font-size:40px}
+.hero-label{left:9%;top:9%;font-size:8px;letter-spacing:.2em}
+.hero-products{left:9%;right:9%;bottom:9%;gap:7px}
+.hero-products span{background:rgba(17,17,15,.26);color:#fff;border-color:rgba(255,255,255,.28);padding:13px 16px;font-size:8px}
+.benefits{width:91%;margin:14px auto 0;border:0;background:transparent;gap:8px}
+.benefits article{padding:23px 20px;border:1px solid var(--line);border-radius:22px;background:rgba(255,255,255,.28)}
+.benefits b{font-size:8px}.benefits strong{font-size:13px}.benefits small{font-size:11px}
+.section{width:91%;max-width:1500px;padding:130px 0}
+.section-intro{margin-bottom:50px}.section-intro h2,.promo h2,.split h2,.contact h2,.newsletter h2{font-size:clamp(52px,6.2vw,92px);line-height:.84;letter-spacing:-.075em}
+.section-intro>p{font-size:13px;max-width:390px}
+.category-grid{grid-template-columns:1.45fr 1fr 1fr;grid-template-rows:350px 350px;gap:10px}
+.category-card{border-radius:28px;padding:28px;background:linear-gradient(145deg,#1b2520,#526052);box-shadow:0 22px 60px rgba(30,25,18,.1)}
+.category-card strong{font-size:24px;letter-spacing:-.04em}.category-card small{font-size:11px}
+.category-card:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 80% 20%,rgba(216,190,139,.35),transparent 25%);pointer-events:none}
+.product-grid{grid-template-columns:repeat(4,1fr);gap:34px 14px}
+.product{border:0;background:transparent;box-shadow:none;overflow:visible}
+.product:hover{transform:none;box-shadow:none}
+.product .pic{aspect-ratio:4/5;border-radius:28px;background:linear-gradient(145deg,#d9d0bf,#8e846f);box-shadow:0 18px 50px rgba(34,28,18,.1)}
+.product .pic img{mix-blend-mode:multiply}
+.product-info{padding:16px 4px 0}.product-title-button h3{font-size:15px;font-weight:650;letter-spacing:-.02em}
+.product-info .price{font-size:15px;font-weight:800}.product-info .add{background:transparent;border-color:var(--line);font-size:9px;letter-spacing:.1em;text-transform:uppercase}
+.product .heart{background:rgba(251,249,244,.75);color:#111}.product .quick-view{background:rgba(17,17,15,.72);font-size:8px;letter-spacing:.13em}
+.promo{width:91%;max-width:1500px;margin:0 auto 80px;padding:90px;min-height:500px;border-radius:34px;background:#11110f;color:#f6f1e7;box-shadow:0 30px 90px rgba(20,17,12,.13)}
+.promo h2{color:#f6f1e7}.promo h2 em{color:#cdb27b}.promo p{max-width:500px;color:#aaa69d;line-height:1.8}
+.promo-art{border-radius:30px;background:linear-gradient(145deg,#b99a64,#28352d);box-shadow:inset 0 0 0 1px rgba(255,255,255,.2)}
+.about-art{border-radius:32px;background:linear-gradient(145deg,#d4c2a1,#596154);min-height:480px}
+.newsletter{width:91%;max-width:1500px;margin:0 auto;padding:110px 8%;border:0;border-radius:34px;background:#e5ddcc}
+.contact{width:91%;max-width:1500px;padding:130px 0}
+.contact-card{border:0;border-radius:30px;background:#fffdf8;padding:42px;box-shadow:0 22px 70px rgba(34,28,18,.08)}
+footer{margin-top:80px;padding:70px 4.5%;background:#11110f;color:#f5efe3}
+.drawer{background:#f8f5ed}.modal-card{background:#fbf9f4!important}
+@media(max-width:900px){.site-header{width:94%}.hero,.benefits,.section,.contact,.newsletter,.promo{width:94%}.hero{padding-top:10px}.hero-copy{padding:65px 25px}.hero-art{min-height:520px}.category-grid{grid-template-columns:1fr 1fr;grid-template-rows:repeat(3,260px)}.product-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.site-header{height:64px;padding:0 9px 0 16px}.brand{font-size:18px}.header-actions button{padding:0 10px}.hero{width:94%}.hero-copy{padding:55px 10px 35px}.hero h1{font-size:59px}.hero-art{min-height:430px}.hero-art:after{font-size:250px}.section{padding:85px 0}.category-grid{display:flex;overflow:auto}.category-card{min-width:82%;height:360px}.promo{padding:45px 28px}.contact-card{padding:28px}}
