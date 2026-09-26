@@ -1,0 +1,1 @@
+{"name":"bhatti-electric-backend","private":true,"type":"module","scripts":{"dev":"node --watch src/server.js","start":"node src/server.js"},"dependencies":{"@supabase/supabase-js":"latest","cors":"latest","dotenv":"latest","express":"latest","helmet":"latest","morgan":"latest"}}
