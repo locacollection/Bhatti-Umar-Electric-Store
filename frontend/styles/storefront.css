@@ -765,3 +765,54 @@ html{background:var(--paper)}body{background:var(--paper);color:var(--ink);font-
   background-size:cover!important;background-position:center!important;
 }
 .system-row .system-tile:before{background:linear-gradient(180deg,rgba(5,9,11,.02),rgba(5,9,11,.72))!important}
+
+
+/* BHATTI // ELECTRICAL BANNER WALL — visual showcase, not navigation */
+.electrical-banner-wall{display:grid;grid-template-rows:minmax(0,1.55fr) minmax(0,1fr);gap:8px;height:100%;min-height:520px}
+.electrical-banner{position:relative;overflow:hidden;min-width:0;isolation:isolate;background:#121719 center/cover no-repeat;border:1px solid #30383b}
+.electrical-banner:before{content:"";position:absolute;inset:0;z-index:-1;background-size:cover;background-position:center;transition:transform .6s ease}
+.electrical-banner:after{content:"";position:absolute;inset:0;z-index:0;background:linear-gradient(180deg,rgba(5,8,10,.02) 15%,rgba(5,8,10,.12) 42%,rgba(5,8,10,.9) 100%)}
+.electrical-banner:hover:before{transform:scale(1.025)}
+.electrical-banner-main:before{background-image:url("https://www.alfatihoman.com/images/Electrical-Supplies.jpg")}
+.electrical-banner-panel:before{background-image:url("https://meethaqi.com/meethaq_website_custom/static/img/service-5.png")}
+.electrical-banner-field:before{background-image:url("https://static.wixstatic.com/media/7dcff2_8842ab36fdfc4021909175656f7e9dec~mv2.png/v1/fill/w_1491%2Ch_1055%2Cal_c%2Cq_90%2Cenc_avif%2Cquality_auto/7dcff2_8842ab36fdfc4021909175656f7e9dec~mv2.png")}
+.electrical-banner-copy{position:absolute;z-index:2;left:18px;right:18px;bottom:17px;color:#fff;display:flex;flex-direction:column;align-items:flex-start;pointer-events:none}
+.electrical-banner-copy span{color:var(--gold);font:800 7px/1 var(--sans);letter-spacing:.15em;text-transform:uppercase;margin-bottom:7px}
+.electrical-banner-copy strong{font:800 clamp(24px,3.5vw,46px)/.86 var(--sans);letter-spacing:-.065em;text-transform:uppercase}
+.electrical-banner-copy small{margin-top:9px;color:#d1d7d8;font:700 8px/1.35 var(--sans);letter-spacing:.06em;text-transform:uppercase}
+.electrical-banner-pair{display:grid;grid-template-columns:1fr 1fr;gap:8px;min-height:0}
+
+/* Replace image-heavy filter cards with a stable control console */
+.filter-console{width:100%;border:1px solid #30383b;background:#111719;padding:14px}
+.filter-console-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding-bottom:13px;border-bottom:1px solid #2b3336}
+.filter-console-head>div{min-width:0}
+.filter-console-head strong{display:block;color:#f4f5f2;font:800 21px/.95 var(--sans);letter-spacing:-.045em}
+.filter-console-head small{display:block;margin-top:7px;color:#7f898d;font:600 9px/1.35 var(--sans)}
+.filter-console .filter-reset{flex:none}
+.filter-control-row,.filter-subrow{display:grid;grid-template-columns:150px minmax(0,1fr);gap:14px;align-items:start;padding-top:13px}
+.filter-control-label,.filter-subrow>span{padding-top:8px;color:#788286;font:800 7px/1.2 var(--sans);letter-spacing:.15em;text-transform:uppercase}
+.filter-control-label b{display:block;margin-top:5px;color:#e8eceb;font:800 11px/1.1 var(--sans);letter-spacing:0;text-transform:none}
+.filter-tabs{display:flex;flex-wrap:wrap;gap:6px;min-width:0}
+.filter-tab{min-height:36px;padding:0 12px;border:1px solid #3a4448;border-radius:2px;background:#171d1f;color:#aeb7ba;font:800 8px/1 var(--sans);letter-spacing:.07em;text-transform:uppercase;cursor:pointer;white-space:nowrap;transition:.18s ease}
+.filter-tab:hover{border-color:#778186;color:#f3f5f2;background:#20282b}
+.filter-tab.active{background:var(--gold);border-color:var(--gold);color:#101416}
+.filter-subrow{margin-top:1px;border-top:1px dashed #293134}
+.sub-tabs .filter-tab{min-height:32px;font-size:7px}
+@media(max-width:1000px){
+  .electrical-banner-wall{min-height:430px}
+}
+@media(max-width:700px){
+  .electrical-banner-wall{min-height:410px;grid-template-rows:1.2fr 1fr}
+  .electrical-banner-copy{left:13px;right:13px;bottom:13px}
+  .electrical-banner-copy strong{font-size:27px}
+  .electrical-banner-copy small{font-size:7px}
+  .filter-console{padding:11px}
+  .filter-console-head{align-items:flex-start}
+  .filter-console-head strong{font-size:18px}
+  .filter-console-head small{max-width:240px}
+  .filter-control-row,.filter-subrow{grid-template-columns:1fr;gap:7px}
+  .filter-control-label,.filter-subrow>span{padding-top:0}
+  .filter-control-label b{display:none}
+  .filter-tabs{overflow:visible}
+  .filter-tab{min-height:34px;padding:0 10px}
+}
