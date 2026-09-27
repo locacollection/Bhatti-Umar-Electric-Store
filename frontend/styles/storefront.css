@@ -604,3 +604,16 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 input,select,textarea{font-size:16px!important;line-height:1.35}
 button,a,.filter,.sub-chip,.quick-view{touch-action:manipulation}
 }
+
+/* Mobile safe-area layout: keep headers, banners and modal tops below browser/notch chrome. */
+html,body{margin:0;min-height:100%;padding:0}
+@media(max-width:680px){
+:root{--mobile-safe-top:env(safe-area-inset-top,0px);--mobile-safe-bottom:env(safe-area-inset-bottom,0px)}
+body{padding-top:var(--mobile-safe-top);padding-bottom:var(--mobile-safe-bottom)}
+.site-header{top:var(--mobile-safe-top);z-index:100;height:auto;min-height:64px}
+.announcement{position:relative;z-index:101}
+.site-header .nav-shell{min-height:64px;padding-top:4px;padding-bottom:4px}
+.hero{scroll-margin-top:calc(76px + var(--mobile-safe-top))}
+.modal-layer,.checkout-modal{padding-top:max(12px,var(--mobile-safe-top));padding-bottom:max(12px,var(--mobile-safe-bottom));}
+.product-modal-card,.modal-card,.checkout-card{max-height:calc(100dvh - var(--mobile-safe-top) - var(--mobile-safe-bottom) - 16px);overflow:auto}
+}
