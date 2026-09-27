@@ -21,21 +21,21 @@ BHATTI.safeImage=value=>{
 };
 
 BHATTI.productCard=function(p){
-  const escape=BHATTI.escape,id=String(p.id),discount=p.old&&p.old>p.price?Math.round((p.old-p.price)/p.old*100):0,admin=BHATTI.profile?.role==='admin'&&!BHATTI.previewMode;
+  const escape=BHATTI.escape,id=String(p.id),discount=p.old&&p.old>p.price?Math.round((p.old-p.price)/p.old*100):0,admin=BHATTI.profile?.role==='admin'&&!BHATTI.previewMode,adminPreview=BHATTI.previewMode&&['admin','super_admin'].includes(BHATTI.profile?.role);
   return `<article class="product" data-description="${escape(p.description||'')}">
     <div class="pic">
       <button class="product-image-button" type="button" onclick="openProduct('${id}')" aria-label="View ${escape(p.name)} details">
         <img loading="lazy" src="${escape(BHATTI.safeImage(p.image))}" alt="${escape(p.name)}" onerror="this.onerror=null;this.src='assets/product-placeholder.svg'">
       </button>
       <div class="product-badges">${p.new?'<span class="badge new-badge">New arrival</span>':''}${discount>0?`<span class="badge sale-badge">SAVE ${discount}%</span>`:''}</div>
-      ${admin?`<button class="heart admin-edit-product" type="button" aria-label="Edit ${escape(p.name)}" onclick="openAdminProductEditor('${id}')">✎</button>`:`<button class="heart" type="button" aria-label="Add ${escape(p.name)} to bag" data-add-product="${escape(id)}">＋</button>`}
+      ${admin||adminPreview?`<button class="heart admin-edit-product" type="button" aria-label="Edit ${escape(p.name)}" onclick="openAdminProductEditor('${id}')">✎</button>`:`<button class="heart" type="button" aria-label="Add ${escape(p.name)} to bag" data-add-product="${escape(id)}">＋</button>`}
       <button class="quick-view" type="button" onclick="openProduct('${id}')">Quick view</button>
     </div>
     <div class="product-info">
       <div class="category-row"><span class="category">${escape(p.cat||'BHATTI edit')}</span><span class="delivery-pill">Trade delivery</span></div>
       <button class="product-title-button" type="button" onclick="openProduct('${id}')"><h3>${escape(p.name)}</h3></button>
       <div class="price">${BHATTI.money(p.price)}${p.old&&p.old>p.price?`<span class="old">${BHATTI.money(p.old)}</span>`:''}</div>
-      ${admin?`<button class="add admin-edit-product" type="button" onclick="openAdminProductEditor('${id}')"><span aria-hidden="true">✎</span> Edit in Admin Studio</button>`:`<button class="add" type="button" data-add-product="${escape(id)}"><span aria-hidden="true">＋</span> Add to bag</button>`}
+      ${admin||adminPreview?`<button class="add admin-edit-product" type="button" onclick="openAdminProductEditor('${id}')"><span aria-hidden="true">✎</span> Edit in Live Catalogue</button>`:`<button class="add" type="button" data-add-product="${escape(id)}"><span aria-hidden="true">＋</span> Add to bag</button>`}
     </div>
   </article>`;
 };
