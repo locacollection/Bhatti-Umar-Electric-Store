@@ -439,3 +439,22 @@ body:before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opa
 .drawer-backdrop,.modal{background:rgba(3,8,11,.66);backdrop-filter:blur(15px)}
 .admin-toast{background:rgba(10,15,19,.90)!important;border:1px solid rgba(234,215,170,.18)!important;backdrop-filter:blur(22px)}
 @media(max-width:900px){.shell{grid-template-columns:1fr}.sidebar{position:relative;top:auto;height:auto}.main{padding-top:30px}.wrap{width:min(100% - 28px,1320px)}}
+
+
+/* BHATTI stock control */
+.inventory-panel{position:relative}
+.inventory-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:18px 0}
+.inventory-stats>div{padding:18px 20px;border:1px solid var(--l-line);border-radius:18px;background:linear-gradient(135deg,rgba(255,255,255,.72),rgba(255,255,255,.38));box-shadow:0 12px 34px rgba(5,11,15,.06)}
+.inventory-stats span{display:block;color:#68717a;font-size:.72rem;text-transform:uppercase;letter-spacing:.12em}
+.inventory-stats b{display:block;margin-top:6px;font-size:1.55rem;color:var(--l-ink)}
+.inventory-table-wrap{overflow:auto}
+.inventory-table-wrap table{min-width:1040px}
+.inventory-number{width:88px;min-height:40px;border:1px solid var(--l-line);border-radius:12px;background:rgba(255,255,255,.8);padding:8px 10px;font:inherit;color:var(--l-ink)}
+.inventory-number:focus{outline:2px solid rgba(61,140,168,.28);border-color:var(--l-sage)}
+.inventory-status{display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border-radius:999px;font-size:.72rem;font-weight:700;letter-spacing:.04em;white-space:nowrap}
+.inventory-status.healthy{background:rgba(79,138,112,.12);color:#35684f}
+.inventory-status.low{background:rgba(199,166,106,.18);color:#785d25}
+.inventory-status.out{background:rgba(177,75,70,.13);color:#8a3935}
+.inventory-save{min-width:66px}
+@media(max-width:900px){.inventory-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.inventory-stats{grid-template-columns:1fr}}
