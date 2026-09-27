@@ -318,6 +318,13 @@ async function signOutCustomer(){
     const{error}=await BHATTI.db.auth.signOut();
     if(error)throw error;
     await BHATTI.loadCart();
+    BHATTI.notice?.({
+      eyebrow:'Account access',
+      title:'You are signed out.',
+      message:'Your BHATTI session has been closed on this device.',
+      tone:'success',
+      action:'Continue shopping'
+    });
   }catch(error){
     console.error('BHATTI sign-out failed:',error);
     BHATTI.notice?.({
