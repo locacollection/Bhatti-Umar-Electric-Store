@@ -165,7 +165,20 @@ function initStoreUI(){
     let activeMain='All';
     if(BHATTI.filter!=='All')activeMain=BHATTI.filter.includes(' - ')?BHATTI.filter.split(' - ')[0].trim():BHATTI.filter;
     const current=taxonomy.find(item=>item.id===activeMain),hasSubcategories=current&&current.subcategories?.length;
-    let html='<div class="main-filters">'+taxonomy.map(item=>`<button type="button" class="filter ${item.id===activeMain?'active':''}" data-category="${BHATTI.escape(item.id)}" onclick="setFilter(this.dataset.category)">${BHATTI.escape(item.label||item.id)}</button>`).join('')+'</div>';
+    const primary=[
+      {id:'Lighting',label:'SEE THE LIGHT.',meta:'LED • commercial • residential',className:'filter-light'},
+      {id:'Wiring',label:'CONNECT.',meta:'Cables • conductors • conduit',className:'filter-wiring'},
+      {id:'Circuit Protection',label:'PROTECT.',meta:'MCB • DB • safety',className:'filter-protect'},
+      {id:'Switches & Sockets',label:'SWITCHGEAR.',meta:'Switches • sockets • outlets',className:'filter-switch'}
+    ];
+    const primaryById=Object.fromEntries(primary.map(item=>[item.id,item]));
+    const visiblePrimary=primary.filter(item=>taxonomy.some(t=>t.id===item.id));
+    let html='<div class="filter-heading"><div><span class="filter-kicker">FILTER BY SYSTEM</span><strong>Choose where to start.</strong></div><button type="button" class="filter-reset '+(BHATTI.filter==='All'?'active':'')+'" onclick="setFilter('All')">All products <span>↗</span></button></div>';
+    html+='<div class="filter-deck">'+visiblePrimary.map(item=>`<button type="button" class="system-filter-card ${item.className} ${BHATTI.filter===item.id?'active':''}" data-category="${BHATTI.escape(item.id)}" onclick="setFilter(this.dataset.category)"><span>${BHATTI.escape(item.id)}</span><strong>${BHATTI.escape(item.label)}</strong><small>${BHATTI.escape(item.meta)}</small><b>↗</b></button>`).join('')+'</div>';
+    const secondary=taxonomy.filter(item=>!primaryById[item.id]&&item.id!=='All');
+    if(secondary.length){
+      html+='<div class="filter-more"><span>MORE FILTERS</span>'+secondary.map(item=>`<button type="button" class="sub-chip ${item.id===activeMain?'active':''}" data-category="${BHATTI.escape(item.id)}" onclick="setFilter(this.dataset.category)">${BHATTI.escape(item.label||item.id)}</button>`).join('')+'</div>';
+    }
     if(hasSubcategories){
       html+='<div class="sub-filters"><span class="sub-filter-label">Explore '+BHATTI.escape(current.label||current.id)+':</span><button class="sub-chip '+(BHATTI.filter===activeMain?'active':'')+'" data-category="'+BHATTI.escape(activeMain)+'" onclick="setFilter(this.dataset.category)">All '+BHATTI.escape(current.label||current.id)+'</button>'+current.subcategories.map(sub=>`<button class="sub-chip ${BHATTI.filter===sub.id?'active':''}" data-category="${BHATTI.escape(sub.id)}" onclick="setFilter(this.dataset.category)">${BHATTI.escape(sub.label)}</button>`).join('')+'</div>';
     }
