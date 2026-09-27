@@ -86,10 +86,11 @@
   async function init() {
     try {
       const { data: { session } = {} } = await db.auth.getSession();
-      if (!session) { $("saLogin").hidden = false; return; }
+      if (!session) { window.location.replace("index.html?auth=signin&from=super-admin"); return; }
       if (!await verifySuperAdmin()) {
-        $("saLoginMessage").textContent = "This account is not a Super Admin.";
-        await db.auth.signOut();
+        const { data: { user } = {} } = await db.auth.getUser();
+        if (user) { const { data: profile } = await db.from("profiles").select("role").eq("id", user.id).maybeSingle(); if (profile?.role === "admin") { window.location.replace("admin-store.html"); return; } }
+        window.location.replace("index.html");
         return;
       }
       $("saLogin").hidden = true; $("saApp").hidden = false;
