@@ -32,19 +32,29 @@
     loadAdmins();
   }
 
+  async function listAdministrators() {
+    const authToken = await token();
+    const response = await fetch(`${window.BHATTI.SUPABASE_URL}/functions/v1/super-admin-list-users`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${authToken}`,
+        "apikey": window.BHATTI.SUPABASE_KEY,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({})
+    });
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(payload?.error || `Administrator directory request failed (HTTP ${response.status}).`);
+    return payload;
+  }
+
   async function loadAdmins() {
     const body = $("superAdminAdminsBody");
     if (!body) return;
     body.innerHTML = '<tr><td colspan="5">Loading administrator accounts…</td></tr>';
     try {
       await requireSuperAdmin();
-      const authToken = await token();
-      const { data, error } = await db.functions.invoke("super-admin-list-users", {
-        body: {},
-        headers: { Authorization: `Bearer ${authToken}` }
-      });
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
+      const data = await listAdministrators();
       const admins = data?.administrators || [];
       $("adminManagementCount").textContent = `${admins.length} elevated account${admins.length === 1 ? "" : "s"} · Supabase Auth`;
       $("sideAdminCount").textContent = admins.filter(x => x.role === "admin").length;
