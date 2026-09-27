@@ -646,3 +646,9 @@ body{padding-top:var(--bh-top);padding-bottom:var(--bh-bottom);overflow-x:hidden
 .product-modal-card{margin-top:0!important}
 .support-float{bottom:calc(18px + var(--bh-bottom))!important}
 }
+
+@media(max-width:680px){
+.site-header{transition:transform .28s ease,opacity .2s ease!important}
+body.bhatti-window-open .site-header,body.bhatti-search-open .site-header{transform:translateY(calc(-100% - var(--bh-top,0px)))!important;opacity:0!important;pointer-events:none!important}
+body.bhatti-window-open .announcement,body.bhatti-search-open .announcement{pointer-events:none!important}
+}
