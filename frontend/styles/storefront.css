@@ -860,3 +860,51 @@ html{background:var(--paper)}body{background:var(--paper);color:var(--ink);font-
   .electrical-banner-wall{border-width:5px;padding:5px}
   .electrical-banner-main .electrical-banner-copy strong{font-size:28px}
 }
+
+
+/* BHATTI ELECTRIC STORE // FINAL BLACK + YELLOW STORE IDENTITY */
+:root{
+  --pak-green:#111416;
+  --pak-green-dark:#07090a;
+  --pak-red:#e3a52f;
+  --pak-cream:#f3f1e9;
+  --store-black:#111416;
+  --store-black-deep:#07090a;
+  --store-yellow:#e3a52f;
+  --store-yellow-bright:#f2c14b;
+  --store-paper:#f3f1e9;
+}
+body{background:#f3f1e9;color:#111416}
+.announcement{background:var(--store-black-deep);color:#f3f1e9}
+.announcement span:first-child{color:var(--store-yellow-bright)}
+.site-header{background:#f3f1e9}
+.brand strong{color:var(--store-black)}
+.brand small{color:#5d6568}
+.power-deck-main{background:linear-gradient(135deg,#07090a 0%,#111416 62%,#1b1f20 100%)}
+.power-deck-main h1 strong{color:var(--store-yellow-bright)}
+.power-deck-main:after{color:rgba(255,255,255,.045)}
+.deck-status{color:var(--store-yellow-bright)}
+.power-deck-side{background:#dedbd1}
+.electrical-banner-wall{border-color:#111416;background:#111416}
+.electrical-banner{border-color:rgba(227,165,47,.85);background:#111416}
+.electrical-banner:after{background:linear-gradient(180deg,rgba(8,10,11,.02) 8%,rgba(8,10,11,.16) 42%,rgba(8,10,11,.9) 100%)}
+.electrical-banner-main:before{background-image:url("https://markazpublic.s3.ap-southeast-1.amazonaws.com/business/701748756/g_701748756_68ae9625bfef9-712.webp")}
+.electrical-banner-panel:before{background-image:url("https://www.bihebazaar.com/uploads/2020/02/fb-img-1581684646079.jpg")}
+.electrical-banner-field:before{background-image:url("https://www.pnsteelproduct.com/wp-content/uploads/2020/05/Lamps-Shop-display-shelf-1080x720.jpg")}
+.electrical-banner-copy span{color:var(--store-yellow-bright)}
+.electrical-banner-copy strong{font-family:var(--sans)!important;text-transform:uppercase!important;letter-spacing:-.04em!important;line-height:.88!important}
+.power-deck-foot{background:#07090a;border-color:rgba(255,255,255,.12)}
+.power-deck-foot strong{color:var(--store-yellow-bright)}
+.benefits b{color:var(--store-black)}
+.section-intro .eyebrow,.story .eyebrow,.newsletter .eyebrow{color:#6a7275}
+.filter-tab.active{background:var(--store-yellow);border-color:var(--store-yellow);color:#111416}
+.filter-tab:hover{border-color:var(--store-yellow);color:#111416;background:#f7edcf}
+.button.primary{background:var(--store-yellow);border-color:var(--store-yellow);color:#111416}
+.button.primary:hover{background:var(--store-yellow-bright);border-color:var(--store-yellow-bright);color:#111416}
+.story-index{color:var(--store-yellow)}
+.category-card:hover{border-color:var(--store-yellow)}
+.electrical-banner-main .electrical-banner-copy strong{font-family:var(--sans)!important;font-size:clamp(25px,3.8vw,50px)!important}
+@media(max-width:700px){
+  .electrical-banner-wall{border-width:5px;padding:5px}
+  .electrical-banner-main .electrical-banner-copy strong{font-size:28px!important}
+}
