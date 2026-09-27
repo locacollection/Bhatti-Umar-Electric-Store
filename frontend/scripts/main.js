@@ -29,21 +29,7 @@ import('./navbar.js?v=20260927-no-role-store-bridge-1').catch(error=>console.war
 
 document.addEventListener('DOMContentLoaded',async()=>{
   initExperience();
-  // Storefront data must never wait for authentication. A slow/stale auth session
-  // previously prevented the catalogue from leaving its loading state.
-  const catalogueTask=(async()=>{
-    try{
-      BHATTI.cart={};
-      await loadProducts();
-      drawCart();
-      reveal();
-      checkSupabaseConnection();
-    }catch(error){
-      console.error('BHATTI catalogue initialization failed:',error);
-      const grid=document.getElementById('grid');
-      if(grid)grid.innerHTML='<div class="search-empty"><h3>Catalogue temporarily unavailable.</h3><p>Please refresh once. Your account and bag are not affected.</p></div>';
-    }
-  })();
+  const catalogueTask=window.startCatalogue?startCatalogue():loadProducts();
   try{
     await initAuth();
   }catch(error){
@@ -58,13 +44,4 @@ document.addEventListener('DOMContentLoaded',async()=>{
     }
     return originalCheckout();
   };
-  try{
-    BHATTI.cart={};
-    await loadProducts();
-    drawCart();
-    reveal();
-    checkSupabaseConnection();
-  }catch(error){
-    console.error('BHATTI initialization failed:',error);
-  }
 });
