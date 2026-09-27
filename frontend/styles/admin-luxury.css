@@ -472,3 +472,12 @@ body{padding-top:var(--admin-safe-top);padding-bottom:var(--admin-safe-bottom)}
 .top{top:var(--admin-safe-top);height:76px!important;min-height:76px;z-index:200}
 @media(max-width:600px){.top{height:64px!important;min-height:64px}.topin{height:64px!important}.sidebar{top:calc(64px + var(--admin-safe-top));max-height:calc(100dvh - 64px - var(--admin-safe-top));overflow-x:auto}}
 }
+
+/* SITE-WIDE ADMIN MOBILE VIEWPORT SAFE AREA */
+@media(max-width:900px){
+:root{--admin-top-safe:env(safe-area-inset-top,0px);--admin-bottom-safe:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:calc(76px + var(--admin-top-safe) + 8px)}
+body{padding-top:var(--admin-top-safe);padding-bottom:var(--admin-bottom-safe);overflow-x:hidden}
+.top{top:var(--admin-top-safe)!important;z-index:1000}
+@media(max-width:600px){.top{top:var(--admin-top-safe)!important;height:64px!important;min-height:64px}.sidebar{top:calc(64px + var(--admin-top-safe))!important;max-height:calc(100dvh - 64px - var(--admin-top-safe))!important}.main{padding-top:20px!important}}
+}
