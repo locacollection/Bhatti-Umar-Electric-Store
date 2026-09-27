@@ -17,7 +17,8 @@ BHATTI.normalizeProduct=function(p){
     new:Boolean(p.is_new||p.new_arrival||false),
     description:String(p.description||''),
     specs:(p.specs&&typeof p.specs==='object'&&!Array.isArray(p.specs))?p.specs:{},
-    image:String(p.image_url||p.image||'')
+    image:String(p.image_url||p.image||''),
+    gallery:Array.isArray(p.image_gallery)?p.image_gallery.filter(v=>typeof v==='string'&&v.trim()).map(v=>String(v).trim()):[]
   };
 };
 BHATTI.esc=BHATTI.escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -92,7 +93,7 @@ async function loadProducts(){
   const withTimeout=(promise,ms,label)=>Promise.race([promise,new Promise((_,reject)=>setTimeout(()=>reject(new Error(label+' timed out')),ms))]);
   try{
     const {data,error}=await withTimeout(
-      BHATTI.db.from('products').select('id,category_id,name,category,price,description,specs,sku,image_url,active,created_at,updated_at').eq('active',true).order('created_at',{ascending:false}),
+      BHATTI.db.from('products').select('id,category_id,name,category,price,description,specs,sku,image_url,image_gallery,active,created_at,updated_at').eq('active',true).order('created_at',{ascending:false}),
       10000,'Catalogue request'
     );
     if(error)throw error;
