@@ -51,7 +51,7 @@ async function init() {
     $("storeRole").textContent = role === "super_admin" ? "SUPER ADMIN STOREFRONT" : "ADMIN STOREFRONT";
     $("storeBrand").href = role === "super_admin" ? "super-admin-store.html" : "admin-store.html";
     $("storeIdentity").textContent = full_name;
-    $("storeTitle").innerHTML = role === "super_admin" ? "Power for<br><em>the people who run it.</em>" : "Power for<br><em>real work.</em>";
+    $("storeTitle").innerHTML = role === "super_admin" ? "The store,<br><em>under your control.</em>" : "Power for<br><em>real operations.</em>";
     $("adminStudioLink").href = "admin/index.html";
     $("dashboardLink").hidden = role !== "super_admin";
     $("dashboardLink").href = "super-admin.html";
