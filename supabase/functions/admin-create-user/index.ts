@@ -35,12 +35,13 @@ Deno.serve(async (request: Request) => {
     const invitedRole = payload?.role === "admin" ? "admin" : "customer";
     if (!/^\S+@\S+\.\S+$/.test(email)) return json({ error: "Enter a valid email address." }, 400);
 
-    const redirectTo = "https://locacollection.github.io/locacollection1/verify.html";
+    const origin = request.headers.get("Origin") || Deno.env.get("BHATTI_SITE_URL") || "https://bhatti-umar-electric-store.vercel.app";
+    const redirectTo = new URL("/verify.html", origin).toString();
     const { data: created, error: createError } = await adminClient.auth.admin.inviteUserByEmail(email, { redirectTo, data: { invited_role: invitedRole } });
     if (createError) return json({ error: createError.message }, 400);
     if (!created.user) return json({ error: "The administrator account was not created." }, 500);
 
-    const { data: profile, error: profileError } = await adminClient.from("profiles").upsert({ id: created.user.id, email, contact_email: email, role: invitedRole }, { onConflict: "id" }).select("id,email,full_name,role,admin_identifier,created_at").single();
+    const { data: profile, error: profileError } = await adminClient.from("profiles").upsert({ id: created.user.id, role: invitedRole }, { onConflict: "id" }) .select("id,full_name,role,created_at").single();
     if (profileError) {
       await adminClient.auth.admin.deleteUser(created.user.id);
       throw profileError;
