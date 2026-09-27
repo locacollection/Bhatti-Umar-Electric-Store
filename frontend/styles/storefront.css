@@ -657,3 +657,42 @@ body.bhatti-window-open .announcement,body.bhatti-search-open .announcement{poin
 body.bhatti-window-open .site-header{position:fixed!important;top:calc(-1 * (var(--bh-top,0px) + 120px))!important;left:0;right:0;transform:none!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important;height:0!important;overflow:hidden!important}
 body.bhatti-window-open .announcement{display:none!important}
 }
+
+/* BHATTI modal layering fix — dialogs must cover the complete storefront, including the sticky header. */
+.modal-layer,.checkout-modal{
+  z-index:2000!important;
+}
+.overlay{
+  z-index:1900!important;
+}
+.bag-drawer{
+  z-index:1950!important;
+}
+@media(max-width:680px){
+  .modal-layer,.checkout-modal{
+    z-index:2000!important;
+  }
+  .overlay{
+    z-index:1900!important;
+  }
+  .bag-drawer{
+    z-index:1950!important;
+  }
+  /* Never move the homepage/header to make a modal visible. */
+  body.bhatti-window-open .site-header,
+  body.bhatti-search-open .site-header{
+    transform:none!important;
+    opacity:1!important;
+    visibility:visible!important;
+    pointer-events:auto!important;
+    position:sticky!important;
+    top:var(--bh-top,0px)!important;
+    height:auto!important;
+    overflow:visible!important;
+  }
+  body.bhatti-window-open .announcement,
+  body.bhatti-search-open .announcement{
+    display:flex!important;
+    pointer-events:auto!important;
+  }
+}
