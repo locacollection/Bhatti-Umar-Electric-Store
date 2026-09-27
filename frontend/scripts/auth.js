@@ -216,7 +216,7 @@ function initials(value){return String(value||'BHATTI').trim().split(/\s+/).slic
 function showInlineMessage(id,text){const box=document.getElementById(id);if(!box)return;box.textContent=text;box.hidden=false;setTimeout(()=>box.hidden=true,2600);}
 
 function populateProfileForm(){
-  const profile=BHATTI.profile||{},registered=BHATTI.currentUser?.email||profile.email||'',name=profile.full_name||registered.split('@')[0]||'BHATTI member',contact=profile.contact_email||registered;
+  const profile=BHATTI.profile||{},registered=BHATTI.currentUser?.email||profile.email||'',name=profile.full_name||registered.split('@')[0]||'BHATTI member',contact=registered;
   document.getElementById('profileEmail').value=registered;
   document.getElementById('profileName').value=profile.full_name||'';
   document.getElementById('contactRegisteredEmail').value=registered;
