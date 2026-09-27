@@ -177,7 +177,7 @@ async function handleAuth(event){
     closeAuth();
     const profile=await BHATTI.ensureProfile();
     if(profile?.role==='super_admin'){
-      window.location.assign('super-admin.html');
+      window.location.assign('super-admin.html?control=1');
       return;
     }
     if(profile?.role==='admin'){
