@@ -15,8 +15,8 @@ export async function protectAdminRoute() {
     .eq("id", userId)
     .maybeSingle();
 
-  if (profileError || !["admin", "super_admin"].includes(profile?.role)) {
-    window.alert("Access restricted to administrators.");
+  if (profileError || profile?.role !== "admin") {
+    window.alert("This workspace is restricted to Admin accounts.");
     window.location.replace("index.html");
     return false;
   }
