@@ -585,3 +585,59 @@ footer a:hover{color:var(--gold)!important}
 .preview-profile-details>div{background:rgba(255,255,255,.045)!important;border-color:rgba(255,255,255,.08)!important}
 .preview-profile-foot{color:#8ea6ad!important}
 @media(max-width:760px){.announcement span:nth-child(n+2){display:none}.hero:after{opacity:.35;right:-80px}.nav-shell{min-height:66px}}
+
+/* BHATTI // GRIDLINE — NEW RETAIL TEMPLATE */
+:root{
+ --ink:#18201f;--ink-2:#26312f;--cream:#f3f0e8;--paper:#fffdf8;--muted:#69736f;
+ --line:#d8d8cf;--gold:#d79b2b;--gold-soft:#f2ca70;--wine:#c7443e;--green:#167c68;
+ --blue:#155e75;--electric:#28a8c7;--serif:"Archivo Black",Impact,sans-serif;
+ --sans:"Manrope",system-ui,sans-serif;--ease:cubic-bezier(.2,.8,.2,1);
+ --shadow:0 18px 50px rgba(24,32,31,.10);--shadow-soft:0 8px 24px rgba(24,32,31,.07)
+}
+html{scroll-behavior:smooth;background:var(--cream)}
+body{margin:0;background:#f3f0e8;color:var(--ink);font-family:var(--sans);font-size:15px}
+body:before{content:"";position:fixed;inset:0;z-index:-1;opacity:.55;pointer-events:none;background:linear-gradient(90deg,rgba(21,94,117,.045) 1px,transparent 1px),linear-gradient(rgba(21,94,117,.045) 1px,transparent 1px);background-size:48px 48px}
+.announcement{height:30px;padding:0 4vw;background:#18201f;color:#fff;letter-spacing:.11em;font-size:9px}
+.announcement span:first-child{color:#f2ca70;font-weight:900}
+.site-header{background:#fffdf8;color:#18201f;border-bottom:1px solid #d8d8cf;position:sticky;top:0;z-index:50}
+.nav-shell{min-height:74px;max-width:1480px;margin:auto;padding:0 4vw}
+.brand{font-family:var(--serif)!important;letter-spacing:-.045em;text-transform:uppercase}
+.brand-mark,.logo-mark{background:#d79b2b!important;color:#18201f!important;border-radius:3px!important;box-shadow:none!important}
+.brand small,.brand-subtitle{color:#69736f!important;font-size:9px;letter-spacing:.22em}
+.nav-link,.nav-actions a,.nav-actions button{color:#26312f!important}
+.nav-link:hover,.nav-actions a:hover{color:#155e75!important}
+.hero{max-width:1480px;margin:0 auto;background:#dfe9e6!important;color:#18201f!important;min-height:560px;border-bottom:1px solid #cbd3d0;position:relative;overflow:hidden}
+.hero:before{content:"";position:absolute;right:-7%;top:-24%;width:57%;height:150%;background:#155e75;clip-path:polygon(24% 0,100% 0,76% 100%,0 100%);opacity:.96}
+.hero:after{content:"BH / 01";position:absolute;right:8%;bottom:10%;color:#f2ca70;font:900 clamp(42px,7vw,108px)/.8 var(--serif);letter-spacing:-.05em}
+.hero h1{font-family:var(--serif)!important;font-size:clamp(58px,9vw,138px)!important;line-height:.82!important;letter-spacing:-.065em!important;text-transform:uppercase!important;max-width:900px}
+.hero .eyebrow,.hero .kicker{color:#c7443e!important;font-weight:900;letter-spacing:.16em}
+.hero p{max-width:560px;color:#43514d!important}
+.hero .button.primary{background:#18201f!important;color:#fffdf8!important;border-color:#18201f!important}
+.hero-art,.hero-image{border-radius:0!important}
+.section,.collection-section{max-width:1480px;margin:auto}
+.section-head{border-bottom:2px solid #18201f;padding-bottom:14px}
+.section-head h2,.section-title{font-family:var(--serif)!important;text-transform:uppercase!important;letter-spacing:-.035em!important}
+.category-card{border:0!important;border-top:4px solid #155e75!important;border-radius:0!important;background:#fffdf8!important;box-shadow:none!important}
+.category-card:hover{transform:translateY(-3px);background:#e8f0ed!important}
+.product-grid{gap:1px!important;background:#d8d8cf!important;border:1px solid #d8d8cf}
+.product-card{border:0!important;border-radius:0!important;background:#fffdf8!important;box-shadow:none!important}
+.product-card:hover{transform:none!important;background:#f1f4ef!important}
+.product-image{background:#e7ece8!important;border-radius:0!important}
+.product-card .price,.price{color:#155e75!important;font-weight:900}
+.product-card .badge,.badge,.tag{border-radius:2px!important;background:#c7443e!important;color:#fff!important}
+.heart{border-radius:3px!important;background:#fffdf8!important;border:1px solid #c9cfcc!important}
+.add,.button.primary{border-radius:3px!important;background:#d79b2b!important;color:#18201f!important;border:0!important;font-weight:900}
+.add:hover,.button.primary:hover{background:#f2ca70!important}
+.button.quiet{border-radius:3px!important;background:#18201f!important;color:#fff!important}
+.search-box,input,select,textarea{background:#fffdf8!important;border:1px solid #bfc8c4!important;border-radius:3px!important;color:#18201f!important}
+.search-box:focus-within,input:focus,select:focus,textarea:focus{border-color:#155e75!important;box-shadow:0 0 0 2px rgba(21,94,117,.12)!important}
+footer{background:#18201f!important;color:#bfc9c5!important;border-top:5px solid #d79b2b!important}
+footer h3,footer strong{color:#fffdf8!important}
+footer a:hover{color:#f2ca70!important}
+.modal-layer{background:rgba(24,32,31,.62)!important;backdrop-filter:blur(5px)}
+.preview-profile-card{border-radius:3px!important;background:#fffdf8!important;color:#18201f!important;border:3px solid #18201f!important;box-shadow:16px 16px 0 #d79b2b!important}
+.preview-profile-mark{background:#d79b2b!important;color:#18201f!important;border-radius:2px!important}
+.preview-profile-details>div{border-radius:2px!important;background:#eef2ef!important}
+.preview-profile-role{border-radius:2px!important;background:#e4eeeb!important;border-color:#b9cbc5!important}
+.preview-profile-role-dot{background:#c7443e!important}
+@media(max-width:760px){.announcement span:nth-child(n+2){display:none}.hero{min-height:500px}.hero:before{width:75%;right:-28%}.hero h1{font-size:60px!important}}
