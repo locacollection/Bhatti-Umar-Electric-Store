@@ -176,8 +176,12 @@ async function handleAuth(event){
     clearPendingVerification();
     closeAuth();
     const profile=await BHATTI.ensureProfile();
+    if(profile?.role==='super_admin'){
+      window.location.assign('super-admin.html');
+      return;
+    }
     if(profile?.role==='admin'){
-      window.location.assign('admin.html');
+      window.location.assign('admin/index.html');
       return;
     }
   }catch(error){
