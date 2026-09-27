@@ -16,7 +16,7 @@ BHATTI.normalizeProduct=function(p){
     old:p.old_price!=null?Number(p.old_price):(p.compare_at_price!=null?Number(p.compare_at_price):null),
     new:Boolean(p.is_new||p.new_arrival||false),
     description:String(p.description||''),
-    image:BHATTI.catalogueThumb(p)
+    image:String(p.image_url||p.image||'')
   };
 };
 BHATTI.esc=BHATTI.escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
