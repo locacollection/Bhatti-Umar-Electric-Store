@@ -4,11 +4,12 @@ on:
     branches: [main]
   workflow_dispatch:
 
-# Keep only the newest storefront deployment running.
-# This prevents stale GitHub Pages deployments from remaining queued/in-progress.
+# One Pages deployment at a time for the main storefront.
+# A newer run cancels an older in-progress deployment instead of
+# leaving GitHub Pages blocked by a stale deployment.
 concurrency:
-  group: bhatti-github-pages-${{ github.run_id }}
-  cancel-in-progress: false
+  group: bhatti-github-pages-main
+  cancel-in-progress: true
 
 permissions:
   contents: read
