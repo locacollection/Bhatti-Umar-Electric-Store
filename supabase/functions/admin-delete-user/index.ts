@@ -45,7 +45,7 @@ Deno.serve(async (req: Request) => {
       .maybeSingle();
 
     if (adminCheckError) throw adminCheckError;
-    if (!["admin","super_admin"].includes(adminRecord?.role)) return json({ error: "Admin access is required." }, 403);
+    if (adminRecord?.role !== "super_admin") return json({ error: "Only the Super Admin can manage administrator accounts." }, 403);
 
     const payload = await req.json().catch(() => ({}));
     const userId = typeof payload?.user_id === "string" ? payload.user_id.trim() : "";
@@ -64,7 +64,7 @@ Deno.serve(async (req: Request) => {
       .maybeSingle();
 
     if (targetProfileError) throw targetProfileError;
-    if (["admin","super_admin"].includes(targetProfile?.role)) return json({ error: "Admin accounts cannot be deleted from this screen." }, 403);
+    if (targetProfile?.role !== "admin") return json({ error: "Only administrator accounts can be removed here." }, 403);
 
     const { data: target, error: targetError } = await adminClient.auth.admin.getUserById(userId);
     if (targetError || !target.user) return json({ error: "This registered user no longer exists." }, 404);
