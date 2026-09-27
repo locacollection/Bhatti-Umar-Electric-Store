@@ -46,8 +46,12 @@ async function init(){
     window.addQuantity=async()=>{openProfile();return false;};
     window.openCheckout=async()=>{openProfile();return false;};
     setProfileModal();
-    $("previewAccountButton").onclick=openProfile;
-    $("previewFooterProfile").onclick=openProfile;
+    const profileButton=$("previewAccountButton");
+    if(profileButton){
+      profileButton.onclick=null;
+      profileButton.addEventListener("click",event=>{event.preventDefault();event.stopImmediatePropagation();openProfile();},true);
+    }
+    $("previewFooterProfile").onclick=event=>{event.preventDefault();openProfile();};
     $("previewSupport").onclick=openProfile;
     $("previewProfileClose").onclick=closeProfile;
     $("previewProfileModal").addEventListener("click",e=>{if(e.target.id==="previewProfileModal")closeProfile();});
