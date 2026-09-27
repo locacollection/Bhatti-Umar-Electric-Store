@@ -85,8 +85,12 @@
 
   async function init() {
     try {
-      const { data: { session } = {} } = await db.auth.getSession();
-      if (!session) { window.location.replace("index.html?auth=signin&from=super-admin"); return; }
+      if (!db) throw new Error("Supabase client did not initialize. Reload the page.");
+      // Use the authenticated user endpoint for the initial gate. This avoids
+      // blocking the whole Super Admin page on the client-side session lock.
+      const { data: { user } = {}, error: userError } = await db.auth.getUser();
+      if (userError) throw userError;
+      if (!user) { window.location.replace("index.html?auth=signin&from=super-admin"); return; }
       if (!await verifySuperAdmin()) {
         const { data: { user } = {} } = await db.auth.getUser();
         if (user) { const { data: profile } = await db.from("profiles").select("role").eq("id", user.id).maybeSingle(); if (profile?.role === "admin") { window.location.replace("admin-store.html"); return; } }
@@ -95,7 +99,10 @@
       }
       $("saLogin").hidden = true; $("saApp").hidden = false;
       await loadAdmins();
-    } catch (error) { $("saLoginMessage").textContent = error.message || "Access could not be verified."; }
+    } catch (error) {
+      console.error("Super Admin access verification failed:", error);
+      $("saLoginMessage").textContent = error?.message || "Access could not be verified. Please reload and sign in again.";
+    }
   }
 
   $("saLoginButton")?.addEventListener("click", () => { window.location.href = "index.html?auth=signin&from=super-admin"; });
