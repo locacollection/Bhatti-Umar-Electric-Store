@@ -68,8 +68,8 @@
     const password = $("superAdminPassword").value;
     const button = $("superAdminCreateButton");
     const message = $("superAdminCreateMessage");
-    if (!email || !password) return;
-    if (password.length < 8) { $("superAdminCreateMessage").textContent = "Temporary password must be at least 8 characters."; $("superAdminCreateMessage").className = "error"; return; }
+    if (!email) return;
+    if (password && password.length < 8) { $("superAdminCreateMessage").textContent = "Temporary password must be at least 8 characters."; $("superAdminCreateMessage").className = "error"; return; }
     button.disabled = true; button.textContent = "Sending…"; message.textContent = "";
     try {
       await requireSuperAdmin();
@@ -81,7 +81,10 @@
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
       $("superAdminCreateForm").reset();
-      message.textContent = `Admin account created for ${data.email || email}. No verification email was sent.`;
+      message.className = "";
+      message.textContent = data.generated_password
+        ? `Admin account created for ${data.email || email}. No verification email was sent. Temporary password: ${data.temporary_password}`
+        : `Admin account created for ${data.email || email}. No verification email was sent.`;
       await loadAdmins();
     } catch (error) {
       message.textContent = error.message || "The administrator could not be created.";
