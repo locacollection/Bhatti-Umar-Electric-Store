@@ -186,10 +186,10 @@ function initStoreUI(){
     const current=taxonomy.find(item=>item.id===activeMain);
     const available=taxonomy.filter(item=>item.id!=='All');
     let html='<div class="filter-console">';
-    html+='<div class="filter-console-head"><div><span class="filter-kicker">CATALOGUE FILTER</span><strong>Find the right electricals.</strong><small>Filter the live catalogue without leaving the page.</small></div><button type="button" class="filter-reset '+(BHATTI.filter==='All'?'active':'')+'" onclick="setFilter(\\'All\\')">Reset <span>↺</span></button></div>';
+    html+='<div class="filter-console-head"><div><span class="filter-kicker">CATALOGUE FILTER</span><strong>Find the right electricals.</strong><small>Filter the live catalogue without leaving the page.</small></div><button type="button" class="filter-reset '+(BHATTI.filter==='All'?'active':'')+'" onclick="setFilter(\'All\')">Reset <span>↺</span></button></div>';
     html+='<div class="filter-control-row">';
     html+='<div class="filter-control-label"><span>SYSTEM</span><b>Choose a range</b></div>';
-    html+='<div class="filter-tabs"><button type="button" class="filter-tab '+(BHATTI.filter==='All'?'active':'')+'" onclick="setFilter(\\'All\\')">All products</button>';
+    html+='<div class="filter-tabs"><button type="button" class="filter-tab '+(BHATTI.filter==='All'?'active':'')+'" onclick="setFilter(\'All\')">All products</button>';
     html+=available.map(item=>'<button type="button" class="filter-tab '+(BHATTI.filter===item.id||activeMain===item.id?'active':'')+'" data-category="'+BHATTI.escape(item.id)+'" onclick="setFilter(this.dataset.category)">'+BHATTI.escape(item.label||item.id)+'</button>').join('');
     html+='</div></div>';
     if(current&&current.subcategories?.length){
