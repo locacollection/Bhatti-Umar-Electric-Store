@@ -16,7 +16,7 @@ BHATTI.normalizeProduct=function(p){
     old:p.old_price!=null?Number(p.old_price):(p.compare_at_price!=null?Number(p.compare_at_price):null),
     new:Boolean(p.is_new||p.new_arrival||false),
     description:String(p.description||''),
-    image:String(p.image_url||p.image||'')
+    image:BHATTI.catalogueThumb(p)
   };
 };
 BHATTI.esc=BHATTI.escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -29,6 +29,16 @@ BHATTI.safeImage=value=>{
     if(url.protocol==='https:')return url.href;
   }catch{}
   return'assets/product-placeholder.svg';
+};
+BHATTI.catalogueThumb=function(product){
+  const name=String(product?.name||'').toLowerCase();
+  const category=String(product?.category||product?.cat||'').toLowerCase();
+  if(/pvc|conduit|junction|elbow|tee/.test(name)||category.includes('conduit')||category.includes('pvc'))return'assets/catalogue/pvc.svg';
+  if(/fan|regulator/.test(name)||category.includes('fan'))return'assets/catalogue/fans.svg';
+  if(/mcb|rccb|rcbo|breaker|distribution board|db\b/.test(name)||category.includes('protection')||category.includes('circuit'))return'assets/catalogue/protection.svg';
+  if(/switch|socket|plug|plate/.test(name)||category.includes('switch'))return'assets/catalogue/switches.svg';
+  if(/wire|cable|conductor/.test(name)||category.includes('wire'))return'assets/catalogue/wiring.svg';
+  return'assets/catalogue/lighting.svg';
 };
 
 BHATTI.productCard=function(p){
