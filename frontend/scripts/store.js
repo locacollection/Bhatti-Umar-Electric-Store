@@ -190,3 +190,23 @@ window.setFilter=setFilter;
 window.setFilterFromLink=setFilterFromLink;
 window.showSale=showSale;
 window.searchProducts=searchProducts;
+
+
+async function startCatalogue(){
+  if(BHATTI.cataloguePromise)return BHATTI.cataloguePromise;
+  BHATTI.cataloguePromise=loadProducts().catch(error=>{
+    console.error('BHATTI catalogue startup failed:',error);
+    const best=document.getElementById('bestGrid');
+    const grid=document.getElementById('grid');
+    const message='<div class="search-empty"><h3>Catalogue temporarily unavailable.</h3><p>Please refresh once. The storefront connection is still available.</p></div>';
+    if(best&&best.textContent.includes('Loading'))best.innerHTML=message;
+    if(grid&&!grid.innerHTML.trim())grid.innerHTML=message;
+  });
+  return BHATTI.cataloguePromise;
+}
+window.startCatalogue=startCatalogue;
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',()=>startCatalogue(),{once:true});
+}else{
+  startCatalogue();
+}
