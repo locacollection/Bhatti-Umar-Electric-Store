@@ -10,18 +10,18 @@
   function renderAdminReviews(){
     const query=($('reviewAdminSearch')?.value||'').trim().toLowerCase();
     const filter=$('reviewAdminFilter')?.value||'all';
-    const list=reviews.filter(review=>(filter==='all'||(filter==='approved'?review.approved:!review.approved))&&searchText(review).includes(query));
-    const pending=reviews.filter(review=>!review.approved).length;
+    const list=reviews.filter(review=>(filter==='all'||(filter==='approved'?review.status==='approved':!review.status==='approved'))&&searchText(review).includes(query));
+    const pending=reviews.filter(review=>!review.status==='approved').length;
     if($('reviewAdminCount'))$('reviewAdminCount').textContent=`${list.length} shown · ${pending} pending · ${reviews.length} total`;
     if($('sideReviewCount'))$('sideReviewCount').textContent=pending||reviews.length;
     if(!$('reviewAdminBody'))return;
     $('reviewAdminBody').innerHTML=list.length?list.map(review=>{
       const product=productFor(review);
-      return `<article class="review-admin-card ${review.approved?'is-approved':'is-pending'}">
-        <div class="review-admin-card-head"><div>${stars(review.rating)}<span class="review-state">${review.approved?'Published':'Pending approval'}</span></div><time>${new Date(review.created_at).toLocaleString('en-PK')}</time></div>
+      return `<article class="review-admin-card ${review.status==='approved'?'is-approved':'is-pending'}">
+        <div class="review-admin-card-head"><div>${stars(review.rating)}<span class="review-state">${review.status==='approved'?'Published':'Pending approval'}</span></div><time>${new Date(review.created_at).toLocaleString('en-PK')}</time></div>
         <blockquote>“${escape(review.body)}”</blockquote>
         <div class="review-admin-identity"><div><small>Customer</small><strong>${escape(review.display_name||'BHATTI customer')}</strong></div><div><small>Product</small><strong>${escape(product?.name||`Product ${review.product_id}`)}</strong></div></div>
-        <div class="review-admin-actions">${review.approved?`<button class="btn alt" type="button" data-review-action="hide" data-review-id="${escape(review.id)}">Hide from store</button>`:`<button class="btn btn-primary" type="button" data-review-action="approve" data-review-id="${escape(review.id)}">Approve & publish</button>`}<button class="btn danger-ghost" type="button" data-review-action="delete" data-review-id="${escape(review.id)}">Delete</button></div>
+        <div class="review-admin-actions">${review.status==='approved'?`<button class="btn alt" type="button" data-review-action="hide" data-review-id="${escape(review.id)}">Hide from store</button>`:`<button class="btn btn-primary" type="button" data-review-action="approve" data-review-id="${escape(review.id)}">Approve & publish</button>`}<button class="btn danger-ghost" type="button" data-review-action="delete" data-review-id="${escape(review.id)}">Delete</button></div>
       </article>`;
     }).join(''):'<div class="review-admin-empty"><b>No reviews in this view.</b><span>Delivered customers can submit a review from a product window.</span></div>';
   }
@@ -29,7 +29,7 @@
   async function loadAdminReviews({quiet=false}={}){
     if(!quiet&&$('reviewAdminBody'))$('reviewAdminBody').innerHTML='<div class="review-admin-empty"><b>Loading reviews…</b></div>';
     try{
-      const{data,error}=await db.from('product_reviews').select('*').order('created_at',{ascending:false});
+      const{data,error}=await db.from('reviews').select('*').order('created_at',{ascending:false});
       if(error)throw error;
       reviews=data||[];
       renderAdminReviews();
@@ -44,7 +44,7 @@
     if(!review)return;
     try{
       if(!await isCurrentUserAdmin())throw new Error('Your admin session has expired.');
-      const{data,error}=await db.from('product_reviews').update({approved}).eq('id',review.id).select('*').single();
+      const{data,error}=await db.from('reviews').update({status:approved?'approved':'hidden'}).eq('id',review.id).select('*').single();
       if(error)throw error;
       reviews=reviews.map(item=>String(item.id)===String(id)?data:item);
       renderAdminReviews();
@@ -61,7 +61,7 @@
     if(!accepted)return;
     try{
       if(!await isCurrentUserAdmin())throw new Error('Your admin session has expired.');
-      const{error}=await db.from('product_reviews').delete().eq('id',review.id);
+      const{error}=await db.from('reviews').delete().eq('id',review.id);
       if(error)throw error;
       reviews=reviews.filter(item=>String(item.id)!==String(id));
       renderAdminReviews();
