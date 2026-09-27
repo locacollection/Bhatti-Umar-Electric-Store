@@ -97,15 +97,15 @@
         window.location.replace("index.html");
         return;
       }
-      $("saLogin").hidden = true; $("saApp").hidden = false;
       await loadAdmins();
     } catch (error) {
       console.error("Super Admin access verification failed:", error);
-      $("saLoginMessage").textContent = error?.message || "Access could not be verified. Please reload and sign in again.";
+      const body = $("adminsBody");
+      if (body) body.innerHTML = '<tr><td colspan="5" class="error-cell">Super Admin data could not be loaded. Please reload.</td></tr>';
+      if ($("saCount")) $("saCount").textContent = "Directory unavailable";
     }
   }
 
-  $("saLoginButton")?.addEventListener("click", () => { window.location.href = "index.html?auth=signin&from=super-admin"; });
   $("saLogout").addEventListener("click", async () => { const { error } = await db.auth.signOut(); if (error) { $("saLoginMessage").textContent = error.message || "Could not sign out."; return; } window.location.replace("index.html?auth=signin"); });
   $("refreshAdmins").addEventListener("click", loadAdmins);
   $("createAdminForm").addEventListener("submit", createAdmin);
