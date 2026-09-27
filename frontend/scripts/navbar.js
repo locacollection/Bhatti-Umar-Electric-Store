@@ -13,6 +13,7 @@ async function updateNavbar() {
 
   document.querySelectorAll(".admin-link, footer a[href*='admin/']").forEach(link => link.remove());
   document.getElementById("adminBridge")?.remove();
+  document.getElementById("adminFooterBridge")?.remove();
 
   if (isAdmin) {
     const bridge = document.createElement("a");
@@ -22,6 +23,11 @@ async function updateNavbar() {
     bridge.textContent = role === "super_admin" ? "Super Admin Store ↗" : "Admin Store ↗";
     bridge.title = role === "super_admin" ? "Super Admin Studio" : "Admin Studio";
     document.querySelector(".nav-actions")?.prepend(bridge);
+    const footerBridge=document.createElement("a");
+    footerBridge.id="adminFooterBridge";
+    footerBridge.href="admin-store.html";
+    footerBridge.textContent=role === "super_admin" ? "Super Admin Store" : "Admin Store";
+    document.querySelector("footer .footer-top > div:nth-of-type(2)")?.appendChild(footerBridge);
   }
 }
 
