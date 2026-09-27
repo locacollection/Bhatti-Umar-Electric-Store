@@ -84,12 +84,7 @@ async function loadMyOrders(){
   box.innerHTML='<div class="account-loading">Loading your private order book…</div>';
   const orderResult=await BHATTI.db.from('orders').select('*').eq('user_id',BHATTI.currentUser.id).order('created_at',{ascending:false});
   const actionResult={data:[],error:null};
-  /*
-    BHATTI.db.from('orders').select('*').eq('user_id',BHATTI.currentUser.id).order('created_at',{ascending:false}),
-    BHATTI.db.from('order_customer_actions').select('*').eq('user_id',BHATTI.currentUser.id).order('created_at',{ascending:false})
-  ]);
-  */
-  if(orderResult.error){
+    if(orderResult.error){
     box.innerHTML=`<div class="account-empty"><b>Orders unavailable.</b><span>${BHATTI.escape(orderResult.error.message)}</span></div>`;
     return;
   }
