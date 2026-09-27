@@ -816,3 +816,47 @@ html{background:var(--paper)}body{background:var(--paper);color:var(--ink);font-
   .filter-tabs{overflow:visible}
   .filter-tab{min-height:34px;padding:0 10px}
 }
+
+
+/* Pakistan retail-store visual refresh */
+:root{
+  --pak-green:#006b3c;
+  --pak-green-dark:#004d2b;
+  --pak-red:#c62b2b;
+  --pak-cream:#f7f3e8;
+}
+.brand strong{font-size:16px;letter-spacing:.045em;white-space:nowrap}
+.brand small{font-size:7px;letter-spacing:.14em}
+.announcement{background:var(--pak-green-dark);color:#f5f7f1}
+.announcement span:first-child{color:#fff}
+.power-deck-main{background:linear-gradient(135deg,#073f29 0%,#005b35 58%,#003d25 100%)}
+.power-deck-main h1 strong{color:#f3d36a}
+.power-deck-main:after{color:rgba(255,255,255,.055)}
+.deck-status{color:#f3d36a}
+.power-deck-side{background:#efe9da}
+.electrical-banner-wall{border:8px solid #f5f0e4;background:#006b3c;padding:7px;gap:7px}
+.electrical-banner{border:2px solid rgba(255,255,255,.75);background:#063b27}
+.electrical-banner:after{background:linear-gradient(180deg,rgba(0,65,38,.04) 8%,rgba(0,65,38,.22) 42%,rgba(0,24,14,.94) 100%)}
+.electrical-banner-main:before{background-image:url("https://www.bihebazaar.com/uploads/2020/02/fb-img-1581684646079.jpg")}
+.electrical-banner-panel:before{background-image:url("https://www.bazarontips.com/image_business/0202008.jpg")}
+.electrical-banner-field:before{background-image:url("https://sanaaelectricals.com/assets/images/services/shop1.png")}
+.electrical-banner-copy span{color:#f3d36a}
+.electrical-banner-copy strong{letter-spacing:-.04em}
+.electrical-banner-main .electrical-banner-copy strong{font-family:"Noto Nastaliq Urdu",var(--sans);font-size:clamp(27px,3.8vw,50px);line-height:1.02;letter-spacing:0;text-transform:none}
+.electrical-banner-panel .electrical-banner-copy strong,
+.electrical-banner-field .electrical-banner-copy strong{font-size:clamp(20px,2.7vw,34px)}
+.power-deck-foot{background:#003d25;border-color:rgba(255,255,255,.12)}
+.benefits b{color:var(--pak-green)}
+.section-intro .eyebrow,.story .eyebrow,.newsletter .eyebrow{color:var(--pak-green)}
+.filter-tab.active{background:var(--pak-green);border-color:var(--pak-green);color:#fff}
+.filter-tab:hover{border-color:var(--pak-green);color:var(--pak-green);background:#f4f8f4}
+.button.primary{background:var(--pak-green);border-color:var(--pak-green)}
+.button.primary:hover{background:var(--pak-green-dark);border-color:var(--pak-green-dark)}
+.story-index{color:var(--pak-red)}
+@media(max-width:700px){
+  .brand strong{font-size:13px}
+  .brand small{font-size:5.5px;letter-spacing:.08em}
+  .announcement span:nth-child(2){display:none}
+  .electrical-banner-wall{border-width:5px;padding:5px}
+  .electrical-banner-main .electrical-banner-copy strong{font-size:28px}
+}
