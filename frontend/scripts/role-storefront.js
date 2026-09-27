@@ -32,6 +32,7 @@ function setProfileModal(){
   $("previewProfileStudio").textContent=superAdmin?"Open Super Admin Studio ↗":"Open Admin Studio ↗";
   $("previewProfileStudio").href=studioHref;
 }
+window.openAdminProductEditor=(productId)=>{const id=String(productId||"").trim();if(!id)return;const target=role==="super_admin"?"super-admin.html":"admin/index.html";window.location.href=`${target}?editProduct=${encodeURIComponent(id)}`;};
 window.openPreviewProfile=()=>openProfile();
 function openProfile(){ $("previewProfileModal").classList.add("open"); $("previewProfileModal").setAttribute("aria-hidden","false"); document.body.classList.add("lock"); }
 function closeProfile(){ $("previewProfileModal").classList.remove("open"); $("previewProfileModal").setAttribute("aria-hidden","true"); document.body.classList.remove("lock"); }
