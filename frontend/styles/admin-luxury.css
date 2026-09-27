@@ -386,3 +386,6 @@ tbody tr{transition:background .2s}tbody tr:hover{background:#fbf5ed!important}
 .review-admin-empty span{font-size:10px}.review-admin-empty.is-error{border-color:rgba(149,57,50,.25);background:#f8e9e6;color:#8c3b37}
 @media(max-width:850px){.review-admin-grid{grid-template-columns:1fr}}
 @media(max-width:560px){.review-admin-guidance{display:grid}.review-admin-card{padding:18px}.review-admin-identity{grid-template-columns:1fr}.review-admin-actions .btn{width:100%}}
+
+/* Super Admin context */
+body.super-admin-context .studio-brand span{color:#b88745}body.super-admin-context .sidebar-intro{background:linear-gradient(145deg,#241f1a,#15120f);color:#f4efe6;border-color:#4a4036}body.super-admin-context .sidebar-intro .kicker{color:#caa56d}body.super-admin-context .sidebar-foot{border-color:#b88745}body.super-admin-context .head .kicker{color:#a87835}body.super-admin-context .sync-status{border-color:#b88745}body.super-admin-context .store-link{border-color:#b88745;color:#6f4a1d}
