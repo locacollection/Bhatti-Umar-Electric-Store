@@ -98,7 +98,7 @@
   }
 
   $("saLoginButton").addEventListener("click", () => window.location.assign("index.html?auth=signin"));
-  $("saLogout").addEventListener("click", async () => { await db.auth.signOut(); location.reload(); });
+  $("saLogout").addEventListener("click", async () => { const { error } = await db.auth.signOut(); if (error) { $("saLoginMessage").textContent = error.message || "Could not sign out."; return; } window.location.replace("index.html?auth=signin"); });
   $("refreshAdmins").addEventListener("click", loadAdmins);
   $("createAdminForm").addEventListener("submit", createAdmin);
   $("adminsBody").addEventListener("click", event => {
