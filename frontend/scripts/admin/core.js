@@ -23,7 +23,7 @@ async function isCurrentUserAdmin(){
   return ["admin","super_admin"].includes(currentAdminRole);
 }
 function login(){return false;}
-async function logout(){const {error}=await db.auth.signOut();if(error){adminNotify(error.message||"Could not sign out.",{title:"Sign out failed",tone:"error"});return;}window.location.replace("../index.html?auth=signin");}
+async function logout(){const {error}=await db.auth.signOut();if(error){adminNotify(error.message||"Could not sign out.",{title:"Sign out failed",tone:"error"});return;}const customerHome=window.location.pathname.includes("/admin/")?"../index.html":"index.html";window.location.replace(customerHome);}
 async function load(){
   const[or,ir,pr,fr,ar]=await Promise.all([
     db.from("orders").select("*").order("created_at",{ascending:false}),
