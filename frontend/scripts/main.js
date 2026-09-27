@@ -161,12 +161,12 @@ async function submitProductReview(event){
   try{
     await BHATTI.ensureProfile();
     const displayName=BHATTI.profile?.full_name||BHATTI.currentUser.user_metadata?.full_name||BHATTI.currentUser.email?.split('@')[0]||'BHATTI customer';
-    const{error}=await BHATTI.db.from('product_reviews').insert({
+    const{error}=await BHATTI.db.from('reviews').insert({
       product_id:activeProduct.id,
       user_id:BHATTI.currentUser.id,
       rating:Number(document.getElementById('productReviewRating').value),
       body:document.getElementById('productReviewBody').value.trim()
-    });
+    status:'pending'});
     if(error)throw error;
     event.currentTarget.reset();
     message.textContent='Thank you. Your review is waiting for admin approval.';
