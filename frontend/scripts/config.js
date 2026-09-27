@@ -5,7 +5,15 @@ BHATTI.money = n => "PKR " + Number(n || 0).toLocaleString("en-PK");
 
 BHATTI.SUPABASE_URL = "https://ewldqjmyijfhrdenwqfn.supabase.co";
 BHATTI.SUPABASE_KEY = "sb_publishable_s0cpLseFV1CSYGTGnqadMA_cTTRThO9";
-BHATTI.db = supabase.createClient(BHATTI.SUPABASE_URL, BHATTI.SUPABASE_KEY, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
+BHATTI.db = supabase.createClient(BHATTI.SUPABASE_URL, BHATTI.SUPABASE_KEY, {
+  auth: {
+    persistSession: true,
+    storage: window.localStorage,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+    flowType: 'implicit'
+  }
+});
 BHATTI.currentUser = null;
 BHATTI.profile = null;
 BHATTI.products = [];
