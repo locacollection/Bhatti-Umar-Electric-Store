@@ -137,6 +137,7 @@
         return;
       }
       $("sideAdminCount").textContent = "—";
+      await loadAdmins();
     } catch (error) {
       console.error("Super Admin management guard failed:", error);
     }
