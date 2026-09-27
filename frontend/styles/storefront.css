@@ -785,3 +785,24 @@ html{background:var(--paper)}body{background:var(--paper);color:var(--ink);font-
 .hero{display:none!important}
 @media(max-width:1000px){.power-deck{grid-template-columns:1fr;padding:24px 20px 0}.power-deck-main,.power-deck-side{min-height:0}.power-deck-main{min-height:590px}.power-deck-side{grid-template-rows:auto auto auto}.system-tile-large{min-height:320px}}
 @media(max-width:700px){.power-deck{padding:12px 12px 0;gap:8px}.power-deck-main{min-height:570px;padding:23px 20px}.power-deck-main h1{font-size:58px}.power-deck-lede{font-size:12px;margin-top:22px}.power-deck-specs{grid-template-columns:1fr 1fr;gap:12px}.power-deck-actions{display:grid;grid-template-columns:1fr}.power-deck-side{gap:8px}.system-tile-large{min-height:300px;padding:20px}.system-row{gap:8px}.system-row .system-tile{min-height:170px;padding:17px}.system-tile strong{font-size:34px}.power-deck-foot{grid-template-columns:1fr 1fr;padding:12px 2px}.power-deck-foot strong{grid-column:1/-1;grid-row:1}.power-deck-foot span:last-child{text-align:right}}
+
+
+/* BHATTI // mobile layout hardening */
+.power-deck,.power-deck *{box-sizing:border-box}
+.power-deck-side,.system-row,.power-deck-foot{min-width:0}
+.system-tile{display:flex!important;width:100%;text-decoration:none!important;white-space:normal!important;flex-shrink:0}
+.system-row{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}
+.power-deck-foot{display:grid!important}
+@media(max-width:700px){
+  .power-deck{width:100%;max-width:100%;overflow:hidden}
+  .power-deck-main{width:100%;min-width:0}
+  .power-deck-main h1{font-size:clamp(45px,14vw,62px);line-height:.88;overflow-wrap:normal}
+  .power-deck-lede{max-width:100%;font-size:13px;line-height:1.55}
+  .power-deck-specs{width:100%;grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .system-row{width:100%;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}
+  .system-row .system-tile{min-width:0;overflow:hidden}
+  .system-tile strong{font-size:clamp(28px,8vw,38px);white-space:normal}
+  .system-tile small{line-height:1.35}
+  .power-deck-foot{width:100%;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}
+  .power-deck-foot span,.power-deck-foot strong{min-width:0}
+}
