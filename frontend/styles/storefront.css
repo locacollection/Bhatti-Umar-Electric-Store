@@ -597,3 +597,10 @@ footer a:hover{color:var(--gold)!important}
 .quick-view{opacity:1!important;transform:translate(-50%,0)!important}
 }
 @media(max-width:680px){.category-card:hover,.product-card:hover{transform:none!important}.category-card:after{transform:none!important}.product:hover .pic{transform:none!important}}
+
+/* Mobile browser focus fix: prevent Safari/Chrome from auto-zooming the page when small form controls receive focus. */
+@media(max-width:680px){
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+input,select,textarea{font-size:16px!important;line-height:1.35}
+button,a,.filter,.sub-chip,.quick-view{touch-action:manipulation}
+}
