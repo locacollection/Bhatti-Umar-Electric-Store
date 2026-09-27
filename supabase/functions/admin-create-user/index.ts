@@ -28,11 +28,11 @@ Deno.serve(async (request: Request) => {
 
     const { data: actor, error: actorError } = await adminClient.from("profiles").select("role").eq("id", authData.user.id).maybeSingle();
     if (actorError) throw actorError;
-    if (!['admin', 'super_admin'].includes(actor?.role)) return json({ error: "Admin access is required." }, 403);
+    if (actor?.role !== 'super_admin') return json({ error: "Only the Super Admin can create administrator accounts." }, 403);
 
     const payload = await request.json().catch(() => ({}));
     const email = typeof payload?.email === "string" ? payload.email.trim().toLowerCase() : "";
-    const invitedRole = payload?.role === "admin" ? "admin" : "customer";
+    const invitedRole = "admin";
     if (!/^\S+@\S+\.\S+$/.test(email)) return json({ error: "Enter a valid email address." }, 400);
 
     const origin = request.headers.get("Origin") || Deno.env.get("BHATTI_SITE_URL") || "https://bhatti-umar-electric-store.vercel.app";
