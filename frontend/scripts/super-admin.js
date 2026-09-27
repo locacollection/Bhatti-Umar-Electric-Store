@@ -83,6 +83,9 @@
     }
   }
 
+  function renderPreview(products) { const query=($("previewSearch")?.value||"").trim().toLowerCase(); const list=(products||[]).filter(p=>!query||`${p.name||""} ${p.category||""} ${p.description||""}`.toLowerCase().includes(query)); $("previewCount").textContent=`${list.length} product${list.length===1?"":"s"} · read-only`; $("previewGrid").innerHTML=list.map(p=>`<article class="preview-product"><div class="preview-image"><img src="${String(p.image_url||"assets/product-placeholder.svg").replace(/"/g,"&quot;")}" alt="${String(p.name||"").replace(/"/g,"&quot;")}" onerror="this.onerror=null;this.src="assets/product-placeholder.svg""></div><div><span>${String(p.category||"Electrical").replace(/</g,"&lt;")}</span><h3>${String(p.name||"Unnamed product").replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))}</h3><strong>PKR ${Number(p.price||0).toLocaleString("en-PK")}</strong></div></article>`).join("")||"<p>No catalogue matches found.</p>"; }
+  async function loadPreview() { try { const {data,error}=await db.from("products").select("id,name,category,price,image_url,description").eq("active",true).order("id"); if(error)throw error; renderPreview(data||[]); } catch(error) { $("previewCount").textContent="Catalogue unavailable"; $("previewGrid").innerHTML=`<p>${esc(error.message||"Could not load the catalogue.")}</p>`; } }
+
   async function init() {
     try {
       const { data: { session } = {} } = await db.auth.getSession();
@@ -98,6 +101,8 @@
   }
 
   $("saLoginButton").addEventListener("click", () => { window.location.href = "index.html?auth=signin&from=super-admin"; });
+  $("previewSearch")?.addEventListener("input", async () => { const {data}=await db.from("products").select("id,name,category,price,image_url,description").eq("active",true).order("id"); renderPreview(data||[]); });
+  loadPreview();
   $("saLogout").addEventListener("click", async () => { const { error } = await db.auth.signOut(); if (error) { $("saLoginMessage").textContent = error.message || "Could not sign out."; return; } window.location.replace("index.html?auth=signin"); });
   $("refreshAdmins").addEventListener("click", loadAdmins);
   $("createAdminForm").addEventListener("submit", createAdmin);
