@@ -160,9 +160,20 @@ async function submitProductReview(event){
   message.textContent='Checking your delivered order…';
   try{
     await BHATTI.ensureProfile();
-    const displayName=BHATTI.profile?.full_name||BHATTI.currentUser.user_metadata?.full_name||BHATTI.currentUser.email?.split('@')[0]||'BHATTI customer';
+    const {data:deliveredOrders,error:ordersError}=await BHATTI.db.from('orders').select('id').eq('user_id',BHATTI.currentUser.id).eq('status','Delivered');
+    if(ordersError)throw ordersError;
+    const orderIds=(deliveredOrders||[]).map(order=>order.id);
+    if(!orderIds.length)throw new Error('Reviews can only be sent after this product has been delivered to your account.');
+    const {data:purchased,error:itemsError}=await BHATTI.db.from('order_items').select('order_id').in('order_id',orderIds).eq('product_id',activeProduct.id).limit(1);
+    if(itemsError)throw itemsError;
+    const orderId=purchased?.[0]?.order_id;
+    if(!orderId)throw new Error('Reviews can only be sent after this product has been delivered to your account.');
+    const {data:existing,error:existingError}=await BHATTI.db.from('reviews').select('id').eq('user_id',BHATTI.currentUser.id).eq('order_id',orderId).eq('product_id',activeProduct.id).maybeSingle();
+    if(existingError)throw existingError;
+    if(existing)throw new Error('You have already reviewed this delivered item.');
     const{error}=await BHATTI.db.from('reviews').insert({
       product_id:activeProduct.id,
+      order_id:orderId,
       user_id:BHATTI.currentUser.id,
       rating:Number(document.getElementById('productReviewRating').value),
       body:document.getElementById('productReviewBody').value.trim(),
