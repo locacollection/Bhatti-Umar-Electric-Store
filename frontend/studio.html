@@ -19,8 +19,7 @@
     if(sessionError||!session?.user){window.location.replace("index.html?auth=signin");return;}
     const {data:profile,error:profileError}=await db.from("profiles").select("role").eq("id",session.user.id).maybeSingle();
     if(profileError) throw profileError;
-    if(profile?.role==="super_admin"){window.location.replace("super-admin.html");return;}
-    if(profile?.role==="admin"){window.location.replace("admin/index.html");return;}
+    if(["admin","super_admin"].includes(profile?.role)){window.location.replace("admin/index.html");return;}
     window.location.replace("index.html");
   }catch(error){
     document.body.innerHTML="<p>Studio access could not be verified. Please sign in again.</p>";
