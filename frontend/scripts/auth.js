@@ -177,11 +177,11 @@ async function handleAuth(event){
     closeAuth();
     const profile=await BHATTI.ensureProfile();
     if(profile?.role==='super_admin'){
-      window.location.assign('super-admin.html?control=1');
+      window.location.assign('super-admin-store.html');
       return;
     }
     if(profile?.role==='admin'){
-      window.location.assign('admin/index.html');
+      window.location.assign('admin-store.html');
       return;
     }
   }catch(error){
