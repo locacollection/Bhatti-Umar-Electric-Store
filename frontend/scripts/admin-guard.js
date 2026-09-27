@@ -4,7 +4,7 @@ export async function protectAdminRoute() {
   const { data: { session } = {}, error: sessionError } = await supabase.auth.getSession();
 
   if (sessionError || !session?.user) {
-    window.location.replace("index.html?auth=login");
+    window.location.replace("../index.html?auth=signin");
     return false;
   }
 
