@@ -70,8 +70,12 @@ BHATTI.matchesFilter=function(p){
 };
 
 async function loadProducts(){
+  const withTimeout=(promise,ms,label)=>Promise.race([promise,new Promise((_,reject)=>setTimeout(()=>reject(new Error(label+' timed out')),ms))]);
   try{
-    const {data,error}=await BHATTI.db.from('products').select('id,category_id,name,category,price,description,sku,image_url,active,created_at,updated_at').eq('active',true).order('created_at',{ascending:false});
+    const {data,error}=await withTimeout(
+      BHATTI.db.from('products').select('id,category_id,name,category,price,description,sku,image_url,active,created_at,updated_at').eq('active',true).order('created_at',{ascending:false}),
+      10000,'Catalogue request'
+    );
     if(error)throw error;
     BHATTI.products=(data||[]).map(BHATTI.normalizeProduct);
   }catch(error){
@@ -79,15 +83,12 @@ async function loadProducts(){
     console.warn('Production catalogue load failed:',error.message);
   }
 
-  // Inventory is enrichment only. A stock/RLS/API problem must never hide the live catalogue.
-  try{
-    const {data,error}=await BHATTI.db.from('inventory').select('product_id,quantity');
-    if(error)throw error;
+  // Inventory is optional enrichment. Never block the catalogue on it.
+  BHATTI.inventory={};
+  BHATTI.db.from('inventory').select('product_id,quantity').then(({data,error})=>{
+    if(error){console.warn('Inventory enrichment unavailable:',error.message);return;}
     BHATTI.inventory=Object.fromEntries((data||[]).map(row=>[String(row.product_id),Math.max(0,Number(row.quantity)||0)]));
-  }catch(error){
-    BHATTI.inventory={};
-    console.warn('Inventory availability could not be loaded; catalogue remains available.',error.message);
-  }
+  }).catch(error=>console.warn('Inventory enrichment unavailable:',error.message));
 
   try{
     initStoreUI();
