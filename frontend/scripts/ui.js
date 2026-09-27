@@ -37,6 +37,7 @@ function configureNotice(options){
 }
 
 function openNotice(layer,focusSelector){
+  closeMenu();
   layer.classList.add('open');
   document.body.classList.add('lock');
   setTimeout(()=>layer.querySelector(focusSelector)?.focus(),80);
@@ -79,6 +80,12 @@ document.addEventListener('keydown',event=>{
 BHATTI.notice=showNotice;
 BHATTI.ask=askNotice;
 
+function closeMenu(){
+  document.getElementById('mainNav')?.classList.remove('is-open');
+  document.querySelector('.menu-toggle')?.setAttribute('aria-expanded','false');
+  document.body.classList.remove('menu-open');
+}
+
 function toggleMenu(){
   const nav=document.getElementById('mainNav');
   const button=document.querySelector('.menu-toggle');
@@ -87,11 +94,14 @@ function toggleMenu(){
   document.body.classList.toggle('menu-open',!!open);
 }
 
-document.querySelectorAll('#mainNav a').forEach(link=>link.addEventListener('click',()=>{
-  document.getElementById('mainNav')?.classList.remove('is-open');
-  document.querySelector('.menu-toggle')?.setAttribute('aria-expanded','false');
-  document.body.classList.remove('menu-open');
-}));
+// Keep the mobile/header shutter out of the way whenever a header action is chosen.
+// This prevents the menu-open body state from blocking Account, Bag and Search.
+document.addEventListener('click',event=>{
+  const action=event.target.closest?.('.account-button,.bag-button,.nav-icon');
+  if(action)closeMenu();
+});
+
+document.querySelectorAll('#mainNav a').forEach(link=>link.addEventListener('click',closeMenu));
 
 async function subscribe(event){
   event.preventDefault();
@@ -167,6 +177,8 @@ document.addEventListener('visibilitychange',()=>{
 });
 
 window.toggleMenu=toggleMenu;
+window.toggleWiringu=toggleMenu;
+window.closeMenu=closeMenu;
 window.subscribe=subscribe;
 window.reveal=reveal;
 window.checkSupabaseConnection=checkSupabaseConnection;
