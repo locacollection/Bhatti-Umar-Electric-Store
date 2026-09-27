@@ -54,6 +54,7 @@ async function init() {
     $("adminStudioLink").href = "admin/index.html";
     $("dashboardLink").hidden = role !== "super_admin";
     $("dashboardLink").href = "super-admin.html";
+    $("dashboardLinkHero").hidden = role !== "super_admin";
     $("storeApp").hidden = false;
     await loadProducts();
   } catch (error) {
