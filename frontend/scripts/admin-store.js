@@ -58,7 +58,7 @@ function showProduct(id) {
   document.getElementById('productModalName').textContent = product.name;
   document.getElementById('productModalPrice').innerHTML = `<strong>${money(product.price)}</strong>${discount(product) ? `<span>${money(product.old_price)}</span>` : ''}`;
   document.getElementById('productModalDescription').textContent = product.description || 'A considered piece from the live BHATTI collection.';
-  document.getElementById('productModalDetails').textContent = product.description || 'Detailed product information from the live catalogue.';
+  document.getElementById('productModalDetails').innerHTML = '<p>'+escapeHtml(product.description || 'Electrical item available from Bhatti Electric Store.')+'</p>' + Object.entries(product.specs || {}).map(([key,value]) => '<div class="catalog-spec-preview"><b>'+escapeHtml(String(key).replace(/_/g,' '))+'</b><span>'+escapeHtml(value)+'</span></div>').join('');
   const editUrl = `admin/index.html?editProduct=${encodeURIComponent(product.id)}`;
   document.getElementById('productEditButton').onclick = () => window.location.assign(editUrl);
   document.getElementById('productAdminLink').href = editUrl;
@@ -68,7 +68,7 @@ function showProduct(id) {
 
 async function start() {
   if (!await adminGuardReady) return;
-  const { data, error } = await supabase.from('products').select('id,name,category,price,old_price,image_url,description,is_new').eq('active', true).order('id');
+  const { data, error } = await supabase.from('products').select('id,name,category,price,image_url,description,specs').eq('active', true).order('id');
   if (error) { grid.innerHTML = `<p class="catalog-empty">${escapeHtml(error.message)}</p>`; return; }
   products = data || [];
   renderFilters();
