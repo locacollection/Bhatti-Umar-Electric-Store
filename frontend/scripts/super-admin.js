@@ -98,7 +98,7 @@
     } catch (error) { $("saLoginMessage").textContent = error.message || "Access could not be verified."; }
   }
 
-  $("saLoginButton").addEventListener("click", () => { window.location.href = "index.html?auth=signin&from=super-admin"; });
+  $("saLoginButton")?.addEventListener("click", () => { window.location.href = "index.html?auth=signin&from=super-admin"; });
   $("saLogout").addEventListener("click", async () => { const { error } = await db.auth.signOut(); if (error) { $("saLoginMessage").textContent = error.message || "Could not sign out."; return; } window.location.replace("index.html?auth=signin"); });
   $("refreshAdmins").addEventListener("click", loadAdmins);
   $("createAdminForm").addEventListener("submit", createAdmin);
