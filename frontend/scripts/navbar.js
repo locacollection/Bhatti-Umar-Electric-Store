@@ -11,7 +11,10 @@ async function updateNavbar() {
     isAdmin = ["admin", "super_admin"].includes(role);
   }
 
-  document.querySelectorAll(".admin-link, footer a[href*='admin/']").forEach(link => link.remove());
+  const isRoleStorefront = /(?:^|\/)super-admin-store\.html$|(?:^|\/)admin-store\.html$/.test(window.location.pathname);
+  if (!isRoleStorefront) {
+    document.querySelectorAll(".admin-link, footer a[href*='admin/']").forEach(link => link.remove());
+  }
   document.getElementById("adminBridge")?.remove();
   document.getElementById("adminFooterBridge")?.remove();
 
