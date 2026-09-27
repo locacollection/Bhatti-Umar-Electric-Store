@@ -15,7 +15,7 @@
     if(!$('archiveBody'))return;
     $('archiveBody').innerHTML=list.length?list.map(record=>{
       const itemCount=archivedItems(record).reduce((sum,item)=>sum+Number(item.quantity||item.qty||0),0);
-      return `<article class="archive-card"><div class="archive-card-top"><div><p class="kicker">Archived order</p><h3>${clean(record.order_number||record.original_order_id)}</h3><span>${new Date(record.archived_at).toLocaleString('en-PK')}</span></div><div class="archive-workflow">${orderStatusBadge(record.status)}${paymentStatusBadge(record.payment_status)}</div></div><div class="archive-facts"><div><span>Customer</span><strong>${clean(record.customer_name||'Unnamed customer')}</strong><small>${clean(record.customer_email||'No email')}</small></div><div><span>Order</span><strong>${itemCount} item${itemCount===1?'':'s'}</strong><small>${new Date(record.ordered_at||record.archived_at).toLocaleDateString('en-PK')}</small></div><div><span>Value</span><strong>${money(record.total)}</strong><small>${clean(record.payment_method||'Payment not recorded')}</small></div></div>${record.archive_reason?`<p class="archive-note"><b>Archive note</b>${clean(record.archive_reason)}</p>`:''}<div class="archive-actions"><button class="smallbtn" type="button" data-inspect-archive="${clean(record.id)}">Inspect snapshot</button><button class="smallbtn danger-action" type="button" data-delete-archive="${clean(record.id)}">Delete forever</button></div></article>`;
+      return `<article class="archive-card"><div class="archive-card-top"><div><p class="kicker">Archived order</p><h3>${clean(record.order_number||record.original_order_id)}</h3><span>${new Date(record.archived_at).toLocaleString('en-PK')}</span></div><div class="archive-workflow">${orderStatusBadge(record.status)}${paymentStatusBadge(record.payment_status)}</div></div><div class="archive-facts"><div><span>Customer</span><strong>${clean(record.customer_name||'Unnamed customer')}</strong><small>${clean(record.customer_email||'No email')}</small></div><div><span>Order</span><strong>${itemCount} item${itemCount===1?'':'s'}</strong><small>${new Date(record.ordered_at||record.archived_at).toLocaleDateString('en-PK')}</small></div><div><span>Value</span><strong>${money(record.total)}</strong><small>${clean(record.payment_method||'Payment not recorded')}</small></div></div>${record.archive_reason?`<p class="archive-note"><b>Archive note</b>${clean(record.archive_reason)}</p>`:''}<div class="archive-actions"><button class="smallbtn" type="button" data-inspect-archive="${clean(record.id)}">Inspect snapshot</button><span class="smallbtn" aria-disabled="true">Read-only archive</span></div></article>`;
     }).join(''):'<div class="archive-empty"><div>◇</div><h3>The Order Archive is empty.</h3><p>Orders removed from the live workflow will appear here with their customer, items and activity snapshot.</p></div>';
     $('archiveBody').querySelectorAll('.archive-card').forEach(card=>{const recordId=card.querySelector('[data-delete-archive]')?.dataset.deleteArchive;if(recordId&&!card.querySelector('[data-archive-select]')){const checkbox=document.createElement('input');checkbox.type='checkbox';checkbox.dataset.archiveSelect=recordId;checkbox.setAttribute('aria-label','Select archived order');card.prepend(checkbox)}});
   }
@@ -24,9 +24,7 @@
     const head=document.querySelector('#archiveSection .section-head .toolbar-actions');
     if(!head||head.querySelector('[data-delete-selected-archive]'))return;
     const selectAll=document.createElement('button');selectAll.className='btn alt';selectAll.type='button';selectAll.textContent='Select all';selectAll.dataset.selectAllArchive='';
-    const deleteSelected=document.createElement('button');deleteSelected.className='btn danger';deleteSelected.type='button';deleteSelected.textContent='Delete selected';deleteSelected.dataset.deleteSelectedArchive='';
-    const deleteAll=document.createElement('button');deleteAll.className='btn danger';deleteAll.type='button';deleteAll.textContent='Delete all';deleteAll.dataset.deleteAllArchive='';
-    head.append(selectAll,deleteSelected,deleteAll);
+    const note=document.createElement('span');note.className='muted';note.textContent='Historical archive · read only';head.append(selectAll,note);
   }
 
   async function bulkDeleteArchived(ids){
@@ -38,14 +36,36 @@
   async function loadArchivedOrders({quiet=false}={}){
     if(!$('archiveBody'))return;
     if(!quiet)$('archiveBody').innerHTML='<div class="archive-empty"><p>Loading archived orders…</p></div>';
-    const{data,error}=await db.from('archived_orders').select('*').order('archived_at',{ascending:false});
+    const{data,error}=await db.from('orders').select('*').not('archived_at','is',null).order('archived_at',{ascending:false});
     if(error){
       archivedOrders=[];
       $('archiveBody').innerHTML=`<div class="archive-empty is-error"><h3>Archive unavailable.</h3><p>${clean(error.message)}</p></div>`;
       if(!quiet)adminNotify(error.message||'The Order Archive could not be loaded.',{title:'Archive unavailable',tone:'error'});
       return;
     }
-    archivedOrders=data||[];
+    const ordersList=data||[];
+    const ids=ordersList.map(order=>order.id);
+    let itemRows=[],auditRows=[];
+    if(ids.length){
+      const [itemsResult,auditResult]=await Promise.all([
+        db.from('order_items').select('*').in('order_id',ids),
+        db.from('audit_log').select('*').eq('entity_type','order').in('entity_id',ids).order('created_at',{ascending:false})
+      ]);
+      if(itemsResult.error)throw itemsResult.error;
+      if(auditResult.error)throw auditResult.error;
+      itemRows=itemsResult.data||[];
+      auditRows=auditResult.data||[];
+    }
+    archivedOrders=ordersList.map(order=>({
+      ...order,
+      original_order_id:order.id,
+      customer_city:order.city,
+      customer_address:order.address_line,
+      ordered_at:order.created_at,
+      archive_reason:order.internal_note,
+      items:itemRows.filter(item=>String(item.order_id)===String(order.id)),
+      customer_actions:auditRows.filter(item=>String(item.entity_id)===String(order.id))
+    }));
     renderArchivedOrders();
   }
 
@@ -102,26 +122,12 @@
     const itemsHtml=archivedItems(record).map(item=>`<div class="item"><span>${clean(item.product_name||item.name||'Product')} × ${Number(item.quantity||item.qty||0)}</span><b>${money(Number(item.price||item.unit_price||0)*Number(item.quantity||item.qty||0))}</b></div>`).join('')||'<p class="muted">No item snapshot was available.</p>';
     const actionsHtml=archivedActions(record).length?`<div class="customer-action-timeline"><p class="kicker">Customer activity snapshot</p>${archivedActions(record).map(action=>`<div class="customer-action-entry"><div><strong>${clean(action.action_type)}</strong><span>${new Date(action.created_at).toLocaleString('en-PK')}</span></div><div>${action.reason?`<b>${clean(action.reason)}</b>`:''}${action.note?`<p>${clean(action.note)}</p>`:''}</div></div>`).join('')}</div>`:'';
     $('modalTitle').textContent=record.order_number||record.original_order_id;
-    $('modalBody').innerHTML=`<div class="archive-snapshot-banner"><div><p class="kicker">Order Archive</p><strong>Read-only historical snapshot</strong><span>Archived ${new Date(record.archived_at).toLocaleString('en-PK')}</span></div><button class="smallbtn danger-action" type="button" data-delete-archive="${clean(record.id)}">Delete forever</button></div><div class="order-detail-workflow"><div><small>Fulfilment at archive</small>${orderStatusBadge(record.status)}</div><div><small>Payment at archive</small>${paymentStatusBadge(record.payment_status)}</div></div><div class="grid"><div class="detail"><span>Customer</span>${clean(record.customer_name||'Unnamed customer')}</div><div class="detail"><span>Phone</span>${clean(record.customer_phone||'Not provided')}</div><div class="detail"><span>Email</span>${clean(record.customer_email||'Not provided')}</div><div class="detail"><span>City</span>${clean(record.customer_city||'Not provided')}</div><div class="detail"><span>Payment method</span>${clean(record.payment_method||'Not recorded')}</div><div class="detail"><span>Original order date</span>${new Date(record.ordered_at||record.archived_at).toLocaleString('en-PK')}</div><div class="detail" style="grid-column:1/-1"><span>Delivery address</span>${clean(record.customer_address||'Not provided')}</div>${record.archive_reason?`<div class="detail" style="grid-column:1/-1"><span>Archive note</span>${clean(record.archive_reason)}</div>`:''}</div>${actionsHtml}<div class="order-line-items">${itemsHtml}</div><div class="total"><span>Archived order total</span><b>${money(record.total)}</b></div>`;
+    $('modalBody').innerHTML=`<div class="archive-snapshot-banner"><div><p class="kicker">Order Archive</p><strong>Read-only historical snapshot</strong><span>Archived ${new Date(record.archived_at).toLocaleString('en-PK')}</span></div><span class="smallbtn" aria-disabled="true">Read-only archive</span></div><div class="order-detail-workflow"><div><small>Fulfilment at archive</small>${orderStatusBadge(record.status)}</div><div><small>Payment at archive</small>${paymentStatusBadge(record.payment_status)}</div></div><div class="grid"><div class="detail"><span>Customer</span>${clean(record.customer_name||'Unnamed customer')}</div><div class="detail"><span>Phone</span>${clean(record.customer_phone||'Not provided')}</div><div class="detail"><span>Email</span>${clean(record.customer_email||'Not provided')}</div><div class="detail"><span>City</span>${clean(record.customer_city||'Not provided')}</div><div class="detail"><span>Payment method</span>${clean(record.payment_method||'Not recorded')}</div><div class="detail"><span>Original order date</span>${new Date(record.ordered_at||record.archived_at).toLocaleString('en-PK')}</div><div class="detail" style="grid-column:1/-1"><span>Delivery address</span>${clean(record.customer_address||'Not provided')}</div>${record.archive_reason?`<div class="detail" style="grid-column:1/-1"><span>Archive note</span>${clean(record.archive_reason)}</div>`:''}</div>${actionsHtml}<div class="order-line-items">${itemsHtml}</div><div class="total"><span>Archived order total</span><b>${money(record.total)}</b></div>`;
     $('modal').classList.add('open');
   }
 
-  async function permanentlyDeleteArchivedOrder(id){
-    const record=archivedOrders.find(entry=>String(entry.id)===String(id));
-    if(!record)return;
-    const approved=await confirmAction({eyebrow:'Permanent deletion',title:`Delete ${record.order_number||'this archived order'} forever?`,message:'This permanently erases the archived order, customer snapshot, item list and activity history. It cannot be recovered and will not be saved anywhere else.',confirmLabel:'Delete forever'});
-    if(!approved)return;
-    try{
-      if(!await isCurrentUserAdmin())throw new Error('Your admin session has expired.');
-      const{error}=await db.rpc('admin_permanently_delete_archived_order',{p_archive_id:record.id});
-      if(error)throw error;
-      $('modal')?.classList.remove('open');
-      archivedOrders=archivedOrders.filter(entry=>String(entry.id)!==String(record.id));
-      renderArchivedOrders();
-      adminNotify(`${record.order_number||'Archived order'} was permanently erased.`,{title:'Archive record deleted'});
-    }catch(error){
-      adminNotify(error.message||'The archived order could not be deleted.',{title:'Permanent deletion failed',tone:'error',duration:6000});
-    }
+  async function permanentlyDeleteArchivedOrder(){
+    adminNotify('Permanent deletion is disabled because Bhatti order history is retained as business records.',{title:'Archive is read-only',tone:'error'});
   }
 
   $('archiveSearch')?.addEventListener('input',renderArchivedOrders);
