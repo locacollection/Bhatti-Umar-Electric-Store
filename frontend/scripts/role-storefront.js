@@ -49,14 +49,15 @@ async function init() {
     if (!["admin", "super_admin"].includes(role)) { window.location.replace("index.html"); return; }
 
     const isSuperAdmin = role === "super_admin";
+    const studioHref = isSuperAdmin ? "super-admin.html" : "admin/index.html";
     $("storeRole").textContent = isSuperAdmin ? "SUPER ADMIN STOREFRONT" : "ADMIN STOREFRONT";
     $("storeBrand").href = isSuperAdmin ? "super-admin-store.html" : "admin-store.html";
     $("storeIdentity").textContent = full_name;
     $("storeTitle").innerHTML = isSuperAdmin ? "The store,<br><em>under your control.</em>" : "Power for<br><em>real operations.</em>";
     $("studioLink").textContent = isSuperAdmin ? "Super Admin Studio ↗" : "Admin Studio ↗";
-    $("studioLink").href = "admin/index.html";
+    $("studioLink").href = studioHref;
     $("studioHeroLink").textContent = isSuperAdmin ? "Super Admin Studio ↗" : "Admin Studio ↗";
-    $("studioHeroLink").href = "admin/index.html";
+    $("studioHeroLink").href = studioHref;
     $("storeApp").hidden = false;
     await loadProducts();
   } catch (error) {
