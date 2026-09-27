@@ -175,7 +175,14 @@ async function handleAuth(event){
     }
     clearPendingVerification();
     closeAuth();
-    const profile=await BHATTI.ensureProfile();
+    // The Supabase session is authoritative. Do not throw the user back to the
+    // sign-in form merely because the profile row is late/missing.
+    BHATTI.currentUser=data.user;
+    try{await BHATTI.ensureProfile();}catch(profileError){
+      console.warn('Profile row is not ready after sign-in:',profileError.message);
+      BHATTI.profile={id:data.user.id,full_name:data.user.user_metadata?.full_name||'',phone:'',role:'customer'};
+    }
+    const profile=BHATTI.profile;
     if(profile?.role==='super_admin'){
       window.location.assign('super-admin-store.html');
       return;
@@ -200,13 +207,21 @@ async function handleAuth(event){
 BHATTI.ensureProfile=async function(){
   if(!BHATTI.currentUser)return null;
   if(!isVerifiedUser(BHATTI.currentUser))throw new Error('Verify your email before activating your BHATTI profile.');
-  for(let attempt=0;attempt<5;attempt+=1){
+  for(let attempt=0;attempt<3;attempt+=1){
     const{data,error}=await BHATTI.db.from('profiles').select('*').eq('id',BHATTI.currentUser.id).maybeSingle();
-    if(error)throw error;
+    if(error){
+      if(attempt===2)throw error;
+      await new Promise(resolve=>setTimeout(resolve,250));
+      continue;
+    }
     if(data){BHATTI.profile=data;return data;}
-    await new Promise(resolve=>setTimeout(resolve,120*(attempt+1)));
+    const fallback={id:BHATTI.currentUser.id,full_name:BHATTI.currentUser.user_metadata?.full_name||'',role:'customer'};
+    const{data:created,error:createError}=await BHATTI.db.from('profiles').upsert(fallback,{onConflict:'id'}).select('*').single();
+    if(!createError&&created){BHATTI.profile=created;return created;}
+    if(attempt===2)throw createError||new Error('Profile is not available yet.');
+    await new Promise(resolve=>setTimeout(resolve,250));
   }
-  throw new Error('Your verified profile is still being prepared. Refresh the page in a moment.');
+  throw new Error('Profile could not be prepared.');
 };
 
 function renderAccountHeader(){
