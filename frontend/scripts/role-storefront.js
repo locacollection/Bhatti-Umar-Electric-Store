@@ -29,6 +29,7 @@ function setProfileModal(){
   $("previewProfileStudio").textContent=superAdmin?"Open Super Admin Studio ↗":"Open Admin Studio ↗";
   $("previewProfileStudio").href=studioHref;
 }
+window.openPreviewProfile=()=>openProfile();
 function openProfile(){ $("previewProfileModal").classList.add("open"); $("previewProfileModal").setAttribute("aria-hidden","false"); document.body.classList.add("lock"); }
 function closeProfile(){ $("previewProfileModal").classList.remove("open"); $("previewProfileModal").setAttribute("aria-hidden","true"); document.body.classList.remove("lock"); }
 async function signOut(){const {error}=await db.auth.signOut();if(error){alert(error.message);return;}window.location.replace("index.html?auth=signin");}
@@ -46,6 +47,17 @@ async function init(){
     window.addQuantity=async()=>{openProfile();return false;};
     window.openCheckout=async()=>{openProfile();return false;};
     setProfileModal();
+    const studioTarget=role==="super_admin"?"super-admin.html":"admin/index.html";
+    const studioLink=$("previewStudioLink");
+    if(studioLink){studioLink.href=studioTarget;studioLink.textContent=role==="super_admin"?"Super Admin Studio ↗":"Admin Studio ↗";}
+    const studioButton=$("previewStudioButton");
+    if(studioButton){studioButton.type="button";studioButton.onclick=event=>{event.preventDefault();window.location.assign(studioTarget);};}
+    document.addEventListener("click",event=>{
+      const account=event.target.closest("#previewAccountButton");
+      const studio=event.target.closest("#previewStudioButton");
+      if(account){event.preventDefault();event.stopPropagation();openProfile();}
+      if(studio){event.preventDefault();event.stopPropagation();window.location.assign(studioTarget);}
+    },true);
     const profileButton=$("previewAccountButton");
     if(profileButton){
       profileButton.onclick=null;
