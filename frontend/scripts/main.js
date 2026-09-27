@@ -267,37 +267,9 @@ import('./navbar.js?v=20260927-no-role-store-bridge-1').catch(error=>console.war
 
 
 
-// Mobile window behavior: automatically clear the fixed header when a full-screen
-// drawer/modal opens, so the new surface owns the viewport instead of sitting under it.
-function syncMobileHeaderVisibility(){
-  const opened=Boolean(document.querySelector('.modal-layer.open,.checkout-modal.open,.bag-drawer.open,.site-notice-layer.open'));
-  document.body.classList.toggle('bhatti-window-open',opened);
-}
-function initMobileWindowHeader(){
-  const header=document.querySelector('.site-header');
-  const hideHeader=()=>document.body.classList.add('bhatti-window-open');
-  const restoreHeader=()=>document.body.classList.remove('bhatti-window-open','bhatti-search-open');
-  const observer=new MutationObserver(()=>{
-    const opened=Boolean(document.querySelector('.modal-layer.open,.checkout-modal.open,.bag-drawer.open,.site-notice-layer.open'));
-    if(opened)hideHeader(); else restoreHeader();
-  });
-  observer.observe(document.body,{subtree:true,attributes:true,attributeFilter:['class','aria-hidden']});
-  document.querySelector('.nav-actions .nav-icon')?.addEventListener('click',hideHeader,{capture:true});
-  document.querySelector('.nav-actions .account-button')?.addEventListener('click',hideHeader,{capture:true});
-  document.querySelector('.nav-actions .bag-button')?.addEventListener('click',hideHeader,{capture:true});
-  document.querySelector('.nav-actions .nav-icon')?.addEventListener('click',()=>document.body.classList.add('bhatti-search-open'),{capture:true});
-  document.querySelector('.nav-actions .nav-icon')?.addEventListener('focus',hideHeader);
-  document.querySelector('.nav-actions .account-button')?.addEventListener('focus',hideHeader);
-  document.querySelector('.nav-actions .bag-button')?.addEventListener('focus',hideHeader);
-  document.querySelector('#productSearch')?.addEventListener('focus',hideHeader);
-  const search=document.getElementById('productSearch');
-  search?.addEventListener('blur',()=>document.body.classList.remove('bhatti-search-open'));
-  if(header) header.addEventListener('touchstart',()=>{}, {passive:true});
-  observer.takeRecords();
-}
+
 document.addEventListener('DOMContentLoaded',async()=>{
   initExperience();
-  initMobileWindowHeader();
   try{
     await initAuth();
   }catch(error){
