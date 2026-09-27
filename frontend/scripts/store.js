@@ -16,6 +16,7 @@ BHATTI.normalizeProduct=function(p){
     old:p.old_price!=null?Number(p.old_price):(p.compare_at_price!=null?Number(p.compare_at_price):null),
     new:Boolean(p.is_new||p.new_arrival||false),
     description:String(p.description||''),
+    specs:(p.specs&&typeof p.specs==='object'&&!Array.isArray(p.specs))?p.specs:{},
     image:String(p.image_url||p.image||'')
   };
 };
@@ -91,7 +92,7 @@ async function loadProducts(){
   const withTimeout=(promise,ms,label)=>Promise.race([promise,new Promise((_,reject)=>setTimeout(()=>reject(new Error(label+' timed out')),ms))]);
   try{
     const {data,error}=await withTimeout(
-      BHATTI.db.from('products').select('id,category_id,name,category,price,description,sku,image_url,active,created_at,updated_at').eq('active',true).order('created_at',{ascending:false}),
+      BHATTI.db.from('products').select('id,category_id,name,category,price,description,specs,sku,image_url,active,created_at,updated_at').eq('active',true).order('created_at',{ascending:false}),
       10000,'Catalogue request'
     );
     if(error)throw error;
