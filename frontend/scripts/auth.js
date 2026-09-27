@@ -245,7 +245,7 @@ async function openAccount(section='profile'){
   if(!BHATTI.currentUser){openAuth('signin');return;}
   try{
     await BHATTI.ensureProfile();
-    if(BHATTI.profile?.role==='admin')return;
+    if(['admin','super_admin'].includes(BHATTI.profile?.role)){window.location.replace(BHATTI.profile.role==='super_admin'?'super-admin-store.html':'admin-store.html');return;}
     populateProfileForm();
     document.getElementById('accountModal')?.classList.add('open');
     document.body.classList.add('lock');
@@ -294,7 +294,13 @@ async function handleSession(session){
   BHATTI.currentUser=session?.user||null;BHATTI.profile=null;BHATTI.addresses=[];renderAccountHeader();
   if(BHATTI.currentUser){
     clearPendingVerification();
-    try{await BHATTI.ensureProfile();await BHATTI.loadCart({mergeGuest:true});window.render?.();}
+    try{await BHATTI.ensureProfile();
+      if(['admin','super_admin'].includes(BHATTI.profile?.role) && /(^|\/)index\.html$/.test(window.location.pathname)){
+        window.location.replace(BHATTI.profile.role==='super_admin'?'super-admin-store.html':'admin-store.html');
+        return;
+      }
+      if(['admin','super_admin'].includes(BHATTI.profile?.role)) return;
+      await BHATTI.loadCart({mergeGuest:true});window.render?.();}
     catch(error){console.warn('Account setup failed',error);await BHATTI.loadCart();}
   }else await BHATTI.loadCart();
 }
