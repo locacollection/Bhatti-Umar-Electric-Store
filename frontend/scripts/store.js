@@ -21,7 +21,7 @@ BHATTI.safeImage=value=>{
 };
 
 BHATTI.productCard=function(p){
-  const escape=BHATTI.escape,id=String(p.id),discount=p.old&&p.old>p.price?Math.round((p.old-p.price)/p.old*100):0,admin=BHATTI.profile?.role==='admin';
+  const escape=BHATTI.escape,id=String(p.id),discount=p.old&&p.old>p.price?Math.round((p.old-p.price)/p.old*100):0,admin=BHATTI.profile?.role==='admin'&&!BHATTI.previewMode;
   return `<article class="product" data-description="${escape(p.description||'')}">
     <div class="pic">
       <button class="product-image-button" type="button" onclick="openProduct('${id}')" aria-label="View ${escape(p.name)} details">
