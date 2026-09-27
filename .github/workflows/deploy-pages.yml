@@ -3,12 +3,21 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+
+# Keep only the newest storefront deployment running.
+# This prevents stale GitHub Pages deployments from remaining queued/in-progress.
+concurrency:
+  group: bhatti-github-pages
+  cancel-in-progress: true
+
 permissions:
   contents: read
   pages: write
   id-token: write
+
 jobs:
   deploy:
+    timeout-minutes: 15
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -16,14 +25,18 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
       - name: Validate frontend
         run: node tests/runtime-smoke.cjs
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
+
       - name: Upload storefront
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./frontend
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
