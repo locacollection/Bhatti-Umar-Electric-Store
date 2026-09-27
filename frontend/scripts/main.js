@@ -267,6 +267,11 @@ import('./navbar.js?v=20260927-super-admin-route').catch(error=>console.warn('Na
 
 document.addEventListener('DOMContentLoaded',async()=>{
   initExperience();
+  try{
+    await initAuth();
+  }catch(error){
+    console.error('BHATTI authentication initialization failed:',error);
+  }
   const originalCheckout=window.openCheckout;
   if(originalCheckout)window.openCheckout=async()=>{
     if(BHATTI.profile?.role==='admin'){
@@ -281,7 +286,6 @@ document.addEventListener('DOMContentLoaded',async()=>{
     drawCart();
     reveal();
     checkSupabaseConnection();
-    await initAuth();
   }catch(error){
     console.error('BHATTI initialization failed:',error);
   }
