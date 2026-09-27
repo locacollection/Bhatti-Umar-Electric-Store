@@ -696,3 +696,28 @@ body.bhatti-window-open .announcement{display:none!important}
     pointer-events:auto!important;
   }
 }
+
+/* BHATTI modal scroll lock: prevent the storefront document from scrolling behind open overlays. */
+html:has(body.lock){
+  overflow:hidden!important;
+}
+body.lock{
+  overflow:hidden!important;
+  overscroll-behavior:none!important;
+  touch-action:none;
+}
+body.lock .modal-layer.open,
+body.lock .bag-drawer.open,
+body.lock .overlay.open{
+  touch-action:auto;
+}
+body.lock .modal-layer.open{
+  overscroll-behavior:contain;
+}
+body.lock .account-card,
+body.lock .product-modal-card,
+body.lock .info-card,
+body.lock .auth-card,
+body.lock .verification-pending-card{
+  overscroll-behavior:contain;
+}
