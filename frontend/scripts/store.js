@@ -173,7 +173,7 @@ function initStoreUI(){
     ];
     const primaryById=Object.fromEntries(primary.map(item=>[item.id,item]));
     const visiblePrimary=primary.filter(item=>taxonomy.some(t=>t.id===item.id));
-    let html='<div class="filter-heading"><div><span class="filter-kicker">FILTER BY SYSTEM</span><strong>Choose where to start.</strong></div><button type="button" class="filter-reset '+(BHATTI.filter==='All'?'active':'')+'" onclick="setFilter('All')">All products <span>↗</span></button></div>';
+    let html='<div class="filter-heading"><div><span class="filter-kicker">FILTER BY SYSTEM</span><strong>Choose where to start.</strong></div><button type="button" class="filter-reset '+(BHATTI.filter==='All'?'active':'')+'" onclick="setFilter(\'All\')">All products <span>↗</span></button></div>';
     html+='<div class="filter-deck">'+visiblePrimary.map(item=>`<button type="button" class="system-filter-card ${item.className} ${BHATTI.filter===item.id?'active':''}" data-category="${BHATTI.escape(item.id)}" onclick="setFilter(this.dataset.category)"><span>${BHATTI.escape(item.id)}</span><strong>${BHATTI.escape(item.label)}</strong><small>${BHATTI.escape(item.meta)}</small><b>↗</b></button>`).join('')+'</div>';
     const secondary=taxonomy.filter(item=>!primaryById[item.id]&&item.id!=='All');
     if(secondary.length){
