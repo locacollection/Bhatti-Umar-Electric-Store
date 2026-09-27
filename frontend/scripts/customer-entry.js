@@ -9,7 +9,12 @@ if (!sessionError && session?.user) {
     .eq('id', session.user.id)
     .maybeSingle();
 
-  if (['admin', 'super_admin'].includes(profile?.role)) {
+  if (profile?.role === 'super_admin') {
+    window.location.replace('super-admin.html');
+    return;
+  }
+
+  if (profile?.role === 'admin') {
     window.location.replace('admin/index.html');
   }
 }
