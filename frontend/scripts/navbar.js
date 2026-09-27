@@ -17,7 +17,7 @@ async function updateNavbar() {
   if (isAdmin) {
     const bridge = document.createElement("a");
     bridge.id = "adminBridge";
-    bridge.href = "admin/index.html";
+    bridge.href = role === "super_admin" ? "super-admin.html" : "admin/index.html";
     bridge.className = "store-link admin-bridge";
     bridge.textContent = "Studio ↗";
     bridge.title = role === "super_admin" ? "Super Admin Studio" : "Admin Studio";
