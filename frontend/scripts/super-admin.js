@@ -23,7 +23,7 @@
     body.innerHTML = '<tr><td colspan="5">Loading administrator accounts…</td></tr>';
     try {
       const token = await sessionToken();
-      const { data, error } = await db.functions.invoke("super-admin-list-users", { headers: { Authorization: `Bearer ${token}` } });
+      const { data, error } = await db.functions.invoke("super-admin-list-users", { method: "GET", headers: { Authorization: `Bearer ${token}` } });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
       const admins = data?.administrators || [];
