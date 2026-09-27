@@ -25,7 +25,10 @@ function setProfileModal(){
   $("previewFooterStudio").href=studioHref;
   $("previewRolePill").textContent=superAdmin?"SUPER ADMIN PREVIEW":"ADMIN PREVIEW";
   $("previewProfileTitle").textContent=fullName||"Administrator";
-  $("previewProfileBody").textContent=`Email: ${email}\nRole: ${superAdmin?"Super Admin":"Admin"}\nAdmin ID: ${sessionUser?.id||"Unavailable"}`;
+  $("previewProfileSubtitle").textContent=superAdmin?"Super Admin control session":"Administrator control session";
+  $("previewProfileRole").textContent=superAdmin?"SUPER ADMIN":"ADMIN";
+  $("previewProfileEmail").textContent=email||"Unavailable";
+  $("previewProfileId").textContent=sessionUser?.id||"Unavailable";
   $("previewProfileStudio").textContent=superAdmin?"Open Super Admin Studio ↗":"Open Admin Studio ↗";
   $("previewProfileStudio").href=studioHref;
 }
@@ -69,6 +72,6 @@ async function init(){
     $("previewProfileModal").addEventListener("click",e=>{if(e.target.id==="previewProfileModal")closeProfile();});
     $("previewProfileLogout").onclick=signOut;
     await loadProducts();
-  }catch(error){console.error(error);$("previewProfileBody").textContent=error.message||"Administrative preview could not be verified.";}
+  }catch(error){console.error(error);$("previewProfileSubtitle").textContent=error.message||"Administrative preview could not be verified.";}
 }
 init();
