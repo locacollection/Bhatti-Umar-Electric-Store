@@ -6,7 +6,18 @@ BHATTI.getStock=function(id){return Math.max(0,Number(BHATTI.inventory[String(id
 BHATTI.isOutOfStock=function(id){return BHATTI.getStock(id)<=0;};
 BHATTI.money=n=>'PKR '+Number(n||0).toLocaleString('en-PK');
 BHATTI.normalizeProduct=function(p){
-  return {...p,id:p.id,name:p.name||'',cat:p.category||'',category:p.category||'',price:Number(p.price||0),old:p.old_price!=null?Number(p.old_price):null,new:!!p.is_new,description:p.description||'',image:p.image_url||''};
+  return {
+    ...p,
+    id:p.id,
+    name:String(p.name||''),
+    cat:String(p.category||''),
+    category:String(p.category||''),
+    price:Number(p.price||0),
+    old:p.old_price!=null?Number(p.old_price):(p.compare_at_price!=null?Number(p.compare_at_price):null),
+    new:Boolean(p.is_new||p.new_arrival||false),
+    description:String(p.description||''),
+    image:String(p.image_url||p.image||'')
+  };
 };
 BHATTI.esc=BHATTI.escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 BHATTI.safeImage=value=>{
@@ -60,7 +71,7 @@ BHATTI.matchesFilter=function(p){
 
 async function loadProducts(){
   try{
-    const {data,error}=await BHATTI.db.from('products').select('*').eq('active',true).order('id');
+    const {data,error}=await BHATTI.db.from('products').select('id,category_id,name,category,price,description,sku,image_url,active,created_at,updated_at').eq('active',true).order('created_at',{ascending:false});
     if(error)throw error;
     BHATTI.products=(data||[]).map(BHATTI.normalizeProduct);
   }catch(error){
@@ -78,7 +89,17 @@ async function loadProducts(){
     console.warn('Inventory availability could not be loaded; catalogue remains available.',error.message);
   }
 
-  initStoreUI();
+  try{
+    initStoreUI();
+  }catch(error){
+    console.error('Catalogue UI rendering failed:',error);
+    const products=BHATTI.products||[];
+    const cards=products.slice(0,12).map(BHATTI.productCard).join('');
+    const best=document.getElementById('bestGrid');
+    const grid=document.getElementById('grid');
+    if(best)best.innerHTML=cards||'<p class="catalog-empty">No active products are available.</p>';
+    if(grid)grid.innerHTML=cards||'<div class="search-empty"><h3>No active products are available.</h3><p>The catalogue connection is working, but no products could be rendered.</p></div>';
+  }
   if(window.drawCart)drawCart();
 }
 
