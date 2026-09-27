@@ -243,13 +243,14 @@ function switchAccountSection(name='profile'){
 
 async async function openAccount(section='profile'){
   if(!BHATTI.currentUser){openAuth('signin');return;}
+  const modal=document.getElementById('accountModal');
+  modal?.classList.add('open');
+  document.body.classList.add('lock');
+  switchAccountSection(section);
   try{
     await BHATTI.ensureProfile();
     if(['admin','super_admin'].includes(BHATTI.profile?.role)){window.location.replace(BHATTI.profile.role==='super_admin'?'super-admin-store.html':'admin-store.html');return;}
     populateProfileForm();
-    document.getElementById('accountModal')?.classList.add('open');
-    document.body.classList.add('lock');
-    switchAccountSection(section);
     Promise.allSettled([loadMyOrders(),window.loadDeliveryAddresses?loadDeliveryAddresses({seed:true}):Promise.resolve()]);
   }catch(error){
     BHATTI.notice({eyebrow:'My account',title:'Your profile could not be loaded.',message:error.message||'Please try again in a moment.',tone:'error',action:'Close'});
