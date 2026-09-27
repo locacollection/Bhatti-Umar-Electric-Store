@@ -265,8 +265,28 @@ window.closeStoreInfo=closeStoreInfo;
 
 import('./navbar.js?v=20260927-no-role-store-bridge-1').catch(error=>console.warn('Navbar access check could not start:',error));
 
+
+
+// Mobile window behavior: automatically clear the fixed header when a full-screen
+// drawer/modal opens, so the new surface owns the viewport instead of sitting under it.
+function syncMobileHeaderVisibility(){
+  const opened=Boolean(document.querySelector('.modal-layer.open,.checkout-modal.open,.bag-drawer.open,.site-notice-layer.open'));
+  document.body.classList.toggle('bhatti-window-open',opened);
+}
+function initMobileWindowHeader(){
+  const observer=new MutationObserver(syncMobileHeaderVisibility);
+  observer.observe(document.body,{subtree:true,attributes:true,attributeFilter:['class','aria-hidden']});
+  syncMobileHeaderVisibility();
+  const search=document.getElementById('productSearch');
+  if(search){
+    search.addEventListener('focus',()=>document.body.classList.add('bhatti-search-open'));
+    search.addEventListener('blur',()=>document.body.classList.remove('bhatti-search-open'));
+  }
+}
+
 document.addEventListener('DOMContentLoaded',async()=>{
   initExperience();
+  initMobileWindowHeader();
   try{
     await initAuth();
   }catch(error){
