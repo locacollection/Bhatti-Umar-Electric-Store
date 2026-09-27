@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BHATTI / Studio</title>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+</head>
+<body>
+<p>Opening BHATTI Studio…</p>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="scripts/config.js?v=20260927-studio-router"></script>
+<script>
+(async()=>{
+  try{
+    const db=window.BHATTI?.db;
+    if(!db) throw new Error("BHATTI client is unavailable.");
+    const {data:{session}={},error:sessionError}=await db.auth.getSession();
+    if(sessionError||!session?.user){window.location.replace("index.html?auth=signin");return;}
+    const {data:profile,error:profileError}=await db.from("profiles").select("role").eq("id",session.user.id).maybeSingle();
+    if(profileError) throw profileError;
+    if(profile?.role==="super_admin"){window.location.replace("super-admin.html");return;}
+    if(profile?.role==="admin"){window.location.replace("admin/index.html");return;}
+    window.location.replace("index.html");
+  }catch(error){
+    document.body.innerHTML="<p>Studio access could not be verified. Please sign in again.</p>";
+    console.error(error);
+  }
+})();
+</script>
+</body>
+</html>
