@@ -652,3 +652,8 @@ body{padding-top:var(--bh-top);padding-bottom:var(--bh-bottom);overflow-x:hidden
 body.bhatti-window-open .site-header,body.bhatti-search-open .site-header{transform:translateY(calc(-100% - var(--bh-top,0px)))!important;opacity:0!important;pointer-events:none!important}
 body.bhatti-window-open .announcement,body.bhatti-search-open .announcement{pointer-events:none!important}
 }
+
+@media(max-width:680px){
+body.bhatti-window-open .site-header{position:fixed!important;top:calc(-1 * (var(--bh-top,0px) + 120px))!important;left:0;right:0;transform:none!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important;height:0!important;overflow:hidden!important}
+body.bhatti-window-open .announcement{display:none!important}
+}
