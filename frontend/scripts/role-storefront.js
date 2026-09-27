@@ -43,6 +43,8 @@ async function init(){
     BHATTI.currentUser=sessionUser;
     BHATTI.db=db;
     BHATTI.previewMode=true;
+    window.addQuantity=async()=>{openProfile();return false;};
+    window.openCheckout=async()=>{openProfile();return false;};
     setProfileModal();
     $("previewAccountButton").onclick=openProfile;
     $("previewFooterProfile").onclick=openProfile;
