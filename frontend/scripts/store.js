@@ -25,8 +25,8 @@ BHATTI.productCard=function(p){
         <img loading="lazy" src="${escape(BHATTI.safeImage(p.image))}" alt="${escape(p.name)}" onerror="this.onerror=null;this.src='assets/product-placeholder.svg'">
       </button>
       <div class="product-badges">${p.new?'<span class="badge new-badge">New arrival</span>':''}${discount>0?`<span class="badge sale-badge">SAVE ${discount}%</span>`:''}</div>
-      ${admin?`<button class="heart admin-edit-product" type="button" aria-label="Edit ${escape(p.name)}" onclick="openAdminProductEditor('${id}')">✎</button>`:`<button class="heart" type="button" aria-label="Add ${escape(p.name)} to bag" onclick="add(${id})">＋</button>`}
-      <button class="quick-view" type="button" onclick="openProduct(${id})">Quick view</button>
+      ${admin?`<button class="heart admin-edit-product" type="button" aria-label="Edit ${escape(p.name)}" onclick="openAdminProductEditor('${id}')">✎</button>`:`<button class="heart" type="button" aria-label="Add ${escape(p.name)} to bag" onclick="add('${id}')">＋</button>`}
+      <button class="quick-view" type="button" onclick="openProduct('${id}')">Quick view</button>
     </div>
     <div class="product-info">
       <div class="category-row"><span class="category">${escape(p.cat||'BHATTI edit')}</span><span class="delivery-pill">Trade delivery</span></div>
