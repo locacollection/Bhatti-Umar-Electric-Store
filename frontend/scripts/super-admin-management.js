@@ -65,27 +65,29 @@
   async function createAdmin(event) {
     event.preventDefault();
     const email = $("superAdminEmail").value.trim().toLowerCase();
+    const password = $("superAdminPassword").value;
     const button = $("superAdminCreateButton");
     const message = $("superAdminCreateMessage");
-    if (!email) return;
+    if (!email || !password) return;
+    if (password.length < 8) { $("superAdminCreateMessage").textContent = "Temporary password must be at least 8 characters."; $("superAdminCreateMessage").className = "error"; return; }
     button.disabled = true; button.textContent = "Sending…"; message.textContent = "";
     try {
       await requireSuperAdmin();
       const authToken = await token();
       const { data, error } = await db.functions.invoke("admin-create-user", {
-        body: { email, role: "admin" },
+        body: { email, password, role: "admin" },
         headers: { Authorization: `Bearer ${authToken}` }
       });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
       $("superAdminCreateForm").reset();
-      message.textContent = `Invitation sent to ${data.email || email}.`;
+      message.textContent = `Admin account created for ${data.email || email}. No verification email was sent.`;
       await loadAdmins();
     } catch (error) {
       message.textContent = error.message || "The administrator could not be created.";
       message.className = "error";
     } finally {
-      button.disabled = false; button.textContent = "＋ Add Admin";
+      button.disabled = false; button.textContent = "＋ Create Admin";
     }
   }
 
