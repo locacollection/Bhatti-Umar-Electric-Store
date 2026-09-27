@@ -749,3 +749,19 @@ html{background:var(--paper)}body{background:var(--paper);color:var(--ink);font-
   .shop-tools{grid-template-columns:minmax(0,1fr)!important}
   .shop-tools select{width:100%}
 }
+
+/* BHATTI // SYSTEM TILE PHOTOGRAPHY */
+.system-tile-large{
+  background-image:linear-gradient(180deg,rgba(10,14,16,.04) 18%,rgba(10,14,16,.78) 100%),url("https://www.kcdlight.com/photo/pl130042581-oem_odm_9000lm_100w_150w_200w_led_flood_light_ip65_waterproof.jpg")!important;
+  background-size:cover!important;background-position:center!important;color:#fff!important;
+}
+.system-tile-large:before{background:linear-gradient(180deg,rgba(6,10,12,.03),rgba(6,10,12,.72)),repeating-linear-gradient(0deg,transparent 0 22px,rgba(255,255,255,.035) 23px 24px)!important}
+.system-row .system-tile:first-child{
+  background-image:linear-gradient(180deg,rgba(7,11,13,.08),rgba(7,11,13,.9)),url("https://image.made-in-china.com/202f0j00vTFcOARCSjuk/High-Quality-Good-Price-99-99-Bare-Copper-Cable.webp")!important;
+  background-size:cover!important;background-position:center!important;
+}
+.system-row .system-tile:last-child{
+  background-image:linear-gradient(180deg,rgba(7,11,13,.08),rgba(7,11,13,.9)),url("https://cdn.27.ua/sc--media--prod/default/29/ba/80/29ba80bd-a34f-4d64-b2f3-e290e7b7441b.jpg")!important;
+  background-size:cover!important;background-position:center!important;
+}
+.system-row .system-tile:before{background:linear-gradient(180deg,rgba(5,9,11,.02),rgba(5,9,11,.72))!important}
