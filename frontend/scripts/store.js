@@ -30,9 +30,9 @@ BHATTI.productCard=function(p){
     </div>
     <div class="product-info">
       <div class="category-row"><span class="category">${escape(p.cat||'BHATTI edit')}</span><span class="delivery-pill">Trade delivery</span></div>
-      <button class="product-title-button" type="button" onclick="openProduct(${id})"><h3>${escape(p.name)}</h3></button>
+      <button class="product-title-button" type="button" onclick="openProduct('${id}')"><h3>${escape(p.name)}</h3></button>
       <div class="price">${BHATTI.money(p.price)}${p.old&&p.old>p.price?`<span class="old">${BHATTI.money(p.old)}</span>`:''}</div>
-      ${admin?`<button class="add admin-edit-product" type="button" onclick="openAdminProductEditor(${id})"><span aria-hidden="true">✎</span> Edit in Admin Studio</button>`:`<button class="add" type="button" onclick="add(${id})"><span aria-hidden="true">＋</span> Add to bag</button>`}
+      ${admin?`<button class="add admin-edit-product" type="button" onclick="openAdminProductEditor('${id}')"><span aria-hidden="true">✎</span> Edit in Admin Studio</button>`:`<button class="add" type="button" onclick="add('${id}')"><span aria-hidden="true">＋</span> Add to bag</button>`}
     </div>
   </article>`;
 };
