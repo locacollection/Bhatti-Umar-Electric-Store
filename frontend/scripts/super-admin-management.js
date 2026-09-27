@@ -40,7 +40,7 @@
       await requireSuperAdmin();
       const authToken = await token();
       const { data, error } = await db.functions.invoke("super-admin-list-users", {
-        method: "GET",
+        method: "POST",
         headers: { Authorization: `Bearer ${authToken}` }
       });
       if (error) throw error;
