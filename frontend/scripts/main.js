@@ -165,8 +165,8 @@ async function submitProductReview(event){
       product_id:activeProduct.id,
       user_id:BHATTI.currentUser.id,
       rating:Number(document.getElementById('productReviewRating').value),
-      body:document.getElementById('productReviewBody').value.trim()
-    status:'pending'});
+      body:document.getElementById('productReviewBody').value.trim(),
+      status:'pending'});
     if(error)throw error;
     event.currentTarget.reset();
     message.textContent='Thank you. Your review is waiting for admin approval.';
