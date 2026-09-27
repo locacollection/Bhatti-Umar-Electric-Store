@@ -48,14 +48,15 @@ async function init() {
     if (!user) { window.location.replace("index.html?auth=signin"); return; }
     if (!["admin", "super_admin"].includes(role)) { window.location.replace("index.html"); return; }
 
-    $("storeRole").textContent = role === "super_admin" ? "SUPER ADMIN STOREFRONT" : "ADMIN STOREFRONT";
-    $("storeBrand").href = role === "super_admin" ? "super-admin-store.html" : "admin-store.html";
+    const isSuperAdmin = role === "super_admin";
+    $("storeRole").textContent = isSuperAdmin ? "SUPER ADMIN STOREFRONT" : "ADMIN STOREFRONT";
+    $("storeBrand").href = isSuperAdmin ? "super-admin-store.html" : "admin-store.html";
     $("storeIdentity").textContent = full_name;
-    $("storeTitle").innerHTML = role === "super_admin" ? "The store,<br><em>under your control.</em>" : "Power for<br><em>real operations.</em>";
-    $("adminStudioLink").href = "admin/index.html";
-    $("dashboardLink").hidden = role !== "super_admin";
-    $("dashboardLink").href = "super-admin.html";
-    $("dashboardLinkHero").hidden = role !== "super_admin";
+    $("storeTitle").innerHTML = isSuperAdmin ? "The store,<br><em>under your control.</em>" : "Power for<br><em>real operations.</em>";
+    $("studioLink").textContent = isSuperAdmin ? "Super Admin Studio ↗" : "Admin Studio ↗";
+    $("studioLink").href = "admin/index.html";
+    $("studioHeroLink").textContent = isSuperAdmin ? "Super Admin Studio ↗" : "Admin Studio ↗";
+    $("studioHeroLink").href = "admin/index.html";
     $("storeApp").hidden = false;
     await loadProducts();
   } catch (error) {
