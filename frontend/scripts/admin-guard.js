@@ -15,9 +15,18 @@ export async function protectAdminRoute() {
     .eq("id", userId)
     .maybeSingle();
 
-  if (profileError || profile?.role !== "admin") {
-    window.alert("This workspace is restricted to Admin accounts.");
-    window.location.replace("index.html");
+  if (profileError) {
+    window.location.replace("../index.html?auth=signin");
+    return false;
+  }
+
+  if (profile?.role === "super_admin") {
+    window.location.replace("../super-admin.html");
+    return false;
+  }
+
+  if (profile?.role !== "admin") {
+    window.location.replace("../index.html");
     return false;
   }
 
