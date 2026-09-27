@@ -908,3 +908,16 @@ body{background:#f3f1e9;color:#111416}
   .electrical-banner-wall{border-width:5px;padding:5px}
   .electrical-banner-main .electrical-banner-copy strong{font-size:28px!important}
 }
+
+
+/* Product technical specifications */
+.product-specs{margin:18px 0 6px;border:1px solid rgba(17,20,22,.14);background:#faf9f4}
+.product-spec-row{display:grid;grid-template-columns:minmax(120px,.8fr) minmax(0,1.2fr);gap:14px;padding:11px 13px;border-bottom:1px solid rgba(17,20,22,.10);font-size:13px;line-height:1.35}
+.product-spec-row:last-child{border-bottom:0}
+.product-spec-row b{text-transform:capitalize;color:#111416;font-weight:800}
+.product-spec-row span{color:#4d5558}
+.product-detail-description{margin:12px 0 0;color:#555d60}
+.catalog-spec-preview{display:grid;gap:5px;margin:10px 0 12px;padding:9px 10px;background:#f4f2eb;border:1px solid rgba(17,20,22,.10)}
+.catalog-spec-preview span{display:flex;justify-content:space-between;gap:10px;font-size:11px;color:#5c6366}
+.catalog-spec-preview b{text-transform:capitalize;color:#171a1c}
+@media(max-width:700px){.product-spec-row{grid-template-columns:1fr;gap:3px}.product-spec-row b{font-size:11px}.product-spec-row span{font-size:13px}}
