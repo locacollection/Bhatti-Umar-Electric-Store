@@ -693,3 +693,59 @@ html{background:var(--paper)}body{background:var(--paper);color:var(--ink);font-
 .account-button.is-signed-in #accountIcon{color:#2c7657!important}
 .nav-icon:hover,.account-button:hover,.bag-button:hover,.menu-toggle:hover{background:#f1f3f1!important;border-color:#7f8986!important;box-shadow:0 3px 12px rgba(0,0,0,.10)!important}
 @media(max-width:700px){.nav-icon,.account-button,.bag-button,.menu-toggle{width:42px!important;height:42px!important;flex-basis:42px!important}.nav-icon svg,.account-button svg,.bag-button svg,.menu-toggle svg{width:23px;height:23px}.account-button,.bag-button{padding:0!important}.bag-button b{min-width:22px;height:22px;font-size:10px}}
+
+/* BHATTI // SYSTEM FILTER DECK — redesigned catalogue controls */
+#filters{width:100%}
+.filter-heading{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:14px}
+.filter-kicker{display:block;color:var(--gold);font:800 8px/1 var(--sans);letter-spacing:.16em;text-transform:uppercase;margin-bottom:7px}
+.filter-heading strong{display:block;color:#f4f5f2;font:800 22px/1 var(--sans);letter-spacing:-.045em}
+.filter-reset{min-height:38px;padding:0 14px;border:1px solid rgba(255,255,255,.2);background:#151b1d;color:#d8ddde;font:800 9px/1 var(--sans);letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:.22s}
+.filter-reset span{margin-left:8px;color:var(--gold)}
+.filter-reset:hover,.filter-reset.active{background:var(--gold);border-color:var(--gold);color:#101416}
+.filter-deck{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.system-filter-card{position:relative;min-height:158px;padding:18px;display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;text-align:left;border:1px solid #30383b;background:#151b1d;color:#fff;overflow:hidden;cursor:pointer;isolation:isolate;transition:transform .24s ease,border-color .24s ease,box-shadow .24s ease}
+.system-filter-card:before{content:"";position:absolute;inset:0;z-index:-2;background-size:cover;background-position:center;transition:transform .5s ease,filter .35s ease}
+.system-filter-card:after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(7,11,13,.05) 5%,rgba(7,11,13,.22) 42%,rgba(7,11,13,.92) 100%)}
+.system-filter-card:hover{transform:translateY(-2px);border-color:#667177;box-shadow:0 14px 32px rgba(0,0,0,.18)}
+.system-filter-card:hover:before{transform:scale(1.045);filter:saturate(1.05)}
+.system-filter-card.active{border-color:var(--gold);box-shadow:inset 0 0 0 1px var(--gold),0 12px 28px rgba(0,0,0,.18)}
+.system-filter-card>span,.system-filter-card>strong,.system-filter-card>small,.system-filter-card>b{position:relative;z-index:2}
+.system-filter-card>span{position:absolute;top:15px;left:16px;color:var(--gold);font:800 8px/1 var(--sans);letter-spacing:.13em;text-transform:uppercase}
+.system-filter-card>strong{font:800 clamp(22px,2.7vw,34px)/.9 var(--sans);letter-spacing:-.065em;text-transform:uppercase}
+.system-filter-card>small{margin-top:8px;color:#c0c8ca;font:700 8px/1.35 var(--sans);letter-spacing:.06em;text-transform:uppercase}
+.system-filter-card>b{position:absolute;right:14px;bottom:14px;width:30px;height:30px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.35);font-size:14px}
+.filter-light:before{background-image:url("https://www.kcdlight.com/photo/pl130042581-oem_odm_9000lm_100w_150w_200w_led_flood_light_ip65_waterproof.jpg")}
+.filter-wiring:before{background-image:url("https://image.made-in-china.com/202f0j00vTFcOARCSjuk/High-Quality-Good-Price-99-99-Bare-Copper-Cable.webp")}
+.filter-protect:before{background-image:url("https://cdn.27.ua/sc--media--prod/default/29/ba/80/29ba80bd-a34f-4d64-b2f3-e290e7b7441b.jpg")}
+.filter-switch:before{background-image:url("https://img.clevup.in/262162/coral-2.1724008503430-1724008503621.jpeg")}
+.filter-more{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.12)}
+.filter-more>span{margin-right:4px;color:#747e82;font:800 7px/1 var(--sans);letter-spacing:.14em}
+.filter-more .sub-chip,.sub-filters .sub-chip{border-radius:2px;background:#151b1d;color:#9ca5a8;padding:8px 11px;font-size:9px}
+.filter-more .sub-chip:hover,.filter-more .sub-chip.active,.sub-filters .sub-chip:hover,.sub-filters .sub-chip.active{background:#f3f5f2;border-color:#f3f5f2;color:#101416}
+.sub-filters{display:flex!important;flex-wrap:wrap!important;align-items:center;width:100%;margin-top:9px;padding-top:9px;border-top:1px dashed rgba(255,255,255,.12)}
+.shop-toolbar{display:block!important}
+.shop-tools{display:grid!important;grid-template-columns:minmax(0,1fr) 180px;gap:8px;margin-top:14px}
+.search-box{min-width:0!important;width:100%;height:48px!important;border-radius:2px!important;background:#f4f5f2!important;border-color:#697276!important;color:#101416!important;padding:0 14px!important}
+.search-box input{color:#101416!important;font-size:13px!important}
+.search-box input::placeholder{color:#70797c!important}
+.shop-tools select{height:48px!important;border-radius:2px!important;background:#151b1d!important;border-color:#465055!important;color:#f4f5f2!important}
+@media(max-width:900px){
+  .filter-deck{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:700px){
+  .filter-heading{align-items:start;margin-bottom:11px}
+  .filter-heading strong{font-size:19px}
+  .filter-reset{min-height:34px;padding:0 10px}
+  .filter-deck{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+  .system-filter-card{min-height:136px;padding:14px}
+  .system-filter-card>span{top:12px;left:13px;font-size:7px}
+  .system-filter-card>strong{font-size:24px}
+  .system-filter-card>small{font-size:7px}
+  .system-filter-card>b{right:11px;bottom:11px;width:26px;height:26px}
+  .filter-more{overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none;padding-bottom:2px}
+  .filter-more::-webkit-scrollbar{display:none}
+  .filter-more>span{flex:none}
+  .filter-more .sub-chip{flex:none}
+  .shop-tools{grid-template-columns:minmax(0,1fr)!important}
+  .shop-tools select{width:100%}
+}
