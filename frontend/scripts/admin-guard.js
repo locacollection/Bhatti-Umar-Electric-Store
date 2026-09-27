@@ -20,12 +20,7 @@ export async function protectAdminRoute() {
     return false;
   }
 
-  if (profile?.role === "super_admin") {
-    window.location.replace("../super-admin.html");
-    return false;
-  }
-
-  if (profile?.role !== "admin") {
+  if (!["admin", "super_admin"].includes(profile?.role)) {
     window.location.replace("../index.html");
     return false;
   }
