@@ -458,3 +458,34 @@ body:before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opa
 .inventory-save{min-width:66px}
 @media(max-width:900px){.inventory-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:560px){.inventory-stats{grid-template-columns:1fr}}
+
+/* BHATTI OPERATIONS SYSTEM — industrial command UI */
+:root{
+ --l-ink:#071014;--l-ink-soft:#0d1b21;--l-cream:#e9eeee;--l-paper:#f5f8f7;--l-paper-2:#edf2f1;
+ --l-wine:#b83b45;--l-wine-deep:#7f2731;--l-gold:#f2b84b;--l-gold-light:#ffda8a;
+ --l-sage:#168b78;--l-danger:#d84d57;--l-line:rgba(7,16,20,.13);--l-shadow:0 24px 70px rgba(3,13,17,.16)
+}
+html{background:var(--l-cream)}
+body{background:radial-gradient(circle at 85% 0,rgba(49,183,255,.11),transparent 25rem),linear-gradient(135deg,#f5f8f7,#e7eceb);color:var(--l-ink)}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.04;background-image:linear-gradient(rgba(7,16,20,.8) 1px,transparent 1px),linear-gradient(90deg,rgba(7,16,20,.8) 1px,transparent 1px);background-size:32px 32px}
+.login{background:linear-gradient(135deg,#061116,#0c222b)!important;color:#f4f8f8}
+.login-card,.panel,.card,.studio-card,.table-wrap,.modal-card{background:rgba(255,255,255,.78)!important;border:1px solid rgba(7,16,20,.12)!important;border-radius:10px!important;box-shadow:var(--l-shadow)!important;backdrop-filter:blur(18px)}
+.sidebar,.side-nav,.admin-sidebar{background:#061116!important;border-right:1px solid rgba(49,183,255,.18)!important;color:#dce8ea}
+.sidebar a,.side-nav a,.admin-sidebar a{color:#9eb0b5!important;border-radius:7px!important}
+.sidebar a:hover,.side-nav a:hover,.admin-sidebar a:hover,.sidebar a.active,.side-nav a.active,.admin-sidebar a.active{background:rgba(49,183,255,.09)!important;color:#f5f9f9!important}
+.sidebar a.active,.side-nav a.active,.admin-sidebar a.active{box-shadow:inset 3px 0 0 var(--l-gold)!important}
+.logo,.brand-mark{background:var(--l-gold)!important;color:#071014!important;border-radius:7px}
+h1,h2,h3,.section-title{font-family:"Barlow Condensed",Impact,sans-serif!important;text-transform:uppercase;letter-spacing:.02em;font-weight:900}
+.eyebrow,.kicker{color:#0b6cae!important;letter-spacing:.18em;font-weight:800}
+.btn,.button{border-radius:6px!important}
+.btn.primary,.button.primary{background:var(--l-gold)!important;color:#071014!important;border-color:var(--l-gold)!important;font-weight:800}
+.btn.alt,.button.alt{background:#0d1b21!important;color:#eef5f5!important;border-color:#0d1b21!important}
+input,select,textarea{background:rgba(255,255,255,.82)!important;color:#071014!important;border:1px solid rgba(7,16,20,.15)!important;border-radius:6px!important}
+input:focus,select:focus,textarea:focus{border-color:#1479c9!important;box-shadow:0 0 0 3px rgba(20,121,201,.12)!important}
+.stat,.metric,.stat-card{background:linear-gradient(145deg,rgba(255,255,255,.84),rgba(231,239,238,.76))!important;border:1px solid rgba(7,16,20,.11)!important;border-radius:9px!important}
+.status-chip,.chip{border-radius:999px!important}
+.order-stock-exception{background:rgba(184,59,69,.10)!important;color:#9d2734!important;border-color:rgba(184,59,69,.22)!important}
+.storefront-command{background:linear-gradient(135deg,#102a34,#0a1a20)!important;border:1px solid rgba(49,183,255,.25)!important;color:#eaf4f6!important;border-radius:8px!important;box-shadow:0 12px 30px rgba(4,13,17,.16)!important}
+.storefront-command strong{color:#fff!important}
+.storefront-command small{color:var(--l-gold)!important}
+.storefront-command em{color:#8ea6ad!important}
