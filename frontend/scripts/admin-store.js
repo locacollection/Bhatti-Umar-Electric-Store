@@ -59,7 +59,7 @@ function showProduct(id) {
   document.getElementById('productModalPrice').innerHTML = `<strong>${money(product.price)}</strong>${discount(product) ? `<span>${money(product.old_price)}</span>` : ''}`;
   document.getElementById('productModalDescription').textContent = product.description || 'A considered piece from the live BHATTI collection.';
   document.getElementById('productModalDetails').textContent = product.description || 'Detailed product information from the live catalogue.';
-  const editUrl = `admin.html?editProduct=${encodeURIComponent(product.id)}`;
+  const editUrl = `admin/index.html?editProduct=${encodeURIComponent(product.id)}`;
   document.getElementById('productEditButton').onclick = () => window.location.assign(editUrl);
   document.getElementById('productAdminLink').href = editUrl;
   detail.classList.add('open');
@@ -82,7 +82,7 @@ document.addEventListener('click', event => {
   const preview = event.target.closest('[data-preview-product]');
   const edit = event.target.closest('[data-edit-product]');
   if (preview) showProduct(preview.dataset.previewProduct);
-  if (edit) window.location.assign(`admin.html?editProduct=${encodeURIComponent(edit.dataset.editProduct)}`);
+  if (edit) window.location.assign(`admin/index.html?editProduct=${encodeURIComponent(edit.dataset.editProduct)}`);
 });
 start();
 window.closeProduct = () => { detail.classList.remove('open'); document.body.classList.remove('lock'); };
