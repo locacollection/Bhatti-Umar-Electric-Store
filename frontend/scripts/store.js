@@ -60,20 +60,25 @@ BHATTI.matchesFilter=function(p){
 
 async function loadProducts(){
   try{
-    const[{data,error},{data:inventory,error:inventoryError}]=await Promise.all([
-      BHATTI.db.from('products').select('*').eq('active',true).order('id'),
-      BHATTI.db.from('inventory').select('product_id,quantity')
-    ]);
-    if(inventoryError)throw inventoryError;
+    const {data,error}=await BHATTI.db.from('products').select('*').eq('active',true).order('id');
     if(error)throw error;
     BHATTI.products=(data||[]).map(BHATTI.normalizeProduct);
-    BHATTI.inventory=Object.fromEntries((inventory||[]).map(row=>[String(row.product_id),Math.max(0,Number(row.quantity)||0)]));
-    initStoreUI();
   }catch(error){
     BHATTI.products=[];
-    initStoreUI();
     console.warn('Production catalogue load failed:',error.message);
   }
+
+  // Inventory is enrichment only. A stock/RLS/API problem must never hide the live catalogue.
+  try{
+    const {data,error}=await BHATTI.db.from('inventory').select('product_id,quantity');
+    if(error)throw error;
+    BHATTI.inventory=Object.fromEntries((data||[]).map(row=>[String(row.product_id),Math.max(0,Number(row.quantity)||0)]));
+  }catch(error){
+    BHATTI.inventory={};
+    console.warn('Inventory availability could not be loaded; catalogue remains available.',error.message);
+  }
+
+  initStoreUI();
   if(window.drawCart)drawCart();
 }
 
