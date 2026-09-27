@@ -7,8 +7,8 @@ on:
 # Keep only the newest storefront deployment running.
 # This prevents stale GitHub Pages deployments from remaining queued/in-progress.
 concurrency:
-  group: bhatti-github-pages
-  cancel-in-progress: true
+  group: bhatti-github-pages-${{ github.run_id }}
+  cancel-in-progress: false
 
 permissions:
   contents: read
