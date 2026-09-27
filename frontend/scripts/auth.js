@@ -295,7 +295,7 @@ async function handleSession(session){
   if(BHATTI.currentUser){
     clearPendingVerification();
     try{await BHATTI.ensureProfile();
-      if(['admin','super_admin'].includes(BHATTI.profile?.role) && /(^|\/)index\.html$/.test(window.location.pathname)){
+      if(['admin','super_admin'].includes(BHATTI.profile?.role) && (/\/index\.html$/.test(window.location.pathname) || /\/$/.test(window.location.pathname))){
         window.location.replace(BHATTI.profile.role==='super_admin'?'super-admin-store.html':'admin-store.html');
         return;
       }
