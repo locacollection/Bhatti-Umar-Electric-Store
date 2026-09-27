@@ -16,7 +16,7 @@ function openProduct(id){
   if(category)category.textContent='BHATTI ELECTRIC STORE / '+String(product.cat||product.category||'PRODUCT').toUpperCase();
   const name=document.getElementById('productModalName'); if(name)name.textContent=product.name;
   const price=document.getElementById('productModalPrice'); if(price)price.innerHTML='<strong>'+BHATTI.money(product.price)+'</strong>';
-  const description=document.getElementById('productModalDescription'); if(description)description.textContent=product.description||'Electrical item available from Bhatti Electric Store.';
+  const descriptionText=product.description||'Electrical item available from Bhatti Electric Store.'; const description=document.getElementById('productModalDescription'); if(description)description.textContent=descriptionText; const descriptionTab=document.getElementById('productModalDescriptionTab'); if(descriptionTab)descriptionTab.textContent=descriptionText;
   const details=document.getElementById('productModalDetails');
   if(details){
     const specs=product.specs&&typeof product.specs==='object'?product.specs:{};
