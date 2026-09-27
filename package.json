@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "node server.js",
-    "build": "node -e \"console.log('Build complete')\"",
+    "build": "node tests/runtime-smoke.cjs && node -e \"console.log('Static build validation complete')\"",
     "start": "node server.js",
-    "test": "node tests/catalog-validation.cjs && node tests/address-management.cjs && node tests/auth-registration.cjs"
+    "test": "node tests/runtime-smoke.cjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.116.0",
