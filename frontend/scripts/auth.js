@@ -241,7 +241,7 @@ function switchAccountSection(name='profile'){
   if(name==='addresses'&&window.loadDeliveryAddresses)loadDeliveryAddresses({seed:true});
 }
 
-async function openAccount(section='profile'){
+async async function openAccount(section='profile'){
   if(!BHATTI.currentUser){openAuth('signin');return;}
   try{
     await BHATTI.ensureProfile();
