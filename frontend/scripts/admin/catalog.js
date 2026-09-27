@@ -7,6 +7,34 @@ Lighting:[['wattage','Wattage (W)'],['voltage','Voltage (V)'],['lumens','Luminou
 Fans:[['sweep_size','Sweep / size (inch)'],['power','Power (W)'],['voltage','Voltage (V)'],['speed','Speed (RPM)'],['motor_type','Motor type'],['air_delivery','Air delivery'],['blade_material','Blade material'],['control','Control'],['colour','Colour'],['application','Application']],
 'Conduit & PVC':[['size','Nominal size (mm / inch)'],['length','Length (m)'],['material','Material'],['wall_thickness','Wall thickness (mm)'],['colour','Colour'],['fitting_type','Fitting type'],['bend_angle','Bend angle (°)'],['standard','Standard / specification'],['application','Application']]
 };
+const SPEC_OPTIONS={
+application:['Indoor','Outdoor','Indoor / Outdoor','Residential','Commercial','Industrial','Residential / Commercial'],
+voltage:['12V DC','24V DC','110-120V AC','220-240V AC','380-415V AC'],
+frequency:['50 Hz','60 Hz','50/60 Hz'],
+colour_temperature:['2700K Warm White','3000K Warm White','4000K Neutral White','5000K Daylight','6000K Cool White','6500K Cool Daylight'],
+ip_rating:['IP20','IP44','IP54','IP55','IP65','IP66','IP67','IP68'],
+base_type:['B22','E27','GU10','MR16','G5','G13','Integrated LED'],
+body_material:['ABS','Aluminium','Die-cast Aluminium','Polycarbonate','PVC','Steel'],
+conductor_material:['Copper','Pure Copper','Aluminium','CCA'],
+cores:['1 Core','2 Core','3 Core','4 Core','5 Core'],
+insulation:['PVC','XLPE','Rubber','LSZH'],
+colour:['White','Black','Grey','Brown','Silver','Natural'],
+standard:['IEC','BS','IEC 60898-1','IEC 61008-1','IEC 60947-2','BS 1363'],
+gangs:['1 Gang','2 Gang','3 Gang','4 Gang','6 Gang'],
+pole:['1 Pole','2 Pole','3 Pole','4 Pole'],
+socket_type:['13A Socket','Universal Socket','Schuko Socket','USB Socket','Switched Socket'],
+plug_type:['2 Pin','3 Pin','13A 3 Pin','Industrial Plug'],
+material:['ABS Plastic','Polycarbonate','PVC','Metal','Aluminium','Steel'],
+device_type:['MCB','MCCB','RCCB','RCBO','Distribution Board','Isolator'],
+poles:['1 Pole','2 Pole','3 Pole','4 Pole'],
+curve:['Type B','Type C','Type D'],
+motor_type:['AC Motor','DC Motor','BLDC Motor','Capacitor Motor'],
+control:['Wall Regulator','Remote Control','Pull Cord','Remote + Wall Control'],
+blade_material:['ABS','PP Plastic','Aluminium','Metal'],
+fitting_type:['Straight Coupler','Bend','Tee','Junction Box','Adaptor','Bush','Conduit Pipe'],
+bend_angle:['45°','90°'],
+application_type:['Indoor','Outdoor','Indoor / Outdoor']
+};
 function specLabel(key){return String(key||'').replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase())}
 function currentSpecObject(){try{const parsed=JSON.parse($('productSpecs').value||'{}');return parsed&&typeof parsed==='object'&&!Array.isArray(parsed)?parsed:{}}catch{return {}}}
 function specKey(value){return String(value||'').trim().toLowerCase().replace(/&/g,'and').replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'').slice(0,80)||'specification'}
@@ -29,11 +57,25 @@ function renderSpecFields(specs={},category=$('productCategory').value){
   container.innerHTML=orderedKeys.map(key=>{
     const label=(template.find(item=>item[0]===key)||[key,specLabel(key)])[1];
     const value=existing[key]??'';
-    return '<div class="spec-row" data-spec-key="'+esc(key)+'"><input class="spec-key" value="'+esc(label)+'" data-key="'+esc(key)+'" aria-label="Specification name"><input class="spec-value" value="'+esc(value)+'" maxlength="500" placeholder="Enter value"><button type="button" class="btn alt spec-remove" title="Remove specification" aria-label="Remove specification">×</button></div>';
+    const choices=SPEC_OPTIONS[key]||[];
+    const valueHtml=choices.length
+      ? '<div class="spec-value-wrap"><select class="spec-value-select" aria-label="'+esc(label)+' preset"><option value="">Select value</option>'+choices.map(v=>'<option value="'+esc(v)+'"'+(String(value)===v?' selected':'')+'>'+esc(v)+'</option>').join('')+'<option value="__custom__">Custom value…</option></select><input class="spec-value '+(choices.includes(String(value))?'is-hidden':'')+'" value="'+(choices.includes(String(value))?'':esc(value))+'" maxlength="500" placeholder="Enter custom value" aria-label="'+esc(label)+' custom value"></div>'
+      : '<input class="spec-value" value="'+esc(value)+'" maxlength="500" placeholder="Enter value" aria-label="'+esc(label)+'">';
+    return '<div class="spec-row" data-spec-key="'+esc(key)+'"><input class="spec-key" value="'+esc(label)+'" data-key="'+esc(key)+'" aria-label="Specification name"><div class="spec-value-cell">'+valueHtml+'</div><button type="button" class="btn alt spec-remove" title="Remove specification" aria-label="Remove specification">×</button></div>';
   }).join('');
-  container.querySelectorAll('.spec-remove').forEach(btn=>btn.addEventListener('click',()=>{btn.closest('.spec-row')?.remove();syncSpecsFromFields()}));
-  container.querySelectorAll('input').forEach(input=>input.addEventListener('input',syncSpecsFromFields));
+  bindSpecRows();
   syncSpecsFromFields();
+}
+function bindSpecRows(){
+  const container=$('specFields');
+  container.querySelectorAll('.spec-remove').forEach(btn=>btn.addEventListener('click',()=>{btn.closest('.spec-row')?.remove();syncSpecsFromFields()}));
+  container.querySelectorAll('.spec-value-select').forEach(select=>select.addEventListener('change',()=>{
+    const input=select.parentElement.querySelector('.spec-value');
+    if(select.value==='__custom__'){input.classList.remove('is-hidden');input.value='';input.focus()}
+    else{input.classList.toggle('is-hidden',!!select.value);input.value=select.value||''}
+    syncSpecsFromFields();
+  }));
+  container.querySelectorAll('input').forEach(input=>input.addEventListener('input',syncSpecsFromFields));
 }
 function addSpecField(key='',label='',value=''){
   const container=$('specFields');if(!container)return;
