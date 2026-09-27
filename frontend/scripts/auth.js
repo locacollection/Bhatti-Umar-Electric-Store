@@ -215,6 +215,12 @@ BHATTI.ensureProfile=async function(){
       continue;
     }
     if(data){BHATTI.profile=data;return data;}
+    // A sign-out can race an account/profile request. Re-check the current
+    // authenticated user immediately before creating the missing profile.
+    const{data:{session:liveSession}}=await BHATTI.db.auth.getSession();
+    if(!liveSession?.user||liveSession.user.id!==BHATTI.currentUser.id){
+      throw new Error('Your session ended before the profile could be prepared.');
+    }
     const fallback={id:BHATTI.currentUser.id,full_name:BHATTI.currentUser.user_metadata?.full_name||'',role:'customer'};
     const{data:created,error:createError}=await BHATTI.db.from('profiles').upsert(fallback,{onConflict:'id'}).select('*').single();
     if(!createError&&created){BHATTI.profile=created;return created;}
@@ -299,7 +305,32 @@ async function saveContactInfo(event){
   finally{button.disabled=false;button.textContent='Save contact info';}
 }
 
-async function signOutCustomer(){await BHATTI.db.auth.signOut();closeAccount();}
+async function signOutCustomer(){
+  // Close the account surface and clear local auth state first so an in-flight
+  // profile load cannot try to create/update a row after sign-out.
+  closeAccount();
+  const signingOutUser=BHATTI.currentUser;
+  BHATTI.currentUser=null;
+  BHATTI.profile=null;
+  BHATTI.addresses=[];
+  renderAccountHeader();
+  try{
+    const{error}=await BHATTI.db.auth.signOut();
+    if(error)throw error;
+    await BHATTI.loadCart();
+  }catch(error){
+    console.error('BHATTI sign-out failed:',error);
+    BHATTI.notice?.({
+      eyebrow:'Account access',
+      title:'Sign out could not be completed.',
+      message:error.message||'Please try again.',
+      tone:'error',
+      action:'Try again'
+    });
+    if(signingOutUser)BHATTI.currentUser=signingOutUser;
+    renderAccountHeader();
+  }
+}
 
 async function handleSession(session){
   if(session?.user&&!isVerifiedUser(session.user)){
