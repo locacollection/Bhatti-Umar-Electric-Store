@@ -62,21 +62,29 @@ BHATTI.productCard=function(p){
 };
 
 BHATTI.matchesFilter=function(p){
-  const category=(p.cat||'').toLowerCase(),filter=BHATTI.filter;
+  const category=String(p.cat||p.category||'').trim().toLowerCase();
+  const name=String(p.name||'').trim().toLowerCase();
+  const filter=String(BHATTI.filter||'All').trim();
+  const normalized=filter.toLowerCase();
   if(filter==='All')return true;
   if(filter==='Sale')return Boolean(p.old&&p.old>p.price);
-  if(category===filter.toLowerCase())return true;
-  if(filter.includes(' - ')){
-    const subcategory=filter.split(' - ')[1].trim().toLowerCase();
-    return category.includes(subcategory)||p.name.toLowerCase().includes(subcategory);
+  if(normalized==='circuit protection'||normalized==='protection'){
+    return category.includes('protection')||category.includes('circuit')||/\\b(mcb|mccb|rccb|rcbo|breaker|distribution board|db)\\b/.test(name);
   }
-  if(filter==='Women')return category.includes('women')||category.includes('woman')||category.includes('ladies');
-  if(filter==='Men')return !category.includes('women')&&/\b(men|man|mens|male)\b/.test(category);
-  if(filter==='Footwear')return/footwear|shoe|chappal|khussa|sandal|slide|peshawari|loafer|heel/.test(category);
-  if(filter==='Accessories')return/accessor|bag|jewell|jewelry|scarf|stole|wallet|belt|cap|clutch|watch/.test(category);
-  if(filter==='Fragrance')return/fragrance|perfume|attar|oudh|mist|scent/.test(category);
-  if(filter==='Kids')return/kid|teen|boy|girl|child/.test(category);
-  return category.includes(filter.toLowerCase());
+  if(normalized==='wiring'||normalized==='wires & cables'||normalized==='wires and cables'){
+    return category.includes('wiring')||category.includes('wire')||category.includes('cable')||/\\b(wire|cable|conductor)\\b/.test(name);
+  }
+  if(normalized==='conduit & pvc'){
+    return category.includes('conduit')||category.includes('pvc')||/\\b(pvc|conduit|junction|elbow|tee)\\b/.test(name);
+  }
+  if(normalized==='switches & sockets'){
+    return category.includes('switch')||category.includes('socket')||/\\b(switch|socket|plug|plate)\\b/.test(name);
+  }
+  if(normalized==='fans'){
+    return category.includes('fan')||/\\b(fan|regulator|exhaust)\\b/.test(name);
+  }
+  if(category===normalized)return true;
+  return category.includes(normalized);
 };
 
 async function loadProducts(){
