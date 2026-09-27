@@ -1,70 +1,56 @@
 import { supabase } from "./supabaseClient.js";
 
-const db = supabase;
-const $ = id => document.getElementById(id);
-const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
-let products = [];
+const db=supabase;
+const $=id=>document.getElementById(id);
+let sessionUser=null;
+let role=null;
+let fullName="";
+let email="";
 
-async function getRole() {
-  const { data: { user } = {}, error } = await db.auth.getUser();
-  if (error || !user) return { user: null, role: null };
-  const { data: profile, error: profileError } = await db.from("profiles").select("role,full_name").eq("id", user.id).maybeSingle();
-  if (profileError) throw profileError;
-  return { user, role: profile?.role || null, full_name: profile?.full_name || user.email || "" };
+async function getRole(){
+  const {data:{user}={},error}=await db.auth.getUser();
+  if(error||!user)return {user:null,role:null};
+  const {data:profile,error:profileError}=await db.from("profiles").select("role,full_name").eq("id",user.id).maybeSingle();
+  if(profileError)throw profileError;
+  return {user,role:profile?.role||null,full_name:profile?.full_name||user.email||"",email:user.email||""};
 }
 
-function render() {
-  const query = ($("storeSearch")?.value || "").trim().toLowerCase();
-  const list = products.filter(p => !query || `${p.name || ""} ${p.category || ""} ${p.description || ""}`.toLowerCase().includes(query));
-  $("storeCount").textContent = `${list.length} product${list.length === 1 ? "" : "s"} · catalogue preview`;
-  $("storeGrid").innerHTML = list.map(p => `
-    <article class="store-product">
-      <div class="store-product-image"><img src="${esc(p.image_url || "assets/product-placeholder.svg")}" alt="${esc(p.name || "Electrical product")}" onerror="this.onerror=null;this.src='assets/product-placeholder.svg'"></div>
-      <div class="store-product-copy">
-        <span>${esc(p.category || "Electrical")}</span>
-        <h3>${esc(p.name || "Unnamed product")}</h3>
-        <strong>PKR ${Number(p.price || 0).toLocaleString("en-PK")}</strong>
-        <p>${esc(p.description || "Live catalogue item.")}</p>
-      </div>
-    </article>`).join("") || "<p class='store-empty'>No catalogue matches found.</p>";
+function setProfileModal(){
+  const superAdmin=role==="super_admin";
+  const studioHref=superAdmin?"super-admin.html":"admin/index.html";
+  $("previewStudioLink").textContent=superAdmin?"Super Admin Studio ↗":"Admin Studio ↗";
+  $("previewStudioLink").href=studioHref;
+  $("previewStudioButton").onclick=()=>window.location.href=studioHref;
+  $("previewFooterStudio").textContent=superAdmin?"Open Super Admin Studio ↗":"Open Admin Studio ↗";
+  $("previewFooterStudio").href=studioHref;
+  $("previewRolePill").textContent=superAdmin?"SUPER ADMIN PREVIEW":"ADMIN PREVIEW";
+  $("previewProfileTitle").textContent=fullName||"Administrator";
+  $("previewProfileBody").textContent=`Email: ${email}\nRole: ${superAdmin?"Super Admin":"Admin"}\nAdmin ID: ${sessionUser?.id||"Unavailable"}`;
+  $("previewProfileStudio").textContent=superAdmin?"Open Super Admin Studio ↗":"Open Admin Studio ↗";
+  $("previewProfileStudio").href=studioHref;
 }
+function openProfile(){ $("previewProfileModal").classList.add("open"); $("previewProfileModal").setAttribute("aria-hidden","false"); document.body.classList.add("lock"); }
+function closeProfile(){ $("previewProfileModal").classList.remove("open"); $("previewProfileModal").setAttribute("aria-hidden","true"); document.body.classList.remove("lock"); }
+async function signOut(){const {error}=await db.auth.signOut();if(error){alert(error.message);return;}window.location.replace("index.html?auth=signin");}
 
-async function loadProducts() {
-  const { data, error } = await db.from("products").select("id,name,category,price,image_url,description").eq("active", true).order("id");
-  if (error) throw error;
-  products = data || [];
-  render();
-}
-
-async function signOut() {
-  const { error } = await db.auth.signOut();
-  if (error) { $("storeMessage").textContent = error.message; return; }
-  window.location.replace("index.html?auth=signin");
-}
-
-async function init() {
-  try {
-    const { user, role, full_name } = await getRole();
-    if (!user) { window.location.replace("index.html?auth=signin"); return; }
-    if (!["admin", "super_admin"].includes(role)) { window.location.replace("index.html"); return; }
-
-    const isSuperAdmin = role === "super_admin";
-    const studioHref = isSuperAdmin ? "super-admin.html" : "admin/index.html";
-    $("storeRole").textContent = isSuperAdmin ? "SUPER ADMIN STOREFRONT" : "ADMIN STOREFRONT";
-    $("storeBrand").href = isSuperAdmin ? "super-admin-store.html" : "admin-store.html";
-    $("storeIdentity").textContent = full_name;
-    $("storeTitle").innerHTML = isSuperAdmin ? "The store,<br><em>under your control.</em>" : "Power for<br><em>real operations.</em>";
-    $("studioLink").textContent = isSuperAdmin ? "Super Admin Studio ↗" : "Admin Studio ↗";
-    $("studioLink").href = studioHref;
-    $("studioHeroLink").textContent = isSuperAdmin ? "Super Admin Studio ↗" : "Admin Studio ↗";
-    $("studioHeroLink").href = studioHref;
-    $("storeApp").hidden = false;
+async function init(){
+  try{
+    const result=await getRole();
+    sessionUser=result.user;role=result.role;fullName=result.full_name;email=result.email;
+    if(!sessionUser){window.location.replace("index.html?auth=signin");return;}
+    if(!["admin","super_admin"].includes(role)){window.location.replace("index.html");return;}
+    BHATTI.profile={role,full_name:fullName,email};
+    BHATTI.currentUser=sessionUser;
+    BHATTI.db=db;
+    BHATTI.previewMode=true;
+    setProfileModal();
+    $("previewAccountButton").onclick=openProfile;
+    $("previewFooterProfile").onclick=openProfile;
+    $("previewSupport").onclick=openProfile;
+    $("previewProfileClose").onclick=closeProfile;
+    $("previewProfileModal").addEventListener("click",e=>{if(e.target.id==="previewProfileModal")closeProfile();});
+    $("previewProfileLogout").onclick=signOut;
     await loadProducts();
-  } catch (error) {
-    $("storeMessage").textContent = error.message || "Administrative storefront could not be verified.";
-  }
+  }catch(error){console.error(error);$("previewProfileBody").textContent=error.message||"Administrative preview could not be verified.";}
 }
-
-$("storeSearch").addEventListener("input", render);
-$("logoutButton").addEventListener("click", signOut);
 init();
