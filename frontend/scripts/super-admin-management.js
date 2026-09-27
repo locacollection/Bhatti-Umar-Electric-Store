@@ -23,7 +23,7 @@
   function activateAccessTab() {
     document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
     document.querySelector('.tab[data-tab="admin-management"]')?.classList.add("active");
-    ["ordersSection","archiveSection","customersSection","usersSection","reviewsSection","productsSection","adminManagementSection"].forEach(id => {
+    ["ordersSection","archiveSection","customersSection","usersSection","reviewsSection","productsSection","inventorySection","adminManagementSection"].forEach(id => {
       const el = $(id);
       if (el) el.style.display = id === "adminManagementSection" ? "block" : "none";
     });
