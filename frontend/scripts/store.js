@@ -25,14 +25,14 @@ BHATTI.productCard=function(p){
         <img loading="lazy" src="${escape(BHATTI.safeImage(p.image))}" alt="${escape(p.name)}" onerror="this.onerror=null;this.src='assets/product-placeholder.svg'">
       </button>
       <div class="product-badges">${p.new?'<span class="badge new-badge">New arrival</span>':''}${discount>0?`<span class="badge sale-badge">SAVE ${discount}%</span>`:''}</div>
-      ${admin?`<button class="heart admin-edit-product" type="button" aria-label="Edit ${escape(p.name)}" onclick="openAdminProductEditor('${id}')">✎</button>`:`<button class="heart" type="button" aria-label="Add ${escape(p.name)} to bag" onclick="add('${id}')">＋</button>`}
+      ${admin?`<button class="heart admin-edit-product" type="button" aria-label="Edit ${escape(p.name)}" onclick="openAdminProductEditor('${id}')">✎</button>`:`<button class="heart" type="button" aria-label="Add ${escape(p.name)} to bag" data-add-product="${escape(id)}">＋</button>`}
       <button class="quick-view" type="button" onclick="openProduct('${id}')">Quick view</button>
     </div>
     <div class="product-info">
       <div class="category-row"><span class="category">${escape(p.cat||'BHATTI edit')}</span><span class="delivery-pill">Trade delivery</span></div>
       <button class="product-title-button" type="button" onclick="openProduct('${id}')"><h3>${escape(p.name)}</h3></button>
       <div class="price">${BHATTI.money(p.price)}${p.old&&p.old>p.price?`<span class="old">${BHATTI.money(p.old)}</span>`:''}</div>
-      ${admin?`<button class="add admin-edit-product" type="button" onclick="openAdminProductEditor('${id}')"><span aria-hidden="true">✎</span> Edit in Admin Studio</button>`:`<button class="add" type="button" onclick="add('${id}')"><span aria-hidden="true">＋</span> Add to bag</button>`}
+      ${admin?`<button class="add admin-edit-product" type="button" onclick="openAdminProductEditor('${id}')"><span aria-hidden="true">✎</span> Edit in Admin Studio</button>`:`<button class="add" type="button" data-add-product="${escape(id)}"><span aria-hidden="true">＋</span> Add to bag</button>`}
     </div>
   </article>`;
 };
@@ -89,7 +89,30 @@ function featuredProducts(){
   return ordered.filter((product,index,list)=>list.findIndex(item=>String(item.id)===String(product.id))===index).slice(0,4);
 }
 
+function bindProductActions(){
+  if(BHATTI.productActionsBound)return;
+  BHATTI.productActionsBound=true;
+  document.addEventListener('click',async event=>{
+    const button=event.target.closest('[data-add-product]');
+    if(!button)return;
+    event.preventDefault();
+    const id=button.getAttribute('data-add-product');
+    if(!id)return;
+    if(typeof window.addQuantity!=='function'){
+      BHATTI.notice?.({eyebrow:'Your bag',title:'Bag is still loading.',message:'Please try again in a moment.',tone:'error',action:'Close'});
+      return;
+    }
+    const original=button.innerHTML;
+    button.disabled=true;
+    button.innerHTML='Adding…';
+    try{await window.addQuantity(id,1,{open:true});}
+    catch(error){BHATTI.notice?.({eyebrow:'Your bag',title:'This piece was not added.',message:error?.message||'Please try again.',tone:'error',action:'Close'});}
+    finally{button.disabled=false;button.innerHTML=original;}
+  });
+}
+
 function initStoreUI(){
+  bindProductActions();
   const filters=document.getElementById('filters');
   if(filters){
     const configured=window.BHATTI.CATEGORY_TAXONOMY||[{id:'All',label:'All',subcategories:[]},{id:'Lighting',label:'Lighting',subcategories:[]},{id:'Wiring',label:'Wiring',subcategories:[]},{id:'Wires & Cables',label:'Wires & Cables',subcategories:[]},{id:'Conduit & PVC',label:'Conduit & PVC',subcategories:[]},{id:'Switches & Sockets',label:'Switches & Sockets',subcategories:[]},{id:'Circuit Protection',label:'Circuit Protection',subcategories:[]},{id:'Protection',label:'Protection',subcategories:[]},{id:'Fans',label:'Fans',subcategories:[]}];
