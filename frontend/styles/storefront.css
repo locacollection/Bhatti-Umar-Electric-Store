@@ -806,3 +806,12 @@ html{background:var(--paper)}body{background:var(--paper);color:var(--ink);font-
   .power-deck-foot{width:100%;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}
   .power-deck-foot span,.power-deck-foot strong{min-width:0}
 }
+
+
+/* BHATTI // high-contrast mobile controls */
+.nav-icon,.account-button,.bag-button,.menu-toggle{color:#182024!important;background:#ffffff!important;border:1.5px solid #aeb6b3!important;box-shadow:0 1px 0 rgba(0,0,0,.08),0 3px 10px rgba(0,0,0,.06)!important}
+.nav-icon svg,.account-button svg,.bag-button svg,.menu-toggle svg{width:22px;height:22px;stroke:#182024!important;stroke-width:2.2!important;opacity:1!important}
+.account-button #accountIcon{display:inline-flex;align-items:center;justify-content:center;color:#182024!important}
+.account-button.is-signed-in #accountIcon{color:#2c7657!important}
+.nav-icon:hover,.account-button:hover,.bag-button:hover,.menu-toggle:hover{background:#f1f3f1!important;border-color:#7f8986!important;box-shadow:0 3px 12px rgba(0,0,0,.10)!important}
+@media(max-width:700px){.nav-icon,.account-button,.bag-button,.menu-toggle{width:42px!important;height:42px!important;flex-basis:42px!important}.nav-icon svg,.account-button svg,.bag-button svg,.menu-toggle svg{width:23px;height:23px}.account-button,.bag-button{padding:0!important}.bag-button b{min-width:22px;height:22px;font-size:10px}}
