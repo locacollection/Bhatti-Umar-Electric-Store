@@ -39,13 +39,13 @@ Deno.serve(async (req: Request) => {
     if (authError || !actor) return json({ error: "Your admin session has expired." }, 401);
 
     const { data: adminRecord, error: adminCheckError } = await adminClient
-      .from("admin_users")
-      .select("user_id")
-      .eq("user_id", actor.id)
+      .from("profiles")
+      .select("role")
+      .eq("id", actor.id)
       .maybeSingle();
 
     if (adminCheckError) throw adminCheckError;
-    if (!adminRecord) return json({ error: "Admin access is required." }, 403);
+    if (!["admin","super_admin"].includes(adminRecord?.role)) return json({ error: "Admin access is required." }, 403);
 
     const payload = await req.json().catch(() => ({}));
     const userId = typeof payload?.user_id === "string" ? payload.user_id.trim() : "";
@@ -57,14 +57,14 @@ Deno.serve(async (req: Request) => {
       return json({ error: "You cannot delete the account currently running the studio." }, 400);
     }
 
-    const { data: targetAdmin, error: targetAdminError } = await adminClient
-      .from("admin_users")
-      .select("user_id")
-      .eq("user_id", userId)
+    const { data: targetProfile, error: targetProfileError } = await adminClient
+      .from("profiles")
+      .select("role")
+      .eq("id", userId)
       .maybeSingle();
 
-    if (targetAdminError) throw targetAdminError;
-    if (targetAdmin) return json({ error: "Admin accounts cannot be deleted from this screen." }, 403);
+    if (targetProfileError) throw targetProfileError;
+    if (["admin","super_admin"].includes(targetProfile?.role)) return json({ error: "Admin accounts cannot be deleted from this screen." }, 403);
 
     const { data: target, error: targetError } = await adminClient.auth.admin.getUserById(userId);
     if (targetError || !target.user) return json({ error: "This registered user no longer exists." }, 404);
