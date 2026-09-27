@@ -27,7 +27,7 @@ async function updateNavbar() {
     footerBridge.id="adminFooterBridge";
     footerBridge.href="admin-store.html";
     footerBridge.textContent=role === "super_admin" ? "Super Admin Store" : "Admin Store";
-    document.querySelector("footer .footer-top > div:nth-of-type(2)")?.appendChild(footerBridge);
+    document.querySelector("footer .footer-top")?.appendChild(footerBridge);
   }
 }
 
