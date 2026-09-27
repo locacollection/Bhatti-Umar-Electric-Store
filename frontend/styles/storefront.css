@@ -617,3 +617,16 @@ body{padding-top:var(--mobile-safe-top);padding-bottom:var(--mobile-safe-bottom)
 .modal-layer,.checkout-modal{padding-top:max(12px,var(--mobile-safe-top));padding-bottom:max(12px,var(--mobile-safe-bottom));}
 .product-modal-card,.modal-card,.checkout-card{max-height:calc(100dvh - var(--mobile-safe-top) - var(--mobile-safe-bottom) - 16px);overflow:auto}
 }
+
+/* Mobile dialog top-safe layout: never center dialogs into browser chrome. */
+@media(max-width:680px){
+.modal-layer.open,.checkout-modal.open{align-items:flex-start;justify-content:center;padding:64px 8px max(12px,env(safe-area-inset-bottom,0px));overflow:auto}
+.modal-layer .modal-card,.modal-layer .checkout-card,.checkout-modal .checkout-card{width:100%;max-height:calc(100dvh - 76px);margin:0;overflow:auto}
+.account-card{max-height:calc(100dvh - 76px)!important;margin:0!important;overflow:auto!important}
+.account-modal-head{padding:28px 54px 24px 22px!important;min-height:96px}
+.account-modal-head h2{font-size:clamp(30px,9vw,42px)!important;line-height:1.05!important;margin:0!important}
+.account-modal-head .close-button{right:14px!important;top:14px!important;width:42px;height:42px;z-index:20}
+.modal-card .modal-head{padding-top:2px}
+.product-modal-card{margin:0!important;max-height:calc(100dvh - 76px)!important}
+.product-modal-close{top:12px!important;right:12px!important}
+}
