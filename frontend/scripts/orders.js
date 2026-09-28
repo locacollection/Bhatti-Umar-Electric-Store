@@ -231,13 +231,24 @@ async function submitOrderAction(event){
 async function confirmOrderDelivery(orderId,button){
   const order=myOrdersCache.find(item=>String(item.id)===String(orderId));
   if(!order)return;
-  if(order.status!=='Out for Delivery'){BHATTI.notice({eyebrow:'Delivery confirmation',title:'Not ready for confirmation.',message:'This order is not currently marked Out for Delivery.',tone:'error',action:'Close'});return}
-  if(!window.confirm('Confirm that you have received this order?'))return;
+  if(order.status!=='Out for Delivery'){
+    BHATTI.notice({eyebrow:'Delivery confirmation',title:'Not ready for confirmation.',message:'This order is not currently marked Out for Delivery.',tone:'error',action:'Close'});
+    return;
+  }
+  const approved=await BHATTI.ask({
+    eyebrow:'Delivery confirmation',
+    title:'Have you received this order?',
+    message:'Confirm only after the order has physically arrived. This will mark the order as Delivered and start the return window.',
+    confirm:'Confirm delivery',
+    secondaryAction:'Not yet'
+  });
+  if(!approved)return;
   const original=button?.textContent;
   if(button){button.disabled=true;button.textContent='Updating…';}
   try{
-    await executeCustomerOrderAction(orderId,'confirm_delivery');
-    BHATTI.notice({eyebrow:'Delivery confirmed',title:'Order marked as delivered.',message:'Your order history has been updated and the return window is now available.',tone:'success',action:'Done'});
+    await executeCustomerOrderAction(orderId,'confirm_delivery','Customer confirmed delivery');
+    await loadMyOrders();
+    BHATTI.notice({eyebrow:'Delivery confirmed',title:'Order marked as delivered.',message:'Your order history is updated. Return eligibility is now shown when applicable.',tone:'success',action:'Done'});
   }catch(error){
     BHATTI.notice({eyebrow:'Delivery update',title:'Delivery was not confirmed.',message:error.message||'Please try again.',tone:'error',action:'Close'});
     if(button){button.disabled=false;button.textContent=original||'Confirm delivery';}
