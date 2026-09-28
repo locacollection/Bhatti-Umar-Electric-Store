@@ -1381,3 +1381,126 @@ body{background:#f3f1e9;color:#111416}
   #accountModal .account-v4-member{min-height:46px!important}
   #accountModal .account-v4-tab{min-height:54px!important;height:54px!important;padding:7px 8px!important}
 }
+
+
+/* CUSTOMER ACCOUNT — storefront account redesign */
+#accountModal .account-v4{
+  width:min(1080px,94vw)!important;
+  height:min(760px,92vh)!important;
+  max-height:92vh!important;
+  padding:0!important;
+  overflow:hidden!important;
+  background:#f4f2eb!important;
+  border:1px solid #303638!important;
+  border-radius:18px!important;
+}
+#accountModal .account-v4-header{
+  height:92px!important;
+  padding:18px 24px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  background:#111416!important;
+  color:#fff!important;
+  border:0!important;
+}
+#accountModal .account-v4-header h2{font-size:30px!important;line-height:1!important;margin:5px 0 0!important}
+#accountModal .account-v4-header .eyebrow{color:#e3a52f!important;margin:0!important}
+#accountModal .account-v4-header .account-identity{color:#aeb5b7!important;font-size:10px!important;margin:6px 0 0!important}
+#accountModal .account-v4-member{
+  display:flex!important;
+  align-items:center!important;
+  gap:13px!important;
+  min-height:72px!important;
+  padding:12px 24px!important;
+  margin:0!important;
+  background:#171c1e!important;
+  border:0!important;
+  border-bottom:1px solid #303638!important;
+  color:#fff!important;
+}
+#accountModal .account-v4-avatar{width:44px!important;height:44px!important;flex:none!important;background:#e3a52f!important;color:#111416!important}
+#accountModal .account-v4-member-copy{min-width:0!important}
+#accountModal .account-v4-member-copy small{display:block!important;color:#e3a52f!important;font-size:7px!important;font-weight:900!important;letter-spacing:.14em!important}
+#accountModal .account-v4-member-copy strong{display:block!important;color:#fff!important;font-size:13px!important;margin-top:2px!important}
+#accountModal .account-v4-member-copy span{display:block!important;color:#8f989b!important;font-size:9px!important;margin-top:2px!important;overflow-wrap:anywhere!important}
+#accountModal .account-v4-member-status{margin-left:auto!important;display:flex!important;align-items:center!important;gap:7px!important;color:#8f989b!important;font-size:8px!important;font-weight:800!important;letter-spacing:.1em!important}
+#accountModal .account-v4-member-status i{width:6px!important;height:6px!important;border-radius:50%!important;background:#62a77c!important;box-shadow:0 0 0 4px rgba(98,167,124,.12)!important}
+#accountModal .account-v4-tabs{
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:8px!important;
+  width:100%!important;
+  padding:12px 24px!important;
+  background:#f4f2eb!important;
+  border-bottom:1px solid #d2d0c8!important;
+  overflow:visible!important;
+}
+#accountModal .account-v4-tab{
+  display:grid!important;
+  grid-template-columns:28px minmax(0,1fr)!important;
+  align-items:center!important;
+  min-width:0!important;
+  min-height:58px!important;
+  padding:9px 11px!important;
+  background:#fff!important;
+  border:1px solid #d2d0c8!important;
+  color:#596164!important;
+  text-align:left!important;
+  border-radius:4px!important;
+}
+#accountModal .account-v4-tab:hover{border-color:#e3a52f!important;background:#fffdf7!important}
+#accountModal .account-v4-tab.active{background:#e3a52f!important;border-color:#e3a52f!important;color:#111416!important}
+#accountModal .account-v4-tab .account-v4-num{font-size:9px!important;font-weight:900!important;color:#9a6d13!important}
+#accountModal .account-v4-tab.active .account-v4-num{color:#111416!important}
+#accountModal .account-v4-tab b{font-size:9px!important;line-height:1.2!important}
+#accountModal .account-v4-tab small{display:block!important;margin-top:3px!important;font-size:7px!important;color:#858d8f!important}
+#accountModal .account-v4-tab.active small{color:#343a3b!important}
+#accountModal .account-v4-signout{
+  grid-column:1/-1!important;
+  justify-self:end!important;
+  width:max-content!important;
+  min-width:100px!important;
+  height:34px!important;
+  margin:0!important;
+  padding:0 12px!important;
+  background:transparent!important;
+  border:0!important;
+  color:#7b8385!important;
+  text-align:right!important;
+  font-size:8px!important;
+  font-weight:900!important;
+  text-transform:uppercase!important;
+}
+#accountModal .account-v4-signout:hover{color:#9a6d13!important;background:transparent!important}
+#accountModal .account-v4-content{
+  display:block!important;
+  width:100%!important;
+  min-width:0!important;
+  height:auto!important;
+  flex:1 1 auto!important;
+  overflow:auto!important;
+  background:#f4f2eb!important;
+}
+#accountModal .account-v4-panel{
+  width:100%!important;
+  min-width:0!important;
+  min-height:100%!important;
+  padding:34px 42px 48px!important;
+  background:#f4f2eb!important;
+}
+#accountModal .account-v4-panel[hidden]{display:none!important}
+#accountModal .account-v4-title{max-width:760px!important;margin-bottom:26px!important}
+#accountModal .account-v4-title h3{font-size:34px!important;color:#111416!important}
+#accountModal .account-v4-form{max-width:720px!important}
+@media(max-width:760px){
+  #accountModal .account-v4{width:100vw!important;height:94vh!important;max-height:94vh!important;border-radius:16px 16px 0 0!important}
+  #accountModal .account-v4-header{height:82px!important;padding:14px 16px!important}
+  #accountModal .account-v4-header h2{font-size:23px!important}
+  #accountModal .account-v4-member{padding:10px 16px!important}
+  #accountModal .account-v4-member-status{display:none!important}
+  #accountModal .account-v4-tabs{grid-template-columns:repeat(2,minmax(0,1fr))!important;padding:9px 12px!important}
+  #accountModal .account-v4-tab{min-height:56px!important}
+  #accountModal .account-v4-signout{grid-column:1/-1!important;width:100%!important;text-align:center!important}
+  #accountModal .account-v4-panel{padding:25px 18px 40px!important}
+}
