@@ -255,11 +255,24 @@ function populateProfileForm(){
 
 function switchAccountSection(name='profile'){
   const valid=['profile','orders','addresses','contact'];
-  if(!valid.includes(name))name='profile';
-  document.querySelectorAll('[data-account-section]').forEach(button=>button.classList.toggle('active',button.dataset.accountSection===name));
-  document.querySelectorAll('[data-account-panel]').forEach(panel=>{const active=panel.dataset.accountPanel===name;panel.hidden=!active;panel.classList.toggle('active',active);});
-  if(name==='orders')loadMyOrders();
-  if(name==='addresses'&&window.loadDeliveryAddresses)loadDeliveryAddresses({seed:true});
+  if(!valid.includes(name)) name='profile';
+  const modal=document.getElementById('accountModal');
+  if(!modal) return;
+  modal.querySelectorAll('[data-account-section]').forEach(button=>{
+    button.classList.toggle('active',button.dataset.accountSection===name);
+    button.setAttribute('aria-current',button.dataset.accountSection===name?'page':'false');
+  });
+  modal.querySelectorAll('[data-account-panel]').forEach(panel=>{
+    const active=panel.dataset.accountPanel===name;
+    panel.hidden=!active;
+    panel.classList.toggle('active',active);
+  });
+  if(name==='orders'){
+    try{ loadMyOrders(); }catch(error){ console.error('BHATTI orders tab:',error); }
+  }
+  if(name==='addresses'&&typeof window.loadDeliveryAddresses==='function'){
+    try{ window.loadDeliveryAddresses({seed:true}); }catch(error){ console.error('BHATTI addresses tab:',error); }
+  }
 }
 
 async function openAccount(section='profile'){
