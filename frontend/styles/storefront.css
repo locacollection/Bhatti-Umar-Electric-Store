@@ -2160,3 +2160,135 @@ body{background:#f3f1e9;color:#111416}
   #accountModal #myOrders .order-meta-row>div+div{padding-left:0!important;border-left:0!important;border-top:1px solid #e1e2de!important}
   #accountModal #myOrders .account-order-action.is-secondary{margin-left:0!important}
 }
+
+/* ACCOUNT COMPACT COMMAND BAR — maximize useful content above the fold */
+#accountModal .account-shell{
+  width:min(1080px,calc(100vw - 24px))!important;
+  max-height:92vh!important;
+  overflow:hidden!important;
+}
+#accountModal .account-shell-head{
+  min-height:48px!important;
+  padding:9px 16px!important;
+}
+#accountModal .account-brand{gap:8px!important}
+#accountModal .account-brand-mark{font-size:18px!important}
+#accountModal .account-brand span{font-size:9px!important}
+#accountModal .account-brand strong{font-size:12px!important}
+#accountModal .account-close{width:34px!important;height:34px!important}
+#accountModal .account-userbar{
+  display:grid!important;
+  grid-template-columns:auto minmax(0,1fr) auto!important;
+  align-items:center!important;
+  gap:12px!important;
+  padding:9px 14px!important;
+  min-height:0!important;
+}
+#accountModal .account-user{gap:8px!important;min-width:0!important}
+#accountModal .account-user-avatar{width:34px!important;height:34px!important;font-size:12px!important}
+#accountModal .account-user small{font-size:7px!important}
+#accountModal .account-user strong{font-size:11px!important}
+#accountModal .account-user span{font-size:8px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+#accountModal .account-tabs{
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(58px,1fr))!important;
+  gap:5px!important;
+  min-width:0!important;
+  width:100%!important;
+}
+#accountModal .account-tab{
+  min-width:0!important;
+  min-height:38px!important;
+  height:38px!important;
+  padding:4px 6px!important;
+  border-radius:7px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:5px!important;
+}
+#accountModal .account-tab b{display:none!important}
+#accountModal .account-tab span{
+  width:auto!important;
+  font-size:8px!important;
+  line-height:1!important;
+  letter-spacing:.02em!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#accountModal .account-tab::before{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:18px!important;
+  height:18px!important;
+  flex:0 0 18px!important;
+  border:1px solid currentColor!important;
+  border-radius:5px!important;
+  font-size:9px!important;
+  font-weight:900!important;
+}
+#accountModal .account-tab[data-icon="profile"]::before{content:"P"}
+#accountModal .account-tab[data-icon="orders"]::before{content:"▤"}
+#accountModal .account-tab[data-icon="address"]::before{content:"⌖"}
+#accountModal .account-tab[data-icon="contact"]::before{content:"☎"}
+#accountModal .account-body{
+  min-height:0!important;
+  overflow:auto!important;
+  padding:14px!important;
+}
+#accountModal .account-page{
+  min-height:0!important;
+  padding:0!important;
+}
+#accountModal .account-page-head{
+  margin-bottom:12px!important;
+  padding-bottom:9px!important;
+}
+#accountModal .account-page-head h2{font-size:19px!important;margin:2px 0!important}
+#accountModal .account-page-head p{font-size:9px!important;line-height:1.35!important;margin:0!important}
+#accountModal .account-form{gap:9px!important}
+#accountModal .account-form label span{font-size:8px!important;margin-bottom:4px!important}
+#accountModal .account-form input,#accountModal .account-form select,#accountModal .account-form textarea{
+  min-height:36px!important;
+  padding:8px 10px!important;
+  font-size:11px!important;
+}
+#accountModal .account-form textarea{min-height:62px!important}
+#accountModal .account-note{font-size:8px!important;margin:0!important}
+#accountModal .account-profile-footer{
+  margin-top:12px!important;
+  padding:10px 0 0!important;
+}
+#accountModal .account-profile-footer span{font-size:8px!important}
+#accountModal .account-signout{min-height:34px!important;padding:7px 12px!important;font-size:8px!important}
+#accountModal .order-filter-tabs{margin:0 0 10px!important;gap:5px!important}
+#accountModal .order-filter-tabs button{min-height:30px!important;padding:6px 9px!important;font-size:8px!important}
+#accountModal .account-order-card{border-radius:10px!important}
+#accountModal .account-order-head{padding:11px 13px!important;gap:10px!important}
+#accountModal .account-order-head strong{font-size:12px!important}
+#accountModal .account-order-head b{font-size:13px!important}
+#accountModal .account-order-status{padding:8px 13px!important}
+#accountModal .account-order-card .order-progress{margin:10px 13px!important;padding:9px!important}
+#accountModal .customer-action-receipt{margin:0 13px 9px!important}
+#accountModal .account-order-foot{margin:0 13px!important;padding:8px 0!important;font-size:8px!important}
+#accountModal .account-order-actions{padding:9px 13px 11px!important}
+#accountModal .account-order-action{min-height:31px!important;padding:6px 9px!important;font-size:8px!important}
+#accountModal .saved-address-list{margin-bottom:10px!important}
+#accountModal .address-editor{padding-top:10px!important}
+@media(max-width:760px){
+  #accountModal .account-userbar{grid-template-columns:1fr auto!important}
+  #accountModal .account-user{grid-column:1/2!important}
+  #accountModal .account-tabs{grid-column:1/-1!important;grid-row:2!important}
+  #accountModal .account-signout{display:none!important}
+}
+@media(max-width:520px){
+  #accountModal .account-shell{width:calc(100vw - 10px)!important;max-height:94vh!important}
+  #accountModal .account-shell-head{padding:8px 11px!important}
+  #accountModal .account-userbar{padding:7px 10px!important}
+  #accountModal .account-tabs{gap:4px!important}
+  #accountModal .account-tab{height:34px!important;min-height:34px!important;padding:3px 4px!important}
+  #accountModal .account-tab span{font-size:7px!important}
+  #accountModal .account-tab::before{width:16px!important;height:16px!important;flex-basis:16px!important;font-size:8px!important}
+  #accountModal .account-body{padding:10px!important}
+}
