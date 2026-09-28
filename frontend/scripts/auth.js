@@ -247,10 +247,11 @@ function populateProfileForm(){
   document.getElementById('contactRegisteredEmail').value=registered;
   document.getElementById('contactEmail').value=contact;
   document.getElementById('contactPhone').value=profile.phone||'';
-  document.getElementById('accountIdentity').textContent=name+' · '+registered;
-  document.getElementById('accountMemberName').textContent=name;
-  document.getElementById('accountMemberEmail').textContent=registered;
-  document.getElementById('accountAvatar').textContent=initials(name);
+  const setText=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=value;};
+  setText('accountIdentity',name+' · '+registered);
+  setText('accountMemberName',name);
+  setText('accountMemberEmail',registered);
+  setText('accountAvatar',initials(name));
 }
 
 function switchAccountSection(name='profile'){
@@ -258,13 +259,13 @@ function switchAccountSection(name='profile'){
   if(!valid.includes(name)) name='profile';
   const modal=document.getElementById('accountModal');
   if(!modal) return false;
-  modal.querySelectorAll('.account-v4-tab[data-account-section]').forEach(button=>{
+  modal.querySelectorAll('[data-account-section]').forEach(button=>{
     const active=button.dataset.accountSection===name;
     button.classList.toggle('active',active);
     button.setAttribute('aria-current',active?'page':'false');
     button.setAttribute('aria-selected',active?'true':'false');
   });
-  modal.querySelectorAll('.account-v4-panel[data-account-panel]').forEach(panel=>{
+  modal.querySelectorAll('[data-account-panel]').forEach(panel=>{
     const active=panel.dataset.accountPanel===name;
     panel.hidden=!active;
     panel.classList.toggle('active',active);
