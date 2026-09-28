@@ -367,11 +367,7 @@ async function handleSession(session){
   if(BHATTI.currentUser){
     clearPendingVerification();
     try{await BHATTI.ensureProfile();
-      if(['admin','super_admin'].includes(BHATTI.profile?.role) && (/\/index\.html$/.test(window.location.pathname) || /\/$/.test(window.location.pathname))){
-        window.location.replace(BHATTI.profile.role==='super_admin'?'super-admin-store.html':'admin-store.html');
-        return;
-      }
-      if(['admin','super_admin'].includes(BHATTI.profile?.role)) return;
+      // Storefront sessions stay in the customer account surface. Administrative tools are opened explicitly from Admin Studio.
       await BHATTI.loadCart({mergeGuest:true});window.render?.();}
     catch(error){console.warn('Account setup failed',error);await BHATTI.loadCart();}
   }else await BHATTI.loadCart();
@@ -393,13 +389,6 @@ function handleAuthReturn(session){
 
 async function initAuth(){
   BHATTI.authMode='signin';updateAuthUI();
-  document.querySelectorAll('#accountModal .account-v4-tab[data-account-section]').forEach(button=>{
-    button.addEventListener('click',event=>{
-      event.preventDefault();
-      event.stopPropagation();
-      switchAccountSection(button.dataset.accountSection);
-    });
-  });
   const{data:{session},error}=await BHATTI.db.auth.getSession();
   if(error)console.warn('Stored BHATTI session could not be restored:',error.message);
   await handleSession(session);handleAuthReturn(session);
