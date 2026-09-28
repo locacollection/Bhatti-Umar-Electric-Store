@@ -261,7 +261,7 @@ function switchAccountSection(name='profile'){
   if(!modal) return false;
   modal.querySelectorAll('[data-account-section]').forEach(button=>{
     const active=button.dataset.accountSection===name;
-    button.classList.toggle('active',active);
+    button.classList.toggle('active',active);button.classList.toggle('is-active',active);
     button.setAttribute('aria-current',active?'page':'false');
     button.setAttribute('aria-selected',active?'true':'false');
   });
