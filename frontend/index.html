@@ -73,10 +73,10 @@
         <div><small>BHATTI MEMBER</small><strong id="accountMemberName">Customer</strong><span id="accountMemberEmail"></span></div>
       </div>
       <div class="account-tabs" role="tablist" aria-label="My account">
-        <button class="account-tab is-active" type="button" role="tab" aria-selected="true" data-account-section="profile"><b>01</b><span>My Profile</span></button>
-        <button class="account-tab" type="button" role="tab" aria-selected="false" data-account-section="orders"><b>02</b><span>My Orders</span></button>
-        <button class="account-tab" type="button" role="tab" aria-selected="false" data-account-section="addresses"><b>03</b><span>Delivery Addresses</span></button>
-        <button class="account-tab" type="button" role="tab" aria-selected="false" data-account-section="contact"><b>04</b><span>Contact Info</span></button>
+        <button class="account-tab is-active" type="button" role="tab" aria-selected="true" data-account-section="profile" onclick="switchAccountSection('profile')" ><b>01</b><span>My Profile</span></button>
+        <button class="account-tab" type="button" role="tab" aria-selected="false" data-account-section="orders" onclick="switchAccountSection('orders')" ><b>02</b><span>My Orders</span></button>
+        <button class="account-tab" type="button" role="tab" aria-selected="false" data-account-section="addresses" onclick="switchAccountSection('addresses')" ><b>03</b><span>Delivery Addresses</span></button>
+        <button class="account-tab" type="button" role="tab" aria-selected="false" data-account-section="contact" onclick="switchAccountSection('contact')" ><b>04</b><span>Contact Info</span></button>
       </div>
       <button class="account-signout" type="button" onclick="signOutCustomer()">Sign out</button>
     </div>
