@@ -629,3 +629,5 @@ body{
   .side-nav .tab .nav-icon{display:none}
   .side-nav .tab b{display:none}
 }
+
+#stats[hidden]{display:none!important}
