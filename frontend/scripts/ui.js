@@ -80,13 +80,17 @@ document.addEventListener('keydown',event=>{
 BHATTI.notice=showNotice;
 BHATTI.ask=askNotice;
 
+
+// Final mobile interaction hardening.
 function switchMobileMenuTab(tab){
   const nav=document.getElementById('mainNav');
   if(!nav)return;
   const target=tab==='categories'?'categories':'menu';
   nav.dataset.menuTab=target;
   nav.querySelectorAll('[data-menu-tab-button]').forEach(button=>{
-    button.classList.toggle('is-active',button.dataset.menuTabButton===target);
+    const active=button.dataset.menuTabButton===target;
+    button.classList.toggle('is-active',active);
+    button.setAttribute('aria-selected',active?'true':'false');
   });
   nav.querySelectorAll('[data-menu-panel]').forEach(panel=>{
     panel.hidden=panel.dataset.menuPanel!==target;
@@ -102,10 +106,17 @@ function closeMenu(){
 function toggleMenu(){
   const nav=document.getElementById('mainNav');
   const button=document.querySelector('.menu-toggle');
-  const open=nav?.classList.toggle('is-open');
-  button?.setAttribute('aria-expanded',String(!!open));
-  // The header menu is navigation, not a modal: keep the page scrollable and expose a side panel.\n  document.body.classList.remove('menu-open');
+  if(!nav)return;
+  const open=nav.classList.toggle('is-open');
+  button?.setAttribute('aria-expanded',String(open));
+  document.body.classList.toggle('menu-open',open);
+  if(open){
+    const activeTab=nav.dataset.menuTab||'menu';
+    switchMobileMenuTab(activeTab);
+    requestAnimationFrame(()=>nav.querySelector('.mobile-menu-tab.is-active')?.focus({preventScroll:true}));
+  }
 }
+
 
 // Keep the mobile/header shutter out of the way whenever a header action is chosen.
 // This prevents the menu-open body state from blocking Account, Bag and Search.
