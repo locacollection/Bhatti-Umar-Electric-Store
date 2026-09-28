@@ -7,6 +7,7 @@ on:
 # One Pages deployment at a time for the main storefront.
 # A newer run cancels an older in-progress deployment instead of
 # leaving GitHub Pages blocked by a stale deployment.
+# Re-deploy reverted main state.
 concurrency:
   group: bhatti-github-pages-main
   cancel-in-progress: true
