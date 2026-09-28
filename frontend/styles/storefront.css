@@ -1940,3 +1940,223 @@ body{background:#f3f1e9;color:#111416}
  #accountModal #myOrders .order-meta-row>div+div{padding-left:0!important;border-left:0!important;border-top:1px solid #e1e4e2!important}
  #accountModal #myOrders .account-order-action.is-secondary{margin-left:0!important}
 }
+
+
+/* STOREFRONT NAVIGATION — mobile side navigation, not a modal */
+@media(max-width:900px){
+  .menu-toggle{display:inline-flex!important;flex:none!important}
+  .site-header .nav-shell{gap:8px!important}
+  .site-header nav#mainNav{
+    position:fixed!important;
+    left:0!important;
+    top:34px!important;
+    bottom:0!important;
+    width:min(340px,88vw)!important;
+    height:calc(100vh - 34px)!important;
+    z-index:120!important;
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:stretch!important;
+    gap:0!important;
+    padding:18px 14px 28px!important;
+    background:#111719!important;
+    color:#fff!important;
+    border-right:1px solid rgba(255,255,255,.12)!important;
+    box-shadow:24px 0 70px rgba(0,0,0,.22)!important;
+    transform:translateX(-105%)!important;
+    visibility:hidden!important;
+    pointer-events:none!important;
+    transition:transform .32s var(--ease),visibility 0s linear .32s!important;
+    overflow:auto!important;
+  }
+  .site-header nav#mainNav.is-open{
+    transform:translateX(0)!important;
+    visibility:visible!important;
+    pointer-events:auto!important;
+    transition:transform .32s var(--ease),visibility 0s!important;
+  }
+  .site-header nav#mainNav a,
+  .site-header nav#mainNav .mobile-nav-action{
+    min-height:48px!important;
+    display:flex!important;
+    align-items:center!important;
+    width:100%!important;
+    padding:0 12px!important;
+    border-bottom:1px solid rgba(255,255,255,.09)!important;
+    color:#f5f5f2!important;
+    background:transparent!important;
+    border-left:0!important;
+    border-right:0!important;
+    border-top:0!important;
+    border-radius:0!important;
+    text-align:left!important;
+    font-size:12px!important;
+    font-weight:700!important;
+  }
+  .site-header nav#mainNav a:after{display:none!important}
+  .site-header nav#mainNav a:hover,
+  .site-header nav#mainNav .mobile-nav-action:hover{
+    color:#e7aa32!important;
+    background:#1a2022!important;
+  }
+  .site-header nav#mainNav .admin-link{color:#e7aa32!important;margin-top:8px!important}
+  .mobile-nav-head{
+    display:flex!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    min-height:48px!important;
+    margin-bottom:6px!important;
+    padding:0 12px!important;
+    color:#e7aa32!important;
+    font-size:10px!important;
+    font-weight:900!important;
+    letter-spacing:.15em!important;
+  }
+  .mobile-nav-head button{
+    width:36px!important;height:36px!important;border:1px solid #394144!important;
+    border-radius:50%!important;background:#1a2022!important;color:#fff!important;font-size:22px!important;
+  }
+  .mobile-nav-action{cursor:pointer!important;font-family:inherit!important}
+}
+@media(min-width:901px){
+  .mobile-nav-head,.mobile-nav-action{display:none!important}
+}
+
+/* CUSTOMER ACCOUNT — sign out belongs to the profile, not global account navigation */
+#accountModal .account-profile-footer{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:18px!important;
+  margin-top:28px!important;
+  padding-top:20px!important;
+  border-top:1px solid #ddd9cf!important;
+}
+#accountModal .account-profile-footer>div{
+  display:grid!important;
+  gap:3px!important;
+}
+#accountModal .account-profile-footer b{
+  font-size:10px!important;
+  text-transform:uppercase!important;
+  letter-spacing:.09em!important;
+}
+#accountModal .account-profile-footer span{
+  color:#737a7c!important;
+  font-size:11px!important;
+}
+#accountModal .account-profile-footer .account-signout{
+  position:static!important;
+  margin:0!important;
+  flex:0 0 auto!important;
+  min-height:40px!important;
+  padding:9px 16px!important;
+  border:1px solid #b8b5ac!important;
+  border-radius:8px!important;
+  background:#fff!important;
+  color:#202527!important;
+  font-size:10px!important;
+  font-weight:900!important;
+}
+#accountModal .account-profile-footer .account-signout:hover{
+  background:#202527!important;
+  border-color:#202527!important;
+  color:#e7aa32!important;
+}
+
+/* CUSTOMER ORDERS — one source of truth for each piece of order information */
+#accountModal #myOrders .account-order-card .order-status-strip{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:0!important;
+  padding:0!important;
+  background:#f4f5f2!important;
+  border-bottom:1px solid #dfe2de!important;
+}
+#accountModal #myOrders .order-status-strip>div{
+  padding:14px 18px!important;
+  display:grid!important;
+  gap:4px!important;
+  border-right:1px solid #dfe2de!important;
+}
+#accountModal #myOrders .order-status-strip>div:last-child{border-right:0!important}
+#accountModal #myOrders .order-status-strip span,
+#accountModal #myOrders .order-meta-row span{
+  font-size:8px!important;
+  font-weight:900!important;
+  letter-spacing:.1em!important;
+  color:#7a8182!important;
+}
+#accountModal #myOrders .order-status-strip strong{
+  font-size:13px!important;
+  color:#1d2426!important;
+}
+#accountModal #myOrders .order-tracking-card{
+  margin:14px 18px!important;
+  padding:15px!important;
+  border:1px solid #d9ddd9!important;
+  border-radius:10px!important;
+  background:#fbfbf8!important;
+}
+#accountModal #myOrders .order-tracking-head{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:12px!important;
+}
+#accountModal #myOrders .order-tracking-head>div{display:grid!important;gap:3px!important}
+#accountModal #myOrders .order-tracking-head span:first-child{
+  font-size:8px!important;font-weight:900!important;letter-spacing:.1em!important;color:#7a8182!important;
+}
+#accountModal #myOrders .order-tracking-head strong{font-size:14px!important;color:#202527!important}
+#accountModal #myOrders .order-tracking-percent{
+  font-size:10px!important;font-weight:900!important;color:#a77b32!important;
+}
+#accountModal #myOrders .order-tracking-bar{
+  height:6px!important;margin:13px 0 11px!important;border-radius:99px!important;background:#e2e5e2!important;overflow:hidden!important;
+}
+#accountModal #myOrders .order-tracking-bar i{
+  display:block!important;height:100%!important;border-radius:inherit!important;background:#a77b32!important;
+}
+#accountModal #myOrders .order-tracking-labels{
+  display:grid!important;grid-template-columns:repeat(4,1fr)!important;gap:5px!important;
+  font-size:8px!important;color:#707778!important;
+}
+#accountModal #myOrders .order-tracking-labels span{min-width:0!important}
+#accountModal #myOrders .order-meta-row{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:0!important;margin:0 18px!important;border-top:1px solid #e1e2de!important;
+}
+#accountModal #myOrders .order-meta-row>div{
+  display:grid!important;gap:3px!important;padding:12px 0!important;
+}
+#accountModal #myOrders .order-meta-row>div+div{
+  padding-left:16px!important;border-left:1px solid #e1e2de!important;
+}
+#accountModal #myOrders .order-meta-row strong{
+  font-size:10px!important;color:#353c3e!important;font-weight:700!important;
+}
+#accountModal #myOrders .account-order-actions{
+  display:flex!important;gap:8px!important;flex-wrap:wrap!important;
+  margin-top:0!important;padding:13px 18px!important;border-top:1px solid #e1e2de!important;background:#f7f7f3!important;
+}
+#accountModal #myOrders .account-order-actions:empty{display:none!important}
+#accountModal #myOrders .account-order-action{
+  min-height:34px!important;padding:7px 12px!important;border-radius:7px!important;
+  font-size:9px!important;font-weight:900!important;
+}
+#accountModal #myOrders .account-order-action.is-danger{border-color:#c9aaa5!important;color:#8d2f25!important;background:#fff9f8!important}
+#accountModal #myOrders .account-order-action.is-positive{border-color:#8fb49f!important;color:#245e42!important;background:#f4fbf7!important}
+#accountModal #myOrders .account-order-action.is-secondary{margin-left:auto!important;background:#202527!important;color:#e7aa32!important;border-color:#202527!important}
+#accountModal #myOrders .order-reference span,
+#accountModal #myOrders .order-total span{display:none!important}
+#accountModal #myOrders .order-reference strong{display:block!important}
+@media(max-width:620px){
+  #accountModal .account-profile-footer{align-items:stretch!important;flex-direction:column!important}
+  #accountModal .account-profile-footer .account-signout{width:100%!important}
+  #accountModal #myOrders .order-status-strip{grid-template-columns:1fr 1fr!important}
+  #accountModal #myOrders .order-tracking-labels{font-size:7px!important}
+  #accountModal #myOrders .order-meta-row{grid-template-columns:1fr!important}
+  #accountModal #myOrders .order-meta-row>div+div{padding-left:0!important;border-left:0!important;border-top:1px solid #e1e2de!important}
+  #accountModal #myOrders .account-order-action.is-secondary{margin-left:0!important}
+}
