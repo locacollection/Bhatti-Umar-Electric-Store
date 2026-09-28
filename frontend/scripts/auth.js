@@ -287,7 +287,8 @@ async function openAccount(section='profile'){
   switchAccountSection(section);
   try{
     await BHATTI.ensureProfile();
-    if(['admin','super_admin'].includes(BHATTI.profile?.role)){window.location.replace(BHATTI.profile.role==='super_admin'?'super-admin-store.html':'admin-store.html');return;}
+    // Keep every signed-in customer, including admins, inside the customer Account modal.
+    // Administrative access remains available through Admin Studio.
     populateProfileForm();
     Promise.allSettled([loadMyOrders(),window.loadDeliveryAddresses?loadDeliveryAddresses({seed:true}):Promise.resolve()]);
   }catch(error){
