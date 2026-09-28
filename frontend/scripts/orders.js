@@ -87,7 +87,7 @@ function orderActionButtons(order){
   const id=BHATTI.escape(order.id);
   const buttons=[];
   if(['Pending','Confirmed','Processing'].includes(order.status))buttons.push(`<button class="account-order-action is-danger" type="button" data-order-action="cancel" data-order-id="${id}">Cancel order</button>`);
-  if(order.status==='Out for Delivery')buttons.push(`<button class="account-order-action is-positive" type="button" data-order-confirm-delivery="${id}" onclick="confirmOrderDelivery('${id}',this)">Confirm delivery</button>`);
+  if(order.status==='Out for Delivery')buttons.push(`<button class="account-order-action is-positive" type="button" data-order-confirm-delivery="${id}">Confirm delivery</button>`);
   if(isReturnEligible(order))buttons.push(`<button class="account-order-action" type="button" data-order-action="request_return" data-order-id="${id}">Request return</button>`);
   buttons.push(`<button class="account-order-action is-secondary" type="button" data-reorder-order="${id}">Buy again</button>`);
   return `<div class="account-order-actions">${buttons.join('')}</div>`;
@@ -102,19 +102,39 @@ function renderMyOrders(){
     const status=order.status||'Pending';
     const payment=order.payment_status||'Unpaid';
     const paymentMethod=order.payment_method||'Cash on Delivery';
+    const steps=['Pending','Confirmed','Processing','Packed','Shipped','Out for Delivery','Delivered'];
+    const current=Math.max(0,steps.indexOf(status));
+    const progress=Math.round(current/(steps.length-1)*100);
+    const isDelivered=status==='Delivered';
     return `<article class="account-order-card">
       <header class="account-order-head">
-        <div class="order-reference"><small>ORDER ${BHATTI.escape(order.order_number||order.id)}</small><strong>${placed.toLocaleDateString('en-PK',{day:'2-digit',month:'short',year:'numeric'})}</strong></div>
-        <div class="order-total"><small>ORDER TOTAL</small><b>${BHATTI.money(order.total)}</b></div>
+        <div class="order-reference">
+          <small>ORDER NUMBER</small>
+          <strong>${BHATTI.escape(order.order_number||order.id)}</strong>
+          <span>${placed.toLocaleDateString('en-PK',{day:'2-digit',month:'short',year:'numeric'})}</span>
+        </div>
+        <div class="order-total">
+          <small>TOTAL</small>
+          <b>${BHATTI.money(order.total)}</b>
+          <span>${BHATTI.escape(paymentMethod)}</span>
+        </div>
       </header>
-      <div class="order-summary-grid">
-        <div><small>FULFILMENT</small><strong>${BHATTI.escape(status)}</strong></div>
-        <div><small>PAYMENT</small><strong>${BHATTI.escape(payment)}</strong></div>
-        <div><small>METHOD</small><strong>${BHATTI.escape(paymentMethod)}</strong></div>
-        <div><small>PLACED</small><strong>${placed.toLocaleString('en-PK',{day:'2-digit',month:'short',year:'numeric',hour:'numeric',minute:'2-digit'})}</strong></div>
+      <div class="order-status-strip">
+        <div><span>FULFILMENT</span><strong>${BHATTI.escape(status)}</strong></div>
+        <div><span>PAYMENT</span><strong>${BHATTI.escape(payment)}</strong></div>
       </div>
-      ${orderProgress(order)}
-      <div class="account-order-foot"><span>Last updated</span><time>${updated.toLocaleString('en-PK',{day:'2-digit',month:'short',year:'numeric',hour:'numeric',minute:'2-digit'})}</time></div>
+      <section class="order-tracking-card" aria-label="Delivery tracking">
+        <div class="order-tracking-head">
+          <div><span>DELIVERY TRACKING</span><strong>${isDelivered?'Delivered':BHATTI.escape(status)}</strong></div>
+          <span class="order-tracking-percent">${progress}%</span>
+        </div>
+        <div class="order-tracking-bar"><i style="width:${progress}%"></i></div>
+        <div class="order-tracking-labels"><span>Order placed</span><span>Processing</span><span>Out for delivery</span><span>Delivered</span></div>
+      </section>
+      <div class="order-meta-row">
+        <div><span>PLACED</span><strong>${placed.toLocaleString('en-PK',{day:'2-digit',month:'short',hour:'numeric',minute:'2-digit'})}</strong></div>
+        <div><span>LAST UPDATED</span><strong>${updated.toLocaleString('en-PK',{day:'2-digit',month:'short',hour:'numeric',minute:'2-digit'})}</strong></div>
+      </div>
       ${orderActionButtons(order)}
     </article>`;
   }).join(''):`<div class="account-empty"><b>No ${activeOrderFilter==='All'?'':activeOrderFilter.toLowerCase()+' '}orders found.</b><span>Your orders will appear here with fulfilment and payment updates.</span></div>`;
