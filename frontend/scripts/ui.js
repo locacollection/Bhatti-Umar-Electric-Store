@@ -118,6 +118,13 @@ function toggleMenu(){
 }
 
 
+document.addEventListener('keydown',event=>{
+  if(event.key==='Escape' && document.getElementById('mainNav')?.classList.contains('is-open')){
+    closeMenu();
+    document.querySelector('.menu-toggle')?.focus({preventScroll:true});
+  }
+});
+
 // Keep the mobile/header shutter out of the way whenever a header action is chosen.
 // This prevents the menu-open body state from blocking Account, Bag and Search.
 document.addEventListener('click',event=>{
