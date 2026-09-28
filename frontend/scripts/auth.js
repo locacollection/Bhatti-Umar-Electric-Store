@@ -257,22 +257,26 @@ function switchAccountSection(name='profile'){
   const valid=['profile','orders','addresses','contact'];
   if(!valid.includes(name)) name='profile';
   const modal=document.getElementById('accountModal');
-  if(!modal) return;
-  modal.querySelectorAll('[data-account-section]').forEach(button=>{
-    button.classList.toggle('active',button.dataset.accountSection===name);
-    button.setAttribute('aria-current',button.dataset.accountSection===name?'page':'false');
+  if(!modal) return false;
+  modal.querySelectorAll('.account-v4-tab[data-account-section]').forEach(button=>{
+    const active=button.dataset.accountSection===name;
+    button.classList.toggle('active',active);
+    button.setAttribute('aria-current',active?'page':'false');
+    button.setAttribute('aria-selected',active?'true':'false');
   });
-  modal.querySelectorAll('[data-account-panel]').forEach(panel=>{
+  modal.querySelectorAll('.account-v4-panel[data-account-panel]').forEach(panel=>{
     const active=panel.dataset.accountPanel===name;
     panel.hidden=!active;
     panel.classList.toggle('active',active);
+    panel.setAttribute('aria-hidden',active?'false':'true');
   });
   if(name==='orders'){
-    try{ loadMyOrders(); }catch(error){ console.error('BHATTI orders tab:',error); }
+    Promise.resolve().then(()=>loadMyOrders()).catch(error=>console.error('BHATTI orders tab:',error));
   }
   if(name==='addresses'&&typeof window.loadDeliveryAddresses==='function'){
-    try{ window.loadDeliveryAddresses({seed:true}); }catch(error){ console.error('BHATTI addresses tab:',error); }
+    Promise.resolve().then(()=>window.loadDeliveryAddresses({seed:true})).catch(error=>console.error('BHATTI addresses tab:',error));
   }
+  return true;
 }
 
 async function openAccount(section='profile'){
@@ -388,7 +392,13 @@ function handleAuthReturn(session){
 
 async function initAuth(){
   BHATTI.authMode='signin';updateAuthUI();
-  document.querySelectorAll('[data-account-section]').forEach(button=>button.addEventListener('click',()=>switchAccountSection(button.dataset.accountSection)));
+  document.querySelectorAll('#accountModal .account-v4-tab[data-account-section]').forEach(button=>{
+    button.addEventListener('click',event=>{
+      event.preventDefault();
+      event.stopPropagation();
+      switchAccountSection(button.dataset.accountSection);
+    });
+  });
   const{data:{session},error}=await BHATTI.db.auth.getSession();
   if(error)console.warn('Stored BHATTI session could not be restored:',error.message);
   await handleSession(session);handleAuthReturn(session);
