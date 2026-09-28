@@ -11,7 +11,45 @@
 <body>
 <a class="skip-link" href="#shop">Skip to collection</a>
 <div class="announcement"><span>BHATTI ELECTRIC STORE</span><span>Electrical items &amp; supplies across Pakistan</span><span>Homes • Shops • Contractors</span></div>
-<header class="site-header"><div class="nav-shell"><button class="menu-toggle" onclick="toggleWiringu()" aria-label="Open menu" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><a class="brand" href="#home"><strong>BHATTI ELECTRIC STORE</strong><small>LIGHTING • WIRING • PROTECTION</small></a><nav id="mainNav" aria-label="Primary navigation"><div class="mobile-nav-head"><span>BHATTI NAVIGATION</span><button type="button" onclick="closeMenu()" aria-label="Close navigation">×</button></div><a href="#home">Home</a><a href="#new">New Arrivals</a><a href="#shop" onclick="setFilterFromLink('Lighting')">Lighting</a><a href="#shop" onclick="setFilterFromLink('Wiring')">Wiring</a><a href="#shop" onclick="setFilterFromLink('Circuit Protection')">MCB &amp; Protection</a><a href="#shop" onclick="showFeatured()">Popular Products</a><a href="#categories">Product Categories</a><a href="#story">About the store</a><a href="#reviews">Customer Reviews</a><button class="mobile-nav-action" type="button" onclick="closeMenu();openAccount()">My Account &amp; Orders</button><button class="mobile-nav-action" type="button" onclick="closeMenu();toggleCart()">Shopping Cart</button></nav><div class="nav-actions"><span class="sync-pill" id="syncPill"><i></i><span>Live Stock</span></span><button class="nav-icon" onclick="searchProducts()" aria-label="Search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg></button><button class="account-button" onclick="openAccount()" aria-label="Open account"><span id="accountIcon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.8-4 3.2-6 7-6s6.2 2 7 6"/></svg></span><span class="account-label">Account</span></button><button class="bag-button" onclick="toggleCart()" aria-label="Open shopping bag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/></svg><span>Bag</span><b id="cartCount" hidden>0</b></button></div></div></header><div class="nav-scrim" id="navScrim" onclick="closeMenu()" aria-hidden="true"></div>
+<header class="site-header"><div class="nav-shell"><button class="menu-toggle" onclick="toggleWiringu()" aria-label="Open menu" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><a class="brand" href="#home"><strong>BHATTI ELECTRIC STORE</strong><small>LIGHTING • WIRING • PROTECTION</small></a><nav id="mainNav" class="mobile-reference-menu" aria-label="Primary navigation" data-menu-tab="menu">
+  <div class="mobile-menu-top">
+    <div class="mobile-menu-tabs" role="tablist" aria-label="Menu sections">
+      <button type="button" class="mobile-menu-tab is-active" data-menu-tab-button="menu" onclick="switchMobileMenuTab('menu')">MENU</button>
+      <button type="button" class="mobile-menu-tab" data-menu-tab-button="categories" onclick="switchMobileMenuTab('categories')">CATEGORIES</button>
+    </div>
+    <button type="button" class="mobile-menu-close" onclick="closeMenu()" aria-label="Close navigation">×</button>
+  </div>
+  <div class="mobile-menu-search">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg>
+    <input id="mobileMenuSearch" type="search" placeholder="Search" aria-label="Search catalogue" onkeydown="if(event.key==='Enter'){searchProducts();closeMenu();}">
+  </div>
+  <div class="mobile-menu-panel" data-menu-panel="menu">
+    <a href="#home">Home</a>
+    <a href="#new">New Arrivals</a>
+    <a href="#shop" onclick="setFilterFromLink('Lighting')">Lighting</a>
+    <a href="#shop" onclick="setFilterFromLink('Wiring')">Wiring</a>
+    <a href="#shop" onclick="setFilterFromLink('Circuit Protection')">MCB &amp; Protection</a>
+    <a href="#shop" onclick="showFeatured()">Popular Products</a>
+    <a href="#categories">Product Categories</a>
+    <a href="#story">About the Store</a>
+    <a href="#reviews">Customer Reviews</a>
+    <button class="mobile-menu-action" type="button" onclick="closeMenu();openAccount()">My Account &amp; Orders</button>
+    <button class="mobile-menu-action" type="button" onclick="closeMenu();toggleCart()">Shopping Cart</button>
+  </div>
+  <div class="mobile-menu-panel" data-menu-panel="categories" hidden>
+    <a href="#shop" onclick="setFilterFromLink('Lighting')">Lighting <span>＋</span></a>
+    <a href="#shop" onclick="setFilterFromLink('Wiring')">Wiring <span>＋</span></a>
+    <a href="#shop" onclick="setFilterFromLink('Circuit Protection')">MCB &amp; Protection <span>＋</span></a>
+    <a href="#shop" onclick="setFilterFromLink('Fans')">Fans <span>＋</span></a>
+    <a href="#shop" onclick="setFilterFromLink('Switches &amp; Sockets')">Switches &amp; Sockets <span>＋</span></a>
+    <a href="#shop" onclick="setFilterFromLink('Installation Materials')">Installation Materials <span>＋</span></a>
+  </div>
+  <div class="mobile-menu-help">
+    <small>Need help?</small>
+    <a href="tel:+923456789">+92 345 6789</a>
+    <a href="mailto:support@bhattielectric.com">support@bhattielectric.com</a>
+  </div>
+</nav><div class="nav-actions"><span class="sync-pill" id="syncPill"><i></i><span>Live Stock</span></span><button class="nav-icon" onclick="searchProducts()" aria-label="Search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg></button><button class="account-button" onclick="openAccount()" aria-label="Open account"><span id="accountIcon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.8-4 3.2-6 7-6s6.2 2 7 6"/></svg></span><span class="account-label">Account</span></button><button class="bag-button" onclick="toggleCart()" aria-label="Open shopping bag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/></svg><span>Bag</span><b id="cartCount" hidden>0</b></button></div></div></header><div class="nav-scrim" id="navScrim" onclick="closeMenu()" aria-hidden="true"></div>
 <main id="home">
 <section class="power-deck" aria-labelledby="powerDeckTitle">
   <div class="power-deck-main">
