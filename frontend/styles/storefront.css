@@ -1851,3 +1851,92 @@ body{background:#f3f1e9;color:#111416}
  #accountModal #myOrders .account-order-foot{margin:0 14px!important}
  #accountModal #myOrders .account-order-actions{padding-left:14px!important;padding-right:14px!important}
 }
+
+/* CUSTOMER MY ORDERS — industrial order-management cards */
+#accountModal #myOrders{display:grid!important;gap:18px!important}
+#accountModal #myOrders .account-order-card{
+  border:1px solid #cfd4d2!important;border-radius:12px!important;background:#fff!important;
+  box-shadow:0 7px 22px rgba(20,28,30,.07)!important;overflow:hidden!important;
+}
+#accountModal #myOrders .account-order-head{
+  display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;gap:20px!important;
+  padding:20px 22px!important;background:#111719!important;border:0!important;color:#fff!important;
+}
+#accountModal #myOrders .order-reference,
+#accountModal #myOrders .order-total{display:grid!important;gap:5px!important}
+#accountModal #myOrders .order-total{text-align:right!important;justify-items:end!important}
+#accountModal #myOrders .account-order-head small{
+  margin:0!important;color:#9ea8aa!important;font-size:8px!important;font-weight:800!important;
+  letter-spacing:.12em!important;text-transform:uppercase!important;
+}
+#accountModal #myOrders .order-reference strong{font-size:17px!important;line-height:1.2!important;color:#fff!important}
+#accountModal #myOrders .order-reference span,
+#accountModal #myOrders .order-total span{font-size:9px!important;color:#aeb7b8!important}
+#accountModal #myOrders .order-total b{font-size:19px!important;line-height:1.1!important;color:#f1b52f!important}
+#accountModal #myOrders .order-status-strip{
+  display:grid!important;grid-template-columns:1fr 1fr!important;border-bottom:1px solid #dfe3e1!important;
+  background:#f5f7f6!important;
+}
+#accountModal #myOrders .order-status-strip>div{
+  padding:14px 18px!important;display:grid!important;gap:4px!important;
+}
+#accountModal #myOrders .order-status-strip>div+div{border-left:1px solid #dfe3e1!important}
+#accountModal #myOrders .order-status-strip span,
+#accountModal #myOrders .order-meta-row span,
+#accountModal #myOrders .order-tracking-head span{
+  color:#6e787a!important;font-size:7px!important;font-weight:900!important;letter-spacing:.12em!important;
+  text-transform:uppercase!important;
+}
+#accountModal #myOrders .order-status-strip strong{font-size:12px!important;color:#20282a!important}
+#accountModal #myOrders .order-tracking-card{
+  margin:18px!important;padding:16px!important;border:1px solid #d8ddda!important;
+  border-radius:9px!important;background:#fafbfa!important;
+}
+#accountModal #myOrders .order-tracking-head{
+  display:flex!important;justify-content:space-between!important;align-items:center!important;gap:15px!important;
+}
+#accountModal #myOrders .order-tracking-head>div{display:grid!important;gap:4px!important}
+#accountModal #myOrders .order-tracking-head strong{font-size:13px!important;color:#182022!important}
+#accountModal #myOrders .order-tracking-percent{
+  padding:5px 8px!important;border-radius:5px!important;background:#e7aa32!important;color:#111!important;
+  font-size:8px!important;font-weight:900!important;
+}
+#accountModal #myOrders .order-tracking-bar{
+  height:7px!important;margin:15px 0 9px!important;border-radius:99px!important;background:#dfe4e1!important;overflow:hidden!important;
+}
+#accountModal #myOrders .order-tracking-bar i{
+  display:block!important;height:100%!important;border-radius:inherit!important;background:#e7aa32!important;
+}
+#accountModal #myOrders .order-tracking-labels{
+  display:flex!important;justify-content:space-between!important;gap:8px!important;
+  color:#7a8385!important;font-size:7px!important;line-height:1.3!important;
+}
+#accountModal #myOrders .order-meta-row{
+  display:grid!important;grid-template-columns:1fr 1fr!important;border-top:1px solid #e1e4e2!important;
+  margin:0 18px!important;
+}
+#accountModal #myOrders .order-meta-row>div{display:grid!important;gap:4px!important;padding:13px 0!important}
+#accountModal #myOrders .order-meta-row>div+div{padding-left:18px!important;border-left:1px solid #e1e4e2!important}
+#accountModal #myOrders .order-meta-row strong{font-size:10px!important;color:#384143!important}
+#accountModal #myOrders .account-order-actions{
+  display:flex!important;gap:8px!important;flex-wrap:wrap!important;
+  margin:0!important;padding:14px 18px 18px!important;background:#f7f8f7!important;border-top:1px solid #e1e4e2!important;
+}
+#accountModal #myOrders .account-order-action{
+  min-height:37px!important;padding:9px 13px!important;border-radius:6px!important;
+  border:1px solid #bfc6c4!important;background:#fff!important;color:#303a3c!important;
+  font-size:8px!important;font-weight:900!important;letter-spacing:.07em!important;text-transform:uppercase!important;
+}
+#accountModal #myOrders .account-order-action.is-positive{background:#e7aa32!important;border-color:#e7aa32!important;color:#111!important}
+#accountModal #myOrders .account-order-action.is-secondary{margin-left:auto!important;background:#111719!important;border-color:#111719!important;color:#fff!important}
+#accountModal #myOrders .account-order-action:hover{transform:translateY(-1px)!important}
+@media(max-width:620px){
+ #accountModal #myOrders .account-order-head{grid-template-columns:1fr!important}
+ #accountModal #myOrders .order-total{text-align:left!important;justify-items:start!important}
+ #accountModal #myOrders .order-status-strip{grid-template-columns:1fr!important}
+ #accountModal #myOrders .order-status-strip>div+div{border-left:0!important;border-top:1px solid #dfe3e1!important}
+ #accountModal #myOrders .order-tracking-labels{font-size:6px!important}
+ #accountModal #myOrders .order-meta-row{grid-template-columns:1fr!important}
+ #accountModal #myOrders .order-meta-row>div+div{padding-left:0!important;border-left:0!important;border-top:1px solid #e1e4e2!important}
+ #accountModal #myOrders .account-order-action.is-secondary{margin-left:0!important}
+}
