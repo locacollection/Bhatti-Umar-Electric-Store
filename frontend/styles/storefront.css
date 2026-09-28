@@ -2344,3 +2344,103 @@ body{background:#f3f1e9;color:#111416}
   #accountModal .account-userbar{padding:5px 9px 2px!important}
   #accountModal .account-tab{height:32px!important;min-height:32px!important}
 }
+
+
+/* ACCOUNT FINAL MOBILE/NOTCH CLEANUP */
+#accountModal .account-shell{
+  margin-top:env(safe-area-inset-top, 6px)!important;
+  max-height:calc(100dvh - env(safe-area-inset-top, 6px) - 8px)!important;
+}
+#accountModal .account-shell-head{
+  height:38px!important;
+  min-height:38px!important;
+  padding:3px 12px!important;
+}
+#accountModal .account-brand{align-items:center!important;line-height:1!important}
+#accountModal .account-brand-mark{width:22px!important;height:22px!important;font-size:12px!important}
+#accountModal .account-brand span{font-size:7px!important;line-height:1!important}
+#accountModal .account-brand strong{font-size:9px!important;line-height:1!important}
+#accountModal .account-close{width:27px!important;height:27px!important;font-size:18px!important}
+#accountModal .account-userbar{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  grid-template-rows:auto auto!important;
+  gap:5px!important;
+  padding:5px 10px!important;
+  min-height:0!important;
+}
+#accountModal .account-user{
+  min-height:28px!important;
+  display:flex!important;
+  align-items:center!important;
+}
+#accountModal .account-tabs{
+  grid-column:1!important;
+  grid-row:2!important;
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  grid-template-rows:36px!important;
+  gap:4px!important;
+  width:100%!important;
+  margin:0!important;
+  padding:0!important;
+}
+#accountModal .account-tab{
+  min-width:0!important;
+  width:100%!important;
+  height:36px!important;
+  min-height:36px!important;
+  padding:3px 2px!important;
+  border-radius:7px!important;
+  gap:2px!important;
+}
+#accountModal .account-tab::before{
+  width:15px!important;height:15px!important;flex:0 0 15px!important;font-size:8px!important;
+}
+#accountModal .account-tab span{
+  width:auto!important;
+  font-size:7px!important;
+  line-height:1!important;
+  letter-spacing:0!important;
+  white-space:normal!important;
+}
+#accountModal .account-body{
+  padding:8px!important;
+  overflow:auto!important;
+}
+#accountModal .account-page-head{
+  margin-bottom:8px!important;
+  padding-bottom:7px!important;
+}
+#accountModal .account-page-head h2{font-size:17px!important}
+#accountModal .account-page-head p{font-size:8px!important}
+#accountModal .account-profile-footer{
+  display:flex!important;
+  justify-content:flex-end!important;
+  margin-top:10px!important;
+  padding-top:8px!important;
+  border-top:1px solid #dedbd2!important;
+}
+#accountModal .account-profile-footer .account-signout{
+  display:inline-flex!important;
+  min-height:32px!important;
+  align-items:center!important;
+  justify-content:center!important;
+  padding:6px 14px!important;
+}
+@media(max-width:520px){
+  #accountModal .account-shell{
+    width:calc(100vw - 8px)!important;
+    max-height:calc(100dvh - env(safe-area-inset-top, 4px) - 6px)!important;
+  }
+  #accountModal .account-shell-head{
+    height:36px!important;
+    min-height:36px!important;
+    padding:2px 9px!important;
+  }
+  #accountModal .account-userbar{padding:4px 8px!important;gap:4px!important}
+  #accountModal .account-tabs{height:34px!important;grid-template-rows:34px!important;gap:3px!important}
+  #accountModal .account-tab{height:34px!important;min-height:34px!important}
+  #accountModal .account-tab span{font-size:6.5px!important}
+  #accountModal .account-body{padding:7px!important}
+}
