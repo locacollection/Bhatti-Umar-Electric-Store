@@ -91,7 +91,7 @@ function toggleMenu(){
   const button=document.querySelector('.menu-toggle');
   const open=nav?.classList.toggle('is-open');
   button?.setAttribute('aria-expanded',String(!!open));
-  document.body.classList.toggle('menu-open',!!open);
+  // The header menu is navigation, not a modal: keep the page scrollable and expose a side panel.\n  document.body.classList.remove('menu-open');
 }
 
 // Keep the mobile/header shutter out of the way whenever a header action is chosen.
