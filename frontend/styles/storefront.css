@@ -1111,3 +1111,26 @@ body{background:#f3f1e9;color:#111416}
 #accountModal .account-v2-form input,#accountModal .account-v2-form textarea{width:100%;box-sizing:border-box;border:1px solid #b9bdb9;border-radius:5px;background:#fff;color:#111416;padding:13px;font:600 12px var(--sans);outline:none}.account-v2-form textarea{min-height:105px;resize:vertical}.account-v2-form input:focus,.account-v2-form textarea:focus{border-color:#e3a52f;box-shadow:0 0 0 3px rgba(227,165,47,.14)}.account-v2-form input[readonly]{background:#e6e4dc;color:#6b7375}
 #accountModal .account-v2-info{padding:12px 14px;border-left:3px solid #e3a52f;background:#e8e6de;color:#60686b;font-size:10px;line-height:1.5}.account-v2-primary{width:max-content;min-width:145px;height:42px;padding:0 18px;border:1px solid #111416;background:#111416;color:#e3a52f;font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;cursor:pointer}.account-v2-primary:hover{background:#e3a52f;color:#111416}.account-v2-message{font-size:10px;font-weight:800;color:#277052}.account-v2-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.account-v2-filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}.account-v2-filters button{border:1px solid #b9bdb9;background:#fff;color:#5c6467;padding:9px 11px;font-size:8px;font-weight:900;text-transform:uppercase;cursor:pointer}.account-v2-filters button.active{background:#111416;color:#e3a52f;border-color:#111416}.account-v2-orders{display:grid;gap:10px}
 @media(max-width:700px){#accountModal .account-v2{width:100vw;height:94vh;max-height:94vh;border-radius:16px 16px 0 0}#accountModal .account-v2-head{height:68px;padding:0 15px}.account-v2-brand h2{font-size:19px}#accountModal .account-v2-body{height:calc(100% - 68px);display:block}#accountModal .account-v2-side{display:none}#accountModal .account-v2-main{height:100%}.account-v2-mobile-tabs{display:flex;position:sticky;top:0;z-index:2;gap:4px;padding:8px;background:#171c1e;overflow-x:auto}.account-v2-mobile-tabs .account-v2-tab{flex:1 0 100px;min-height:38px;text-align:center;padding:0 8px;font-size:8px;font-weight:900;text-transform:uppercase}.account-v2-panel{padding:25px 18px!important}.account-v2-title h3{font-size:25px}.account-v2-grid{grid-template-columns:1fr}.account-v2-refresh{position:static;margin-top:12px}}
+
+/* Account tabs: show every section at once on mobile, no horizontal sliding */
+@media(max-width:700px){
+  #accountModal .account-v2-mobile-tabs{
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:4px;
+    overflow:visible;
+    width:100%;
+    box-sizing:border-box;
+  }
+  #accountModal .account-v2-mobile-tabs .account-v2-tab{
+    min-width:0;
+    width:100%;
+    flex:initial;
+    min-height:42px;
+    padding:0 4px;
+    white-space:normal;
+    overflow-wrap:anywhere;
+    font-size:7px;
+    line-height:1.15;
+  }
+}
