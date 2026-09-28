@@ -15,15 +15,17 @@ function latestOrderAction(orderId){
 }
 function orderProgress(order){
   const steps=['Pending','Confirmed','Processing','Packed','Shipped','Out for Delivery','Delivered'];
-  const index=Math.max(0,steps.indexOf(order.status));
-  const percent=order.status==='Delivered'?100:Math.round(index/(steps.length-1)*100);
+  const current=steps.indexOf(order.status);
+  const index=current<0?0:current;
   const action=latestOrderAction(order.id);
-  if(order.status==='Cancelled')return `<div class="order-exception is-cancelled"><b>Cancelled by ${BHATTI.escape((order.cancelled_by==='customer'?'you':(order.cancelled_by||'BHATTI')).toLowerCase())}</b><span>${BHATTI.escape(order.cancel_reason||'Cancellation details pending')}</span></div>`;
-  if(order.status==='Return Requested')return `<div class="order-exception is-return-requested"><b>Return request received</b><span>${BHATTI.escape(action?.reason||'Our team will review your request shortly.')}</span></div>`;
-  if(order.status==='Returned')return '<div class="order-exception is-returned"><b>Return recorded</b><span>Our team will contact you with the next step.</span></div>';
-  return `<div class="order-progress"><div class="order-progress-track"><i style="width:${percent}%"></i></div><div><span>Order placed</span><span>${order.status==='Delivered'?'Delivered':BHATTI.escape(order.status||'Pending')}</span></div></div>`;
+  if(order.status==='Cancelled')return `<section class="order-exception is-cancelled"><strong>Order cancelled</strong><span>${BHATTI.escape((order.cancel_reason||'Cancellation details pending'))}</span></section>`;
+  if(order.status==='Return Requested')return `<section class="order-exception is-return-requested"><strong>Return request received</strong><span>${BHATTI.escape(action?.reason||'Our team will review your request shortly.')}</span></section>`;
+  if(order.status==='Returned')return '<section class="order-exception is-returned"><strong>Return completed</strong><span>Your return has been recorded.</span></section>';
+  return `<section class="order-timeline" aria-label="Order progress">
+    <div class="order-timeline-line"><i style="width:${Math.round(index/(steps.length-1)*100)}%"></i></div>
+    <div class="order-timeline-steps">${steps.map((step,i)=>`<span class="${i<=index?'is-done':''} ${i===index?'is-current':''}"><i>${i<index?'✓':i+1}</i><b>${BHATTI.escape(step)}</b></span>`).join('')}</div>
+  </section>`;
 }
-
 async function seedDeliveryAddresses(){if(!BHATTI.currentUser)return[];const profile=BHATTI.profile||{},legacy=readLegacyAddresses(),candidates=[];if(false)candidates.push({label:'Home',recipient_name:profile.full_name||'',phone:profile.phone||'',address_line:profile.address_line,city:profile.city||'',is_default:true});legacy.forEach((item,index)=>{if(!item?.address_line||candidates.some(entry=>entry.address_line===item.address_line&&entry.city===(item.city||'')))return;candidates.push({label:item.title||`Saved address ${index+1}`,recipient_name:item.name||profile.full_name||'',phone:item.phone||profile.phone||'',address_line:item.address_line,city:item.city||profile.city||'',is_default:candidates.length===0})});if(!candidates.length)return[];const payload=candidates.slice(0,8).map((item,index)=>({...item,user_id:BHATTI.currentUser.id,is_default:index===0})),{data,error}=await BHATTI.db.from('addresses').insert(payload).select('*');if(error)throw error;return data||[]}
 async function loadDeliveryAddresses({seed=false}={}){if(!BHATTI.currentUser)return[];if(addressLoadPromise)return addressLoadPromise;addressLoadPromise=(async()=>{const{data,error}=await BHATTI.db.from('addresses').select('*').eq('user_id',BHATTI.currentUser.id).order('is_default',{ascending:false}).order('created_at',{ascending:true});if(error)throw error;let rows=data||[];if(seed&&!rows.length)rows=await seedDeliveryAddresses();BHATTI.addresses=rows;renderAccountAddresses();renderAddressOptions();return rows})();try{return await addressLoadPromise}catch(error){console.warn('Address book could not be loaded',error);BHATTI.addresses=[];renderAccountAddresses(error.message);renderAddressOptions();return[]}finally{addressLoadPromise=null}}
 function renderAddressOptions(){const select=document.getElementById('coSavedAddress');if(!select)return;const list=BHATTI.addresses||[];select.innerHTML=list.length?list.map(address=>`<option value="${BHATTI.escape(address.id)}">${address.is_default?'Default · ':''}${BHATTI.escape(address.label||'Saved address')} · ${BHATTI.escape(addressLabel(address))}</option>`).join(''):'<option value="">No saved address yet</option>';applySavedAddress()}
@@ -85,7 +87,7 @@ function orderActionButtons(order){
   const id=BHATTI.escape(order.id);
   const buttons=[];
   if(['Pending','Confirmed','Processing'].includes(order.status))buttons.push(`<button class="account-order-action is-danger" type="button" data-order-action="cancel" data-order-id="${id}">Cancel order</button>`);
-  if(order.status==='Out for Delivery')buttons.push(`<button class="account-order-action is-positive" type="button" data-order-confirm-delivery="${id}">Confirm delivery</button>`);
+  if(order.status==='Out for Delivery')buttons.push(`<button class="account-order-action is-positive" type="button" data-order-confirm-delivery="${id}" onclick="confirmOrderDelivery('${id}',this)">Confirm delivery</button>`);
   if(isReturnEligible(order))buttons.push(`<button class="account-order-action" type="button" data-order-action="request_return" data-order-id="${id}">Request return</button>`);
   buttons.push(`<button class="account-order-action is-secondary" type="button" data-reorder-order="${id}">Buy again</button>`);
   return `<div class="account-order-actions">${buttons.join('')}</div>`;
@@ -94,7 +96,28 @@ function renderMyOrders(){
   const box=document.getElementById('myOrders');
   if(!box)return;
   const list=myOrdersCache.filter(matchesOrderFilter);
-  box.innerHTML=list.length?list.map(order=>`<article class="account-order-card"><div class="account-order-head"><div><small>${new Date(order.created_at).toLocaleDateString('en-PK',{day:'numeric',month:'short',year:'numeric'})}</small><strong>${BHATTI.escape(order.order_number||order.id)}</strong></div><div><b>${BHATTI.money(order.total)}</b><small>${BHATTI.escape(order.payment_method||'Cash on Delivery')}</small></div></div><div class="account-order-status">${storefrontStatusBadge(order.status)}${storefrontStatusBadge(order.payment_status,'payment')}</div>${orderProgress(order)}${customerActionReceipt(order)}<div class="account-order-foot"><span>Last update</span><time>${new Date(order.status_updated_at||order.created_at).toLocaleString('en-PK')}</time></div>${orderActionButtons(order)}</article>`).join(''):`<div class="account-empty"><b>No ${activeOrderFilter==='All'?'':activeOrderFilter.toLowerCase()+' '}orders found.</b><span>Your orders will appear here with payment and delivery updates.</span></div>`;
+  box.innerHTML=list.length?list.map(order=>{
+    const placed=new Date(order.created_at);
+    const updated=new Date(order.status_updated_at||order.updated_at||order.created_at);
+    const status=order.status||'Pending';
+    const payment=order.payment_status||'Unpaid';
+    const paymentMethod=order.payment_method||'Cash on Delivery';
+    return `<article class="account-order-card">
+      <header class="account-order-head">
+        <div class="order-reference"><small>ORDER ${BHATTI.escape(order.order_number||order.id)}</small><strong>${placed.toLocaleDateString('en-PK',{day:'2-digit',month:'short',year:'numeric'})}</strong></div>
+        <div class="order-total"><small>ORDER TOTAL</small><b>${BHATTI.money(order.total)}</b></div>
+      </header>
+      <div class="order-summary-grid">
+        <div><small>FULFILMENT</small><strong>${BHATTI.escape(status)}</strong></div>
+        <div><small>PAYMENT</small><strong>${BHATTI.escape(payment)}</strong></div>
+        <div><small>METHOD</small><strong>${BHATTI.escape(paymentMethod)}</strong></div>
+        <div><small>PLACED</small><strong>${placed.toLocaleString('en-PK',{day:'2-digit',month:'short',year:'numeric',hour:'numeric',minute:'2-digit'})}</strong></div>
+      </div>
+      ${orderProgress(order)}
+      <div class="account-order-foot"><span>Last updated</span><time>${updated.toLocaleString('en-PK',{day:'2-digit',month:'short',year:'numeric',hour:'numeric',minute:'2-digit'})}</time></div>
+      ${orderActionButtons(order)}
+    </article>`;
+  }).join(''):`<div class="account-empty"><b>No ${activeOrderFilter==='All'?'':activeOrderFilter.toLowerCase()+' '}orders found.</b><span>Your orders will appear here with fulfilment and payment updates.</span></div>`;
 }
 async function loadMyOrders(){
   const box=document.getElementById('myOrders');
@@ -186,29 +209,17 @@ async function submitOrderAction(event){
   }
 }
 async function confirmOrderDelivery(orderId,button){
-  const approved=await BHATTI.ask({
-    eyebrow:'Delivery confirmation',
-    title:'Have you received this order?',
-    message:'Confirm only after the parcel is in your hands. The order will be marked as delivered.',
-    action:'Yes, received',
-    secondaryAction:'Not yet',
-    tone:'success'
-  });
-  if(!approved)return;
+  const order=myOrdersCache.find(item=>String(item.id)===String(orderId));
+  if(!order)return;
+  if(order.status!=='Out for Delivery'){BHATTI.notice({eyebrow:'Delivery confirmation',title:'Not ready for confirmation.',message:'This order is not currently marked Out for Delivery.',tone:'error',action:'Close'});return}
+  if(!window.confirm('Confirm that you have received this order?'))return;
   const original=button?.textContent;
-  if(button){button.disabled=true;button.textContent='Confirming…';}
+  if(button){button.disabled=true;button.textContent='Updating…';}
   try{
     await executeCustomerOrderAction(orderId,'confirm_delivery');
-    BHATTI.notice({
-      eyebrow:'Delivery confirmed',
-      title:'Thank you for confirming.',
-      message:'The order is now marked as delivered. Your seven-day return request window is available in My Orders.',
-      tone:'success',
-      action:'Done'
-    });
+    BHATTI.notice({eyebrow:'Delivery confirmed',title:'Order marked as delivered.',message:'Your order history has been updated and the return window is now available.',tone:'success',action:'Done'});
   }catch(error){
     BHATTI.notice({eyebrow:'Delivery update',title:'Delivery was not confirmed.',message:error.message||'Please try again.',tone:'error',action:'Close'});
-  }finally{
     if(button){button.disabled=false;button.textContent=original||'Confirm delivery';}
   }
 }
