@@ -1170,3 +1170,36 @@ body{background:#f3f1e9;color:#111416}
     font-size:7px!important;
   }
 }
+
+/* Account navigation: studio-style 2-row tab layout on mobile */
+@media(max-width:700px){
+  #accountModal .account-v2-mobile-tabs{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:6px!important;
+    padding:8px!important;
+    overflow:visible!important;
+    background:#171c1e!important;
+  }
+  #accountModal .account-v2-mobile-tabs .account-v2-tab{
+    min-width:0!important;
+    width:100%!important;
+    min-height:46px!important;
+    padding:0 10px!important;
+    flex:none!important;
+    font-size:9px!important;
+    font-weight:900!important;
+    letter-spacing:.08em!important;
+    text-transform:uppercase!important;
+    white-space:nowrap!important;
+    overflow:visible!important;
+    border:1px solid #343b3e!important;
+    background:#20272a!important;
+    color:#aeb5b7!important;
+  }
+  #accountModal .account-v2-mobile-tabs .account-v2-tab.active{
+    background:#e3a52f!important;
+    color:#111416!important;
+    border-color:#e3a52f!important;
+  }
+}
