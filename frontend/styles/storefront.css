@@ -1786,3 +1786,24 @@ body{background:#f3f1e9;color:#111416}
  #accountModal .account-order-actions{padding:12px 14px 15px!important}
  #accountModal .account-order-action.is-secondary{margin-left:0!important}
 }
+
+
+/* FINAL CUSTOMER MY ORDERS VISUAL SYSTEM */
+#accountModal #myOrders .account-order-card{font-family:var(--sans,Arial,sans-serif)!important;color:#171b1c!important}
+#accountModal #myOrders .order-progress{display:block!important;margin:16px 20px!important;padding:16px!important;border:1px solid #d9d5cb!important;border-radius:12px!important;background:#f4f2ec!important}
+#accountModal #myOrders .order-progress-track{display:block!important;height:8px!important;margin:0 0 14px!important;overflow:hidden!important;border-radius:999px!important;background:#d7d3c9!important}
+#accountModal #myOrders .order-progress-track i{display:block!important;height:100%!important;min-width:8px!important;border-radius:999px!important;background:#e7aa32!important}
+#accountModal #myOrders .order-progress>div:last-child{display:grid!important;grid-template-columns:1fr 1fr!important;gap:12px!important}
+#accountModal #myOrders .order-progress>div:last-child span{display:block!important;padding:10px 11px!important;border:1px solid #dedbd2!important;border-radius:8px!important;background:#fff!important;color:#4d5557!important;font-size:10px!important;font-weight:800!important;line-height:1.3!important}
+#accountModal #myOrders .order-progress>div:last-child span:last-child{text-align:right!important;color:#171b1c!important}
+#accountModal #myOrders .order-exception{display:grid!important;gap:5px!important;margin:16px 20px!important;padding:15px 16px!important;border-radius:10px!important}
+#accountModal #myOrders .order-exception b{font-size:11px!important}
+#accountModal #myOrders .order-exception span{font-size:10px!important;line-height:1.5!important}
+#accountModal #myOrders .account-order-card .customer-action-receipt{display:grid!important}
+#accountModal #myOrders .account-order-card .account-order-foot{background:#fff!important}
+#accountModal #myOrders .account-order-card .account-order-actions{background:#f7f5ef!important}
+@media(max-width:620px){
+ #accountModal #myOrders .order-progress,#accountModal #myOrders .order-exception{margin-left:14px!important;margin-right:14px!important}
+ #accountModal #myOrders .order-progress>div:last-child{grid-template-columns:1fr!important}
+ #accountModal #myOrders .order-progress>div:last-child span:last-child{text-align:left!important}
+}
