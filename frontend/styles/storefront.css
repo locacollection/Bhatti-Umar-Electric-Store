@@ -1807,3 +1807,47 @@ body{background:#f3f1e9;color:#111416}
  #accountModal #myOrders .order-progress>div:last-child{grid-template-columns:1fr!important}
  #accountModal #myOrders .order-progress>div:last-child span:last-child{text-align:left!important}
 }
+
+/* MY ORDERS — industrial order management UI v2 */
+#accountModal #myOrders .account-order-card{border:1px solid #d7d4cc!important;border-radius:16px!important;background:#fff!important;box-shadow:0 10px 28px rgba(20,24,25,.07)!important}
+#accountModal #myOrders .account-order-head{display:flex!important;justify-content:space-between!important;align-items:center!important;gap:20px!important;padding:18px 20px!important;background:#1d2325!important}
+#accountModal #myOrders .account-order-head small{display:block!important;color:#aeb6b8!important;font-size:8px!important;font-weight:800!important;letter-spacing:.1em!important}
+#accountModal #myOrders .account-order-head strong{display:block!important;margin-top:5px!important;color:#fff!important;font-size:13px!important}
+#accountModal #myOrders .account-order-head .order-total{text-align:right!important}
+#accountModal #myOrders .account-order-head .order-total b{display:block!important;margin-top:5px!important;color:#f0b33a!important;font-size:18px!important}
+#accountModal #myOrders .order-summary-grid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;border-bottom:1px solid #e3e0d8!important}
+#accountModal #myOrders .order-summary-grid>div{min-width:0!important;padding:14px 16px!important;border-right:1px solid #e3e0d8!important}
+#accountModal #myOrders .order-summary-grid>div:last-child{border-right:0!important}
+#accountModal #myOrders .order-summary-grid small{display:block!important;margin-bottom:6px!important;color:#7a8081!important;font-size:7px!important;font-weight:900!important;letter-spacing:.1em!important}
+#accountModal #myOrders .order-summary-grid strong{display:block!important;color:#202628!important;font-size:10px!important;line-height:1.35!important;overflow-wrap:anywhere!important}
+#accountModal #myOrders .order-timeline{margin:18px 20px!important;padding:17px 16px 14px!important;border:1px solid #ddd9d0!important;border-radius:12px!important;background:#f7f5ef!important}
+#accountModal #myOrders .order-timeline-line{height:5px!important;margin:4px 9px 13px!important;background:#d9d5ca!important;border-radius:999px!important;overflow:hidden!important}
+#accountModal #myOrders .order-timeline-line i{display:block!important;height:100%!important;background:#e7aa32!important;border-radius:999px!important}
+#accountModal #myOrders .order-timeline-steps{display:grid!important;grid-template-columns:repeat(7,minmax(0,1fr))!important;gap:5px!important}
+#accountModal #myOrders .order-timeline-steps span{display:grid!important;justify-items:center!important;gap:5px!important;text-align:center!important;color:#8a8f90!important}
+#accountModal #myOrders .order-timeline-steps i{width:20px!important;height:20px!important;display:grid!important;place-items:center!important;border-radius:50%!important;border:1px solid #c9c5bb!important;background:#fff!important;font-style:normal!important;font-size:8px!important}
+#accountModal #myOrders .order-timeline-steps b{font-size:7px!important;line-height:1.25!important;font-weight:800!important}
+#accountModal #myOrders .order-timeline-steps .is-done{color:#303638!important}
+#accountModal #myOrders .order-timeline-steps .is-done i{border-color:#e7aa32!important;background:#e7aa32!important;color:#17191a!important}
+#accountModal #myOrders .order-timeline-steps .is-current b{color:#17191a!important}
+#accountModal #myOrders .order-exception{margin:18px 20px!important}
+#accountModal #myOrders .account-order-foot{margin:0 20px!important;padding:12px 0!important;border-top:1px solid #e3e0d8!important}
+#accountModal #myOrders .account-order-actions{padding:13px 20px 17px!important;background:#f8f7f3!important}
+#accountModal #myOrders .account-order-action{font-weight:800!important}
+#accountModal #myOrders .account-order-action.is-positive{background:#e7aa32!important;border-color:#e7aa32!important;color:#17191a!important}
+@media(max-width:700px){
+ #accountModal #myOrders .order-summary-grid{grid-template-columns:1fr 1fr!important}
+ #accountModal #myOrders .order-summary-grid>div:nth-child(2){border-right:0!important}
+ #accountModal #myOrders .order-summary-grid>div:nth-child(-n+2){border-bottom:1px solid #e3e0d8!important}
+ #accountModal #myOrders .order-timeline{overflow-x:auto!important}
+ #accountModal #myOrders .order-timeline-steps{min-width:600px!important}
+}
+@media(max-width:520px){
+ #accountModal #myOrders .account-order-head{align-items:flex-start!important;flex-direction:column!important}
+ #accountModal #myOrders .account-order-head .order-total{text-align:left!important}
+ #accountModal #myOrders .order-summary-grid{grid-template-columns:1fr!important}
+ #accountModal #myOrders .order-summary-grid>div{border-right:0!important;border-bottom:1px solid #e3e0d8!important}
+ #accountModal #myOrders .order-summary-grid>div:last-child{border-bottom:0!important}
+ #accountModal #myOrders .account-order-foot{margin:0 14px!important}
+ #accountModal #myOrders .account-order-actions{padding-left:14px!important;padding-right:14px!important}
+}
