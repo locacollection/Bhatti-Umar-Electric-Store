@@ -1302,3 +1302,61 @@ body{background:#f3f1e9;color:#111416}
 #accountModal .account-v4-tab{min-height:58px!important;height:58px!important;flex-basis:58px!important;grid-template-columns:22px minmax(0,1fr)!important;padding:7px 5px!important}.account-v4-tab b{font-size:7px!important}.account-v4-tab small{font-size:6px!important}
 #accountModal .account-v4-panel{padding:22px 15px!important}.account-v4-title h3{font-size:22px!important}.account-v4-form{max-width:none!important}
 }
+/* CUSTOMER ACCOUNT — eliminate horizontal overflow at every level */
+#accountModal,
+#accountModal .modal-card,
+#accountModal .account-v4,
+#accountModal .account-v4-header,
+#accountModal .account-v4-layout,
+#accountModal .account-v4-tabs,
+#accountModal .account-v4-content,
+#accountModal .account-v4-panel{
+  max-width:100%!important;
+  overflow-x:hidden!important;
+}
+#accountModal .account-v4-layout{
+  width:100%!important;
+  min-width:0!important;
+}
+#accountModal .account-v4-tabs,
+#accountModal .account-v4-content{
+  min-width:0!important;
+  width:100%!important;
+}
+#accountModal .account-v4-tab{
+  min-width:0!important;
+  max-width:100%!important;
+  overflow:hidden!important;
+}
+#accountModal .account-v4-tab span,
+#accountModal .account-v4-tab b,
+#accountModal .account-v4-tab small{
+  min-width:0!important;
+  max-width:100%!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+@media(max-width:700px){
+  #accountModal .account-v4{
+    width:100%!important;
+    max-width:100%!important;
+    margin:0!important;
+  }
+  #accountModal .account-v4-layout{
+    grid-template-columns:128px minmax(0,1fr)!important;
+  }
+  #accountModal .account-v4-tabs{
+    width:128px!important;
+    max-width:128px!important;
+  }
+  #accountModal .account-v4-content{
+    width:auto!important;
+    max-width:100%!important;
+  }
+  #accountModal .account-v4-tab{
+    width:100%!important;
+    max-width:100%!important;
+    padding-left:5px!important;
+    padding-right:5px!important;
+  }
+}
