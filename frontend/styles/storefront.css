@@ -2864,3 +2864,80 @@ body{background:#f3f1e9;color:#111416}
   #accountModal .account-tab::before{font-size:11px!important}
   #accountModal .account-body{padding:7px!important}
 }
+
+
+/* ========================================================================
+   BHATTI MOBILE MENU + ACCOUNT OVERLAP HARDENING
+   ======================================================================== */
+@media (max-width: 900px){
+  body.menu-open{overflow:hidden!important}
+  .site-header{z-index:1200!important}
+  .site-header nav#mainNav.mobile-reference-menu{
+    position:fixed!important;left:0!important;top:0!important;bottom:0!important;
+    width:min(390px,88vw)!important;height:100dvh!important;max-height:100dvh!important;
+    margin:0!important;padding:0!important;display:flex!important;flex-direction:column!important;
+    align-items:stretch!important;gap:0!important;overflow:hidden!important;
+    background:#fff!important;color:#171b1d!important;
+    box-shadow:22px 0 60px rgba(0,0,0,.18)!important;
+    transform:translateX(-105%)!important;
+    transition:transform .32s cubic-bezier(.16,1,.3,1)!important;z-index:1300!important;
+  }
+  .site-header nav#mainNav.mobile-reference-menu.is-open{transform:translateX(0)!important}
+  .site-header nav#mainNav.mobile-reference-menu a:after{display:none!important}
+  .mobile-menu-top{display:grid!important;grid-template-columns:1fr 48px!important;min-height:58px!important;border-bottom:1px solid #dedbd4!important;background:#fff!important}
+  .mobile-menu-tabs{display:grid!important;grid-template-columns:1fr 1fr!important;align-items:stretch!important}
+  .mobile-menu-tab{position:relative!important;border:0!important;border-bottom:2px solid transparent!important;background:#fff!important;color:#777c7e!important;font-size:10px!important;font-weight:800!important;letter-spacing:.08em!important}
+  .mobile-menu-tab.is-active{color:#171b1d!important;border-bottom-color:#e3a52f!important}
+  .mobile-menu-close{width:48px!important;height:58px!important;border:0!important;border-left:1px solid #dedbd4!important;border-radius:0!important;background:#171b1d!important;color:#fff!important;font-size:27px!important;line-height:1!important}
+  .mobile-menu-search{display:flex!important;align-items:center!important;gap:9px!important;margin:12px 12px 6px!important;height:42px!important;padding:0 12px!important;border:1px solid #d7d4cc!important;border-radius:5px!important;background:#fff!important;color:#777c7e!important}
+  .mobile-menu-search svg{width:17px!important;height:17px!important;flex:none!important}
+  .mobile-menu-search input{width:100%!important;min-width:0!important;border:0!important;outline:0!important;background:transparent!important;color:#171b1d!important;font-size:13px!important}
+  .mobile-menu-panel{display:flex!important;flex-direction:column!important;overflow-y:auto!important;min-height:0!important;padding:0 12px!important}
+  .mobile-menu-panel[hidden]{display:none!important}
+  .mobile-menu-panel>a,.mobile-menu-action{
+    min-height:47px!important;width:100%!important;display:flex!important;align-items:center!important;justify-content:space-between!important;
+    gap:10px!important;padding:0 10px!important;border:0!important;border-bottom:1px solid #ece9e2!important;
+    background:#fff!important;color:#303537!important;font-size:11px!important;font-weight:700!important;
+    text-align:left!important;text-transform:none!important;letter-spacing:0!important;
+  }
+  .mobile-menu-panel>a:hover,.mobile-menu-action:hover{background:#f7f5ef!important;color:#171b1d!important}
+  .mobile-menu-action{cursor:pointer!important}
+  .mobile-menu-help{flex:none!important;display:flex!important;flex-direction:column!important;gap:4px!important;margin:8px 12px 0!important;padding:13px 10px 18px!important;border-top:1px solid #dedbd4!important;color:#74797a!important;font-size:10px!important}
+  .mobile-menu-help small{margin-bottom:2px!important;font-size:9px!important;color:#555b5d!important}
+  .mobile-menu-help a{display:block!important;border:0!important;padding:0!important;min-height:0!important;color:#555b5d!important;font-size:10px!important}
+  .mobile-menu-help a:after{display:none!important}
+  .nav-scrim{position:fixed!important;inset:0!important;z-index:1250!important;background:rgba(15,18,19,.42)!important;opacity:0!important;pointer-events:none!important;transition:opacity .28s ease!important}
+  body:has(#mainNav.mobile-reference-menu.is-open) .nav-scrim{opacity:1!important;pointer-events:auto!important}
+
+  #accountModal{align-items:flex-start!important;justify-content:center!important;padding:8px!important;overflow:hidden!important}
+  #accountModal .account-shell{
+    width:calc(100vw - 16px)!important;height:calc(100dvh - 16px)!important;max-height:none!important;min-height:0!important;
+    display:flex!important;flex-direction:column!important;overflow:hidden!important;border-radius:12px!important;
+  }
+  #accountModal .account-shell-head{flex:0 0 48px!important;height:48px!important;min-height:48px!important;padding:0 12px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;overflow:hidden!important}
+  #accountModal .account-brand{min-width:0!important}
+  #accountModal .account-brand strong{font-size:12px!important}
+  #accountModal .account-brand span{font-size:7px!important;letter-spacing:.12em!important}
+  #accountModal .account-close{width:30px!important;height:30px!important;flex:none!important}
+  #accountModal .account-userbar{flex:0 0 auto!important;display:flex!important;flex-direction:column!important;gap:8px!important;padding:8px 8px 7px!important;min-height:0!important;overflow:visible!important}
+  #accountModal .account-user{width:100%!important;min-width:0!important;display:flex!important;align-items:center!important}
+  #accountModal .account-tabs{width:100%!important;display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:4px!important;overflow:visible!important;min-width:0!important}
+  #accountModal .account-tab{min-width:0!important;width:100%!important;min-height:42px!important;height:42px!important;padding:5px 3px!important;display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:center!important;gap:2px!important;overflow:hidden!important;border-radius:6px!important}
+  #accountModal .account-tab b{font-size:7px!important;line-height:1!important;flex:none!important}
+  #accountModal .account-tab span{max-width:100%!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;font-size:8px!important;line-height:1.15!important;text-align:center!important}
+  #accountModal .account-body{flex:1 1 auto!important;min-height:0!important;overflow-x:hidden!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior:contain!important}
+  #accountModal .account-page{min-height:100%!important;padding:16px 12px 30px!important;overflow:visible!important}
+  #accountModal .account-page-head{gap:10px!important;padding-bottom:14px!important;margin-bottom:16px!important}
+  #accountModal .account-page-head h2{margin:5px 0 5px!important;font-size:24px!important}
+  #accountModal .account-page-head p{font-size:11px!important;line-height:1.45!important}
+  #accountModal .account-form{width:100%!important;gap:13px!important}
+  #accountModal .account-form input,#accountModal .account-form select,#accountModal .account-form textarea{min-width:0!important;font-size:13px!important}
+  #accountModal .two-col{grid-template-columns:1fr!important;gap:13px!important}
+  #accountModal .saved-address-list{grid-template-columns:1fr!important}
+  #accountModal .address-editor{margin-top:16px!important;padding-top:16px!important}
+  #accountModal .account-form .button{width:100%!important}
+  #accountModal .account-profile-footer{margin-top:16px!important}
+}
+@media (min-width:901px){
+  .mobile-reference-menu .mobile-menu-top,.mobile-reference-menu .mobile-menu-search,.mobile-reference-menu .mobile-menu-panel,.mobile-reference-menu .mobile-menu-help{display:none!important}
+}
