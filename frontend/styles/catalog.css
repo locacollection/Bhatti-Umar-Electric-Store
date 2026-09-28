@@ -4,3 +4,15 @@
 .spec-editor-head{display:flex;justify-content:space-between;align-items:end;gap:14px;margin-bottom:10px}.spec-editor-head>div{display:grid;gap:4px}.spec-editor-head label{margin:0}.spec-fields{display:grid;gap:8px;padding:12px;border:1px solid oklch(87% .025 145);border-radius:12px;background:oklch(97% .012 142)}.spec-row{display:grid;grid-template-columns:minmax(150px,.85fr) minmax(0,1.15fr) 38px;gap:8px;align-items:center}.spec-row input{min-width:0;min-height:40px;padding:9px 10px;border:1px solid oklch(87% .025 145);border-radius:8px;background:#fff;color:inherit;font-size:12px}.spec-row .spec-key{font-weight:700}.spec-remove{min-height:40px;padding:0;font-size:17px}.spec-empty{padding:14px;color:oklch(51% .035 150);font-size:11px;line-height:1.5;text-align:center}.spec-editor-head .btn{min-height:36px;padding:0 11px;font-size:10px}@media(max-width:600px){.spec-editor-head{align-items:stretch;flex-direction:column}.spec-row{grid-template-columns:1fr 1fr 38px}.spec-row input{font-size:11px}}
 
 .spec-value-wrap{display:grid;grid-template-columns:minmax(0,1fr);gap:6px}.spec-value-select{width:100%;min-height:40px;padding:9px 10px;border:1px solid oklch(87% .025 145);border-radius:8px;background:#fff;color:inherit;font-size:12px}.spec-value.is-hidden{display:none}.spec-value-cell{min-width:0}
+
+
+/* Sitewide product-editor gallery controls */
+.gallery-editor-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:10px}
+.gallery-fields{display:grid;gap:8px}
+.gallery-row{display:grid;grid-template-columns:58px minmax(0,1fr) auto auto auto;align-items:center;gap:8px;padding:8px;border:1px solid oklch(87% .025 145);border-radius:8px;background:#fff}
+.gallery-thumb{width:58px;height:48px;border:1px solid oklch(88% .02 145);border-radius:6px;overflow:hidden;background:#f5f4ef;display:grid;place-items:center}
+.gallery-thumb img{width:100%;height:100%;object-fit:contain;background:#fff}
+.gallery-row input{min-width:0;width:100%;min-height:40px;padding:9px 10px;border:1px solid oklch(87% .025 145);border-radius:8px;background:#fff;color:inherit;font-size:12px}
+.gallery-row .btn{min-width:38px;padding:8px 9px}
+.gallery-row .btn:disabled{opacity:.35;cursor:not-allowed}
+@media(max-width:700px){.gallery-editor-head{align-items:stretch;flex-direction:column}.gallery-row{grid-template-columns:52px minmax(0,1fr) auto auto auto}.gallery-thumb{width:52px;height:44px}.gallery-row .btn{min-width:32px;padding:7px 6px}}
