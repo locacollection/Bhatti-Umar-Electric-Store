@@ -389,6 +389,7 @@ function handleAuthReturn(session){
 
 async function initAuth(){
   BHATTI.authMode='signin';updateAuthUI();
+  document.querySelectorAll('#accountModal [data-account-section]').forEach(button=>button.addEventListener('click',()=>switchAccountSection(button.dataset.accountSection)));
   const{data:{session},error}=await BHATTI.db.auth.getSession();
   if(error)console.warn('Stored BHATTI session could not be restored:',error.message);
   await handleSession(session);handleAuthReturn(session);
