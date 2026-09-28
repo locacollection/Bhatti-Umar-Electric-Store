@@ -80,6 +80,19 @@ document.addEventListener('keydown',event=>{
 BHATTI.notice=showNotice;
 BHATTI.ask=askNotice;
 
+function switchMobileMenuTab(tab){
+  const nav=document.getElementById('mainNav');
+  if(!nav)return;
+  const target=tab==='categories'?'categories':'menu';
+  nav.dataset.menuTab=target;
+  nav.querySelectorAll('[data-menu-tab-button]').forEach(button=>{
+    button.classList.toggle('is-active',button.dataset.menuTabButton===target);
+  });
+  nav.querySelectorAll('[data-menu-panel]').forEach(panel=>{
+    panel.hidden=panel.dataset.menuPanel!==target;
+  });
+}
+
 function closeMenu(){
   document.getElementById('mainNav')?.classList.remove('is-open');
   document.querySelector('.menu-toggle')?.setAttribute('aria-expanded','false');
