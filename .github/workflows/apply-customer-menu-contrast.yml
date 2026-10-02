@@ -1,0 +1,34 @@
+name: Apply customer menu contrast patch
+
+on:
+  push:
+    paths:
+      - '.github/workflows/apply-customer-menu-contrast.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Add customer menu contrast stylesheet
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('frontend/index.html')
+          s = p.read_text(encoding='utf-8')
+          link = '<link rel="stylesheet" href="styles/customer-menu-contrast.css?v=20261002-menu-contrast">'
+          if 'customer-menu-contrast.css' not in s:
+              marker = '<link rel="stylesheet" href="styles/storefront.css?v=bhatti-final-mobile-20260929">'
+              s = s.replace(marker, marker + link, 1)
+              p.write_text(s, encoding='utf-8')
+          PY
+      - name: Commit patch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add frontend/index.html
+          git diff --cached --quiet || git commit -m 'Fix customer mobile side menu contrast'
+          git push
