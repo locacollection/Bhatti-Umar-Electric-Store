@@ -1,0 +1,39 @@
+name: Apply catalogue editor close fix
+
+on:
+  push:
+    paths:
+      - '.github/workflows/one-time-catalog-close.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Add automatic catalogue editor close handler
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          for name in ['frontend/admin/index.html', 'frontend/super-admin.html']:
+              p = Path(name)
+              s = p.read_text()
+              marker = '../scripts/admin/catalog-close.js?v=20261002-1'
+              tag = f'<script src="{marker}"></script>'
+              if tag not in s:
+                  needle = '<script src="../scripts/admin/catalog.js?v=bhatti-20260930-add-product-2"></script>'
+                  if needle not in s:
+                      raise SystemExit(f'catalog script tag not found in {name}')
+                  s = s.replace(needle, needle + tag, 1)
+                  p.write_text(s)
+          PY
+      - name: Commit and remove one-time workflow
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git rm .github/workflows/one-time-catalog-close.yml
+          git add frontend/admin/index.html frontend/super-admin.html
+          git commit -m 'Close catalogue editor after successful publish'
+          git push
