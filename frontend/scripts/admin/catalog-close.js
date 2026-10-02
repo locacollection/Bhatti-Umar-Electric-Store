@@ -1,4 +1,4 @@
-/* BHATTI catalogue editor UX: close the editor promptly after a confirmed successful save/publish. */
+/* BHATTI catalogue editor UX: close the editor promptly after a successful save/publish. */
 (() => {
   const init = () => {
     const form = document.getElementById('productForm');
@@ -9,78 +9,52 @@
     let pollTimer = 0;
     let closeTimer = 0;
     let fallbackTimer = 0;
-    let saveStartedAt = 0;
 
     const statusNodes = () => [
       document.getElementById('productEditorMessage'),
       document.getElementById('catalogMessage')
     ].filter(Boolean);
 
-    const statusText = () => statusNodes()
-      .map(node => (node.textContent || '').trim())
-      .filter(Boolean)
-      .join(' ')
-      .toLowerCase();
-
-    const hasError = () => statusNodes().some(node =>
-      node.classList.contains('error') || /\b(error|failed|could not|unable|invalid|not saved|schema cache)\b/i.test(node.textContent || '')
-    );
-
-    const hasSuccess = () => {
-      const text = statusText();
-      return !!text && !hasError() && /\b(saved|published|updated|created|deleted|success|successfully)\b/i.test(text);
-    };
+    const statusText = () => statusNodes().map(node => (node.textContent || '').trim()).filter(Boolean).join(' ').toLowerCase();
+    const hasError = () => statusNodes().some(node => node.classList.contains('error') || /\b(error|failed|could not|unable|invalid|not saved|schema cache)\b/i.test(node.textContent || ''));
+    const hasSuccess = () => { const text = statusText(); return !!text && !hasError() && /\b(saved|published|updated|created|deleted|success|successfully)\b/i.test(text); };
 
     const finishClose = () => {
       if (!dialog.open || hasError()) return;
       dialog.close();
       savePending = false;
-      saveStartedAt = 0;
       window.clearInterval(pollTimer);
       window.clearTimeout(closeTimer);
       window.clearTimeout(fallbackTimer);
-      statusNodes().forEach(node => {
-        node.textContent = '';
-        node.classList.remove('error');
-      });
     };
 
     const closeAfterSuccess = () => {
       if (!savePending || !dialog.open || hasError() || !hasSuccess()) return;
       window.clearTimeout(closeTimer);
-      // Short confirmation pause so the successful save state is perceptible.
-      closeTimer = window.setTimeout(finishClose, 250);
+      closeTimer = window.setTimeout(finishClose, 150);
     };
 
     const pollForCompletion = () => {
       window.clearInterval(pollTimer);
       pollTimer = window.setInterval(() => {
-        if (!savePending || !dialog.open) {
-          window.clearInterval(pollTimer);
-          return;
-        }
-        if (hasError()) {
-          window.clearInterval(pollTimer);
-          window.clearTimeout(fallbackTimer);
-          return;
-        }
+        if (!savePending || !dialog.open) { window.clearInterval(pollTimer); return; }
+        if (hasError()) { window.clearInterval(pollTimer); window.clearTimeout(fallbackTimer); return; }
         closeAfterSuccess();
-        if (Date.now() - saveStartedAt > 20000) window.clearInterval(pollTimer);
-      }, 100);
+      }, 75);
     };
 
     form.addEventListener('submit', () => {
       savePending = true;
-      saveStartedAt = Date.now();
       window.clearTimeout(closeTimer);
       window.clearTimeout(fallbackTimer);
       pollForCompletion();
 
-      // If the save routine succeeds without exposing a status message,
-      // use a short fallback rather than leaving the editor stranded.
+      // Hidden → Published saves should not leave the editor open while the
+      // catalogue refresh/status propagation catches up. Give the save handler
+      // a brief 700ms grace period, but never close when an explicit error exists.
       fallbackTimer = window.setTimeout(() => {
         if (savePending && dialog.open && !hasError()) finishClose();
-      }, 2500);
+      }, 700);
     }, true);
 
     const observer = new MutationObserver(() => {
@@ -92,23 +66,16 @@
       }
       closeAfterSuccess();
     });
-    observer.observe(dialog, {
-      childList: true,
-      characterData: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ['class', 'disabled']
-    });
+    observer.observe(dialog, { childList:true, characterData:true, subtree:true, attributes:true, attributeFilter:['class','disabled'] });
 
     dialog.addEventListener('close', () => {
       savePending = false;
-      saveStartedAt = 0;
       window.clearInterval(pollTimer);
       window.clearTimeout(closeTimer);
       window.clearTimeout(fallbackTimer);
     });
   };
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once:true });
   else init();
 })();
