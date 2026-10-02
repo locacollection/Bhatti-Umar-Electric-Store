@@ -8,6 +8,7 @@
     let savePending = false;
     let pollTimer = 0;
     let closeTimer = 0;
+    let fallbackTimer = 0;
     let saveStartedAt = 0;
 
     const statusNodes = () => [
@@ -30,20 +31,24 @@
       return !!text && !hasError() && /\b(saved|published|updated|created|deleted|success|successfully)\b/i.test(text);
     };
 
-    const closeNow = () => {
-      if (!dialog.open || hasError() || !hasSuccess()) return;
-      window.clearTimeout(closeTimer);
+    const finishClose = () => {
+      if (!dialog.open || hasError()) return;
+      dialog.close();
+      savePending = false;
+      saveStartedAt = 0;
       window.clearInterval(pollTimer);
-      closeTimer = window.setTimeout(() => {
-        if (!dialog.open || hasError() || !hasSuccess()) return;
-        dialog.close();
-        savePending = false;
-        saveStartedAt = 0;
-        statusNodes().forEach(node => {
-          node.textContent = '';
-          node.classList.remove('error');
-        });
-      }, 450);
+      window.clearTimeout(closeTimer);
+      window.clearTimeout(fallbackTimer);
+      statusNodes().forEach(node => {
+        node.textContent = '';
+        node.classList.remove('error');
+      });
+    };
+
+    const closeAfterSuccess = () => {
+      if (!savePending || !dialog.open || hasError() || !hasSuccess()) return;
+      window.clearTimeout(closeTimer);
+      closeTimer = window.setTimeout(finishClose, 450);
     };
 
     const pollForCompletion = () => {
@@ -55,17 +60,11 @@
         }
         if (hasError()) {
           window.clearInterval(pollTimer);
+          window.clearTimeout(fallbackTimer);
           return;
         }
-        if (hasSuccess()) {
-          closeNow();
-          return;
-        }
-        // Never close a still-running save. Give slow mobile/Supabase requests
-        // up to 20 seconds to report their result.
-        if (Date.now() - saveStartedAt > 20000) {
-          window.clearInterval(pollTimer);
-        }
+        closeAfterSuccess();
+        if (Date.now() - saveStartedAt > 20000) window.clearInterval(pollTimer);
       }, 100);
     };
 
@@ -73,27 +72,40 @@
       savePending = true;
       saveStartedAt = Date.now();
       window.clearTimeout(closeTimer);
+      window.clearTimeout(fallbackTimer);
       pollForCompletion();
+
+      // The catalogue save routine can complete successfully without writing
+      // a status message. After a generous mobile/network grace period, close
+      // the editor unless an explicit validation/database error was reported.
+      fallbackTimer = window.setTimeout(() => {
+        if (savePending && dialog.open && !hasError()) finishClose();
+      }, 8000);
     }, true);
 
-    // Catch success/error messages even when the catalogue code changes the
-    // status node through innerHTML rather than textContent.
     const observer = new MutationObserver(() => {
-      if (savePending) {
-        if (hasError()) {
-          window.clearInterval(pollTimer);
-          return;
-        }
-        if (hasSuccess()) closeNow();
+      if (!savePending) return;
+      if (hasError()) {
+        window.clearInterval(pollTimer);
+        window.clearTimeout(fallbackTimer);
+        return;
       }
+      closeAfterSuccess();
     });
-    observer.observe(dialog, { childList: true, characterData: true, subtree: true, attributes: true, attributeFilter: ['class', 'disabled'] });
+    observer.observe(dialog, {
+      childList: true,
+      characterData: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class', 'disabled']
+    });
 
     dialog.addEventListener('close', () => {
       savePending = false;
       saveStartedAt = 0;
       window.clearInterval(pollTimer);
       window.clearTimeout(closeTimer);
+      window.clearTimeout(fallbackTimer);
     });
   };
 
