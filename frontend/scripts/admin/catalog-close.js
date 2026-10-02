@@ -10,6 +10,40 @@
   };
   loadMobileStyles();
 
+  const installMobileModalGuard = () => {
+    if (document.getElementById('bhattiMobileModalFix')) return;
+    const style = document.createElement('style');
+    style.id = 'bhattiMobileModalFix';
+    style.textContent = `
+      body.modal-lock { overflow: hidden !important; }
+      @media (max-width: 700px) {
+        body.modal-lock { touch-action: none; }
+        body.modal-lock .shell, body.modal-lock .top { pointer-events: none !important; }
+        #modal.open { position: fixed !important; inset: 0 !important; z-index: 10000 !important; display: flex !important; align-items: flex-end !important; justify-content: center !important; padding: 12px !important; overflow: hidden !important; background: rgba(23,20,17,.58) !important; }
+        #modal.open .modalbox { position: relative !important; z-index: 10001 !important; width: min(100%, 620px) !important; max-height: calc(100dvh - 24px) !important; margin: 0 !important; overflow: auto !important; -webkit-overflow-scrolling: touch !important; border-radius: 22px !important; }
+        #modal.open .modalhead { position: sticky !important; top: 0 !important; z-index: 5 !important; display: flex !important; align-items: center !important; justify-content: space-between !important; min-height: 62px !important; padding: 14px 16px !important; background: rgba(255,250,244,.97) !important; backdrop-filter: blur(16px) !important; border-bottom: 1px solid rgba(39,31,24,.1) !important; }
+        #modal.open #closeModal { display: grid !important; place-items: center !important; flex: 0 0 42px !important; width: 42px !important; height: 42px !important; min-width: 42px !important; min-height: 42px !important; margin-left: 12px !important; border: 1px solid rgba(39,31,24,.16) !important; border-radius: 12px !important; background: #171411 !important; color: #fffaf4 !important; font-size: 24px !important; line-height: 1 !important; opacity: 1 !important; visibility: visible !important; }
+        #modal.open #modalBody { padding: 16px !important; }
+        #modal.open .grid { grid-template-columns: 1fr !important; gap: 10px !important; }
+        #modal.open .detail[style*="grid-column"] { grid-column: 1 !important; }
+        #modal.open .order-detail-workflow { grid-template-columns: 1fr !important; gap: 10px !important; }
+      }
+    `;
+    document.head.appendChild(style);
+
+    const modal = document.getElementById('modal');
+    const syncLock = () => document.body.classList.toggle('modal-lock', !!modal?.classList.contains('open'));
+    const closeModal = () => {
+      if (!modal) return;
+      modal.classList.remove('open');
+      document.body.classList.remove('modal-lock');
+    };
+    document.getElementById('closeModal')?.addEventListener('click', closeModal);
+    modal?.addEventListener('click', event => { if (event.target === modal) closeModal(); });
+    document.addEventListener('keydown', event => { if (event.key === 'Escape' && modal?.classList.contains('open')) closeModal(); });
+    if (modal) new MutationObserver(syncLock).observe(modal, { attributes:true, attributeFilter:['class'] });
+  };
+
   const installSharedStudio = async () => {
     const db = window.BHATTI?.db;
     if (!db) return;
@@ -56,19 +90,10 @@
         </div>`;
       wrap.appendChild(section);
 
-      const hideAdminSection = () => {
-        section.style.display = 'none';
-        tab.classList.remove('active');
-      };
-      document.addEventListener('click', event => {
-        const clickedTab = event.target.closest('.tab');
-        if (!clickedTab) return;
-        if (clickedTab === tab) return;
-        hideAdminSection();
-      }, true);
+      const hideAdminSection = () => { section.style.display = 'none'; tab.classList.remove('active'); };
+      document.addEventListener('click', event => { const clickedTab = event.target.closest('.tab'); if (!clickedTab || clickedTab === tab) return; hideAdminSection(); }, true);
       tab.addEventListener('click', event => {
-        event.preventDefault();
-        event.stopPropagation();
+        event.preventDefault(); event.stopPropagation();
         document.querySelectorAll('.side-nav .tab').forEach(item => item.classList.remove('active'));
         tab.classList.add('active');
         document.querySelectorAll('.main .panel').forEach(panel => { panel.style.display = 'none'; });
@@ -79,12 +104,11 @@
 
       await import('../super-admin-management.js?shared-studio=20261002');
       window.superAdminLoadAdmins?.();
-    } catch (error) {
-      console.warn('Shared administrator dashboard could not initialize:', error);
-    }
+    } catch (error) { console.warn('Shared administrator dashboard could not initialize:', error); }
   };
 
   const init = () => {
+    installMobileModalGuard();
     installSharedStudio();
     const form = document.getElementById('productForm');
     const dialog = document.getElementById('productEditor');
@@ -94,40 +118,15 @@
     let pollTimer = 0;
     let closeTimer = 0;
     let fallbackTimer = 0;
-
-    const statusNodes = () => [
-      document.getElementById('productEditorMessage'),
-      document.getElementById('catalogMessage')
-    ].filter(Boolean);
+    const statusNodes = () => [document.getElementById('productEditorMessage'), document.getElementById('catalogMessage')].filter(Boolean);
     const statusText = () => statusNodes().map(node => (node.textContent || '').trim()).filter(Boolean).join(' ').toLowerCase();
     const hasError = () => statusNodes().some(node => node.classList.contains('error') || /\b(error|failed|could not|unable|invalid|not saved|schema cache)\b/i.test(node.textContent || ''));
     const hasSuccess = () => { const text = statusText(); return !!text && !hasError() && /\b(saved|published|updated|created|deleted|success|successfully)\b/i.test(text); };
-    const finishClose = () => {
-      if (!dialog.open || hasError()) return;
-      dialog.close(); savePending = false;
-      window.clearInterval(pollTimer); window.clearTimeout(closeTimer); window.clearTimeout(fallbackTimer);
-    };
-    const closeAfterSuccess = () => {
-      if (!savePending || !dialog.open || hasError() || !hasSuccess()) return;
-      window.clearTimeout(closeTimer); closeTimer = window.setTimeout(finishClose, 150);
-    };
-    const pollForCompletion = () => {
-      window.clearInterval(pollTimer);
-      pollTimer = window.setInterval(() => {
-        if (!savePending || !dialog.open) { window.clearInterval(pollTimer); return; }
-        if (hasError()) { window.clearInterval(pollTimer); window.clearTimeout(fallbackTimer); return; }
-        closeAfterSuccess();
-      }, 75);
-    };
-    form.addEventListener('submit', () => {
-      savePending = true; window.clearTimeout(closeTimer); window.clearTimeout(fallbackTimer); pollForCompletion();
-      fallbackTimer = window.setTimeout(() => { if (savePending && dialog.open && !hasError()) finishClose(); }, 700);
-    }, true);
-    const observer = new MutationObserver(() => {
-      if (!savePending) return;
-      if (hasError()) { window.clearInterval(pollTimer); window.clearTimeout(fallbackTimer); return; }
-      closeAfterSuccess();
-    });
+    const finishClose = () => { if (!dialog.open || hasError()) return; dialog.close(); savePending = false; window.clearInterval(pollTimer); window.clearTimeout(closeTimer); window.clearTimeout(fallbackTimer); };
+    const closeAfterSuccess = () => { if (!savePending || !dialog.open || hasError() || !hasSuccess()) return; window.clearTimeout(closeTimer); closeTimer = window.setTimeout(finishClose, 150); };
+    const pollForCompletion = () => { window.clearInterval(pollTimer); pollTimer = window.setInterval(() => { if (!savePending || !dialog.open) { window.clearInterval(pollTimer); return; } if (hasError()) { window.clearInterval(pollTimer); window.clearTimeout(fallbackTimer); return; } closeAfterSuccess(); }, 75); };
+    form.addEventListener('submit', () => { savePending = true; window.clearTimeout(closeTimer); window.clearTimeout(fallbackTimer); pollForCompletion(); fallbackTimer = window.setTimeout(() => { if (savePending && dialog.open && !hasError()) finishClose(); }, 700); }, true);
+    const observer = new MutationObserver(() => { if (!savePending) return; if (hasError()) { window.clearInterval(pollTimer); window.clearTimeout(fallbackTimer); return; } closeAfterSuccess(); });
     observer.observe(dialog, { childList:true, characterData:true, subtree:true, attributes:true, attributeFilter:['class','disabled'] });
     dialog.addEventListener('close', () => { savePending=false; window.clearInterval(pollTimer); window.clearTimeout(closeTimer); window.clearTimeout(fallbackTimer); });
   };
