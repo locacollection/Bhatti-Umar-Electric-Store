@@ -10,12 +10,9 @@ import { supabase } from './supabaseClient.js';
       .eq('id', session.user.id)
       .maybeSingle();
 
-    if (profile?.role === 'super_admin') {
-      window.location.replace('super-admin.html');
-      return;
-    }
-
-    if (profile?.role === 'admin') {
+    if (['admin', 'super_admin'].includes(profile?.role)) {
+      // Both elevated roles use one synchronized Studio. Super Admin only gets
+      // one additional Administrator Access tab inside that shared workspace.
       window.location.replace('admin/index.html');
     }
   }
