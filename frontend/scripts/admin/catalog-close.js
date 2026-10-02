@@ -1,5 +1,15 @@
-/* BHATTI catalogue editor UX: close the editor promptly after a successful save/publish. */
+/* BHATTI catalogue editor UX + mobile workspace style loader. */
 (() => {
+  const loadMobileStyles = () => {
+    if (document.getElementById('bhattiMobileUiCss')) return;
+    const link = document.createElement('link');
+    link.id = 'bhattiMobileUiCss';
+    link.rel = 'stylesheet';
+    link.href = '../styles/mobile-ui.css?v=20261002-mobile1';
+    document.head.appendChild(link);
+  };
+  loadMobileStyles();
+
   const init = () => {
     const form = document.getElementById('productForm');
     const dialog = document.getElementById('productEditor');
@@ -48,10 +58,6 @@
       window.clearTimeout(closeTimer);
       window.clearTimeout(fallbackTimer);
       pollForCompletion();
-
-      // Hidden → Published saves should not leave the editor open while the
-      // catalogue refresh/status propagation catches up. Give the save handler
-      // a brief 700ms grace period, but never close when an explicit error exists.
       fallbackTimer = window.setTimeout(() => {
         if (savePending && dialog.open && !hasError()) finishClose();
       }, 700);
