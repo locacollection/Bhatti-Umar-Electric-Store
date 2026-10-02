@@ -1,0 +1,26 @@
+/* Customer mobile side-menu contrast hardening. Loaded after storefront.css. */
+@media (max-width:900px){
+  .mobile-reference-menu,
+  .mobile-reference-menu .mobile-menu-top,
+  .mobile-reference-menu .mobile-menu-panel,
+  .mobile-reference-menu .mobile-menu-help{color:#171b1d !important;}
+  .mobile-reference-menu .mobile-menu-panel>a,
+  .mobile-reference-menu .mobile-menu-action{color:#171b1d !important;background:#fff !important;border-bottom:1px solid #e4e1da !important;opacity:1 !important;-webkit-text-fill-color:#171b1d !important;}
+  .mobile-reference-menu .mobile-menu-panel>a span,
+  .mobile-reference-menu .mobile-menu-panel>a svg,
+  .mobile-reference-menu .mobile-menu-action span,
+  .mobile-reference-menu .mobile-menu-action svg{color:#171b1d !important;stroke:currentColor !important;opacity:1 !important;}
+  .mobile-reference-menu .mobile-menu-panel>a:hover,
+  .mobile-reference-menu .mobile-menu-panel>a:focus-visible,
+  .mobile-reference-menu .mobile-menu-action:hover,
+  .mobile-reference-menu .mobile-menu-action:focus-visible{background:#f6f2e9 !important;color:#171b1d !important;outline:2px solid rgba(167,123,50,.35);outline-offset:-2px;}
+  .mobile-reference-menu .mobile-menu-panel>a:active,
+  .mobile-reference-menu .mobile-menu-action:active{background:#eee7da !important;color:#171b1d !important;}
+  .mobile-reference-menu .mobile-menu-top button,
+  .mobile-reference-menu .mobile-menu-close{color:#fff !important;background:#171b1d !important;}
+  .mobile-reference-menu .mobile-menu-search{color:#777c7e !important;background:#fff !important;}
+  .mobile-reference-menu .mobile-menu-search input{color:#171b1d !important;-webkit-text-fill-color:#171b1d !important;}
+  .mobile-reference-menu .mobile-menu-search input::placeholder{color:#777c7e !important;opacity:1 !important;}
+  .mobile-reference-menu .mobile-menu-help,
+  .mobile-reference-menu .mobile-menu-help *{color:#5e625f !important;opacity:1 !important;}
+}
