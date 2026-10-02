@@ -18,22 +18,21 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           import re
+          p = Path('frontend/admin/index.html')
+          s = p.read_text()
           tag = '<script src="../scripts/admin/catalog-close.js?v=20261002-1"></script>'
-          for name in ['frontend/admin/index.html', 'frontend/super-admin.html']:
-              p = Path(name)
-              s = p.read_text()
-              if tag not in s:
-                  pattern = r'(<script[^>]+src="\.\./scripts/admin/catalog\.js(?:\?[^\"]*)?"[^>]*></script>)'
-                  s2, count = re.subn(pattern, r'\1' + tag, s, count=1)
-                  if count != 1:
-                      raise SystemExit(f'catalog script tag not found in {name}')
-                  p.write_text(s2)
+          if tag not in s:
+              pattern = r'(<script[^>]+src="\.\./scripts/admin/catalog\.js(?:\?[^\"]*)?"[^>]*></script>)'
+              s, count = re.subn(pattern, r'\1' + tag, s, count=1)
+              if count != 1:
+                  raise SystemExit('catalog script tag not found in frontend/admin/index.html')
+              p.write_text(s)
           PY
       - name: Commit patch and remove one-time workflow
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git rm .github/workflows/one-time-catalog-close.yml
-          git add frontend/admin/index.html frontend/super-admin.html
+          git add frontend/admin/index.html
           git commit -m 'Close catalogue editor after successful publish'
           git push
