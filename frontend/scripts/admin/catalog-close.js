@@ -1,4 +1,4 @@
-/* BHATTI catalogue editor UX: close the editor after a confirmed successful save/publish. */
+/* BHATTI catalogue editor UX: close the editor promptly after a confirmed successful save/publish. */
 (() => {
   const init = () => {
     const form = document.getElementById('productForm');
@@ -48,7 +48,8 @@
     const closeAfterSuccess = () => {
       if (!savePending || !dialog.open || hasError() || !hasSuccess()) return;
       window.clearTimeout(closeTimer);
-      closeTimer = window.setTimeout(finishClose, 450);
+      // Short confirmation pause so the successful save state is perceptible.
+      closeTimer = window.setTimeout(finishClose, 250);
     };
 
     const pollForCompletion = () => {
@@ -75,12 +76,11 @@
       window.clearTimeout(fallbackTimer);
       pollForCompletion();
 
-      // The catalogue save routine can complete successfully without writing
-      // a status message. After a generous mobile/network grace period, close
-      // the editor unless an explicit validation/database error was reported.
+      // If the save routine succeeds without exposing a status message,
+      // use a short fallback rather than leaving the editor stranded.
       fallbackTimer = window.setTimeout(() => {
         if (savePending && dialog.open && !hasError()) finishClose();
-      }, 8000);
+      }, 2500);
     }, true);
 
     const observer = new MutationObserver(() => {
