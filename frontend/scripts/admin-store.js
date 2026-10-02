@@ -12,7 +12,7 @@ const detail = document.getElementById('productModal');
 let products = [];
 let activeFilter = 'All';
 
-const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+const escapeHtml = value => String(value ?? '').replace(/[&<>\"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;', "'": '&#39;' }[char]));
 const money = value => `PKR ${Number(value || 0).toLocaleString('en-PK')}`;
 const image = value => typeof value === 'string' && value ? value : 'assets/product-placeholder.svg';
 const discount = product => product.old_price > product.price ? Math.round((product.old_price - product.price) / product.old_price * 100) : 0;
@@ -68,7 +68,7 @@ function showProduct(id) {
 
 async function start() {
   if (!await adminGuardReady) return;
-  const { data, error } = await supabase.from('products').select('id,name,category,price,image_url,description,specs').eq('active', true).order('id');
+  const { data, error } = await supabase.from('products').select('id,name,category,price,old_price,image_url,description,specs,is_new').eq('active', true).order('id');
   if (error) { grid.innerHTML = `<p class="catalog-empty">${escapeHtml(error.message)}</p>`; return; }
   products = data || [];
   renderFilters();
