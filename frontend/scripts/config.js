@@ -115,7 +115,7 @@ function installStudioIntegrityFixes(){
   };
   document.addEventListener('click',event=>{
     const remove=event.target.closest('[data-delete-archive]');
-    if(remove){event.preventDefault();event.stopPropagation();deleteArchived(remove.dataset.deleteArchive);}
+    if(remove){event.preventDefault();event.stopImmediatePropagation();deleteArchived(remove.dataset.deleteArchive);}
   },true);
   if(archiveBody)new MutationObserver(addArchiveDeleteControls).observe(archiveBody,{childList:true,subtree:true});
   addArchiveDeleteControls();
