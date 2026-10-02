@@ -1,5 +1,82 @@
 window.BHATTI=window.BHATTI||{};
 
+/* Customer mobile side-menu contrast fix. The menu uses #mainNav.mobile-reference-menu;
+   keep these rules in the loaded UI bundle so they cannot be omitted by page-level CSS caching. */
+(function ensureCustomerMenuContrast(){
+  const install=()=>{
+    if(document.getElementById('bhattiCustomerMenuContrast'))return;
+    const style=document.createElement('style');
+    style.id='bhattiCustomerMenuContrast';
+    style.textContent=`
+      @media (max-width:900px){
+        #mainNav.mobile-reference-menu,
+        #mainNav.mobile-reference-menu .mobile-menu-top,
+        #mainNav.mobile-reference-menu .mobile-menu-panel,
+        #mainNav.mobile-reference-menu .mobile-menu-help{color:#171b1d !important;}
+        #mainNav.mobile-reference-menu .mobile-menu-panel>a,
+        #mainNav.mobile-reference-menu .mobile-menu-action{
+          color:#171b1d !important;
+          background:#fff !important;
+          border-bottom:1px solid #e4e1da !important;
+          opacity:1 !important;
+          -webkit-text-fill-color:#171b1d !important;
+          text-shadow:none !important;
+        }
+        #mainNav.mobile-reference-menu .mobile-menu-panel>a span,
+        #mainNav.mobile-reference-menu .mobile-menu-panel>a svg,
+        #mainNav.mobile-reference-menu .mobile-menu-action span,
+        #mainNav.mobile-reference-menu .mobile-menu-action svg{
+          color:#171b1d !important;
+          stroke:#171b1d !important;
+          opacity:1 !important;
+          -webkit-text-fill-color:#171b1d !important;
+        }
+        #mainNav.mobile-reference-menu .mobile-menu-panel>a:hover,
+        #mainNav.mobile-reference-menu .mobile-menu-panel>a:focus-visible,
+        #mainNav.mobile-reference-menu .mobile-menu-action:hover,
+        #mainNav.mobile-reference-menu .mobile-menu-action:focus-visible{
+          background:#f6f2e9 !important;
+          color:#171b1d !important;
+          outline:2px solid rgba(167,123,50,.35);
+          outline-offset:-2px;
+        }
+        #mainNav.mobile-reference-menu .mobile-menu-panel>a:active,
+        #mainNav.mobile-reference-menu .mobile-menu-action:active{
+          background:#eee7da !important;
+          color:#171b1d !important;
+        }
+        #mainNav.mobile-reference-menu .mobile-menu-top button,
+        #mainNav.mobile-reference-menu .mobile-menu-close{
+          color:#fff !important;
+          background:#171b1d !important;
+          -webkit-text-fill-color:#fff !important;
+        }
+        #mainNav.mobile-reference-menu .mobile-menu-search{
+          color:#777c7e !important;
+          background:#fff !important;
+        }
+        #mainNav.mobile-reference-menu .mobile-menu-search input{
+          color:#171b1d !important;
+          -webkit-text-fill-color:#171b1d !important;
+        }
+        #mainNav.mobile-reference-menu .mobile-menu-search input::placeholder{
+          color:#777c7e !important;
+          opacity:1 !important;
+        }
+        #mainNav.mobile-reference-menu .mobile-menu-help,
+        #mainNav.mobile-reference-menu .mobile-menu-help *{
+          color:#5e625f !important;
+          opacity:1 !important;
+          -webkit-text-fill-color:#5e625f !important;
+        }
+      }
+    `;
+    (document.head||document.documentElement).appendChild(style);
+  };
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});
+  else install();
+})();
+
 let siteNoticeResolver=null;
 
 function ensureSiteNotice(){
