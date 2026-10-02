@@ -16,23 +16,22 @@ async function getRole(){
 }
 
 function setProfileModal(){
-  const superAdmin=role==="super_admin";
-  const studioHref=superAdmin?"super-admin.html":"admin/index.html";
-  $("previewStudioLink").textContent=superAdmin?"Super Admin Studio ↗":"Admin Studio ↗";
+  const studioHref="admin/index.html";
+  $("previewStudioLink").textContent="Admin Studio ↗";
   $("previewStudioLink").href=studioHref;
   $("previewStudioButton").onclick=()=>window.location.href=studioHref;
-  $("previewFooterStudio").textContent=superAdmin?"Open Super Admin Studio ↗":"Open Admin Studio ↗";
+  $("previewFooterStudio").textContent="Open Admin Studio ↗";
   $("previewFooterStudio").href=studioHref;
-  $("previewRolePill").textContent=superAdmin?"SUPER ADMIN PREVIEW":"ADMIN PREVIEW";
+  $("previewRolePill").textContent=role==="super_admin"?"SUPER ADMIN PREVIEW":"ADMIN PREVIEW";
   $("previewProfileTitle").textContent=fullName||"Administrator";
-  $("previewProfileSubtitle").textContent=superAdmin?"Super Admin control session":"Administrator control session";
-  $("previewProfileRole").textContent=superAdmin?"SUPER ADMIN":"ADMIN";
+  $("previewProfileSubtitle").textContent="Administrator control session";
+  $("previewProfileRole").textContent=role==="super_admin"?"SUPER ADMIN":"ADMIN";
   $("previewProfileEmail").textContent=email||"Unavailable";
   $("previewProfileId").textContent=sessionUser?.id||"Unavailable";
-  $("previewProfileStudio").textContent=superAdmin?"Open Super Admin Studio ↗":"Open Admin Studio ↗";
+  $("previewProfileStudio").textContent="Open Admin Studio ↗";
   $("previewProfileStudio").href=studioHref;
 }
-window.openAdminProductEditor=(productId)=>{const id=String(productId||"").trim();if(!id)return;const target=role==="super_admin"?"super-admin.html":"admin/index.html";window.location.href=`${target}?editProduct=${encodeURIComponent(id)}`;};
+window.openAdminProductEditor=(productId)=>{const id=String(productId||"").trim();if(!id)return;window.location.href=`admin/index.html?editProduct=${encodeURIComponent(id)}`;};
 window.openPreviewProfile=()=>openProfile();
 function openProfile(){ $("previewProfileModal").classList.add("open"); $("previewProfileModal").setAttribute("aria-hidden","false"); document.body.classList.add("lock"); }
 function closeProfile(){ $("previewProfileModal").classList.remove("open"); $("previewProfileModal").setAttribute("aria-hidden","true"); document.body.classList.remove("lock"); }
@@ -44,6 +43,12 @@ async function init(){
     sessionUser=result.user;role=result.role;fullName=result.full_name;email=result.email;
     if(!sessionUser){window.location.replace("index.html?auth=signin");return;}
     if(!["admin","super_admin"].includes(role)){window.location.replace("index.html");return;}
+    // Super Admin and Admin use the same Studio. The only role-specific
+    // difference is the Administrator Access tab rendered inside that Studio.
+    if(window.location.pathname.endsWith("/super-admin-store.html")){
+      window.location.replace("admin/index.html");
+      return;
+    }
     BHATTI.profile={role,full_name:fullName,email};
     BHATTI.currentUser=sessionUser;
     BHATTI.db=db;
@@ -51,9 +56,9 @@ async function init(){
     window.addQuantity=async()=>{openProfile();return false;};
     window.openCheckout=async()=>{openProfile();return false;};
     setProfileModal();
-    const studioTarget=role==="super_admin"?"super-admin.html":"admin/index.html";
+    const studioTarget="admin/index.html";
     const studioLink=$("previewStudioLink");
-    if(studioLink){studioLink.href=studioTarget;studioLink.textContent=role==="super_admin"?"Super Admin Studio ↗":"Admin Studio ↗";}
+    if(studioLink){studioLink.href=studioTarget;studioLink.textContent="Admin Studio ↗";}
     const studioButton=$("previewStudioButton");
     if(studioButton){studioButton.type="button";studioButton.onclick=event=>{event.preventDefault();window.location.assign(studioTarget);};}
     document.addEventListener("click",event=>{
@@ -63,10 +68,7 @@ async function init(){
       if(studio){event.preventDefault();event.stopPropagation();window.location.assign(studioTarget);}
     },true);
     const profileButton=$("previewAccountButton");
-    if(profileButton){
-      profileButton.onclick=null;
-      profileButton.addEventListener("click",event=>{event.preventDefault();event.stopImmediatePropagation();openProfile();},true);
-    }
+    if(profileButton){profileButton.onclick=null;profileButton.addEventListener("click",event=>{event.preventDefault();event.stopImmediatePropagation();openProfile();},true);}
     $("previewFooterProfile").onclick=event=>{event.preventDefault();openProfile();};
     $("previewSupport").onclick=openProfile;
     $("previewProfileClose").onclick=closeProfile;
