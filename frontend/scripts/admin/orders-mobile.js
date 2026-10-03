@@ -72,7 +72,7 @@
         if (!result.error) products = result.data || [];
       }
       const productMap = new Map(products.map(product => [String(product.id), product]));
-      const fallback = '../assets/product-placeholder.svg';
+      const fallback = location.pathname.includes('/admin/') ? '../assets/product-placeholder.svg' : 'assets/product-placeholder.svg';
 
       rows.forEach(row => {
         const button = row.querySelector('.workflow-button[onclick*="openOrderWorkflow"], .row-actions button[onclick*="openOrderWorkflow"]');
