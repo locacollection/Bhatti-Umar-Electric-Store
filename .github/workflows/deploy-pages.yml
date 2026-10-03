@@ -40,7 +40,7 @@ jobs:
           for path in targets:
               text = path.read_text(encoding='utf-8')
               markers = [
-                  ('scripts/admin/orders-mobile.js', '<script src="' + ('../' if path.parts[-2] == 'admin' else '') + 'scripts/admin/orders-mobile.js?v=20261003-orders-mobile-1"></script>'),
+                  ('scripts/admin/orders-mobile.js', '<script src="' + ('../' if path.parts[-2] == 'admin' else '') + 'scripts/admin/orders-mobile.js?v=20261003-orders-mobile-2"></script>'),
                   ('scripts/admin/orders-render-fix.js', '<script src="' + ('../' if path.parts[-2] == 'admin' else '') + 'scripts/admin/orders-render-fix.js?v=20261003-orders-render-1"></script>')
               ]
               for marker, tag in markers:
