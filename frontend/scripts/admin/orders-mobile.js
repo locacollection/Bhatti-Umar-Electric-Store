@@ -1,7 +1,6 @@
 (() => {
   'use strict';
   const db = window.BHATTI?.db;
-  if (!db) return;
 
   const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -10,10 +9,25 @@
     const style = document.createElement('style');
     style.id = 'bhattiMobileOrdersStyle';
     style.textContent = `
-      .mobile-order-items-summary{display:grid;gap:3px;margin-top:5px;max-width:100%}
-      .mobile-order-item-line{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#514940;font-size:10px;line-height:1.35}
+      .mobile-order-items-toggle{
+        width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;
+        margin-top:7px;padding:9px 11px;border:1px solid rgba(51,40,31,.10);border-radius:10px;
+        background:rgba(249,246,239,.72);color:#29231e;font:inherit;font-size:10px;font-weight:800;
+        text-align:left;cursor:pointer;transition:background .18s ease,border-color .18s ease;
+      }
+      .mobile-order-items-toggle:hover{background:#fff;border-color:rgba(168,126,60,.28)}
+      .mobile-order-items-toggle:focus-visible{outline:2px solid #d7a52a;outline-offset:2px}
+      .mobile-order-items-toggle .items-chevron{font-size:12px;line-height:1;transition:transform .18s ease}
+      .mobile-order-items-toggle[aria-expanded="true"] .items-chevron{transform:rotate(180deg)}
+      .mobile-order-items-panel{
+        display:none;margin-top:5px;padding:8px 10px;border-left:2px solid rgba(168,126,60,.45);
+        background:rgba(249,246,239,.48);border-radius:0 9px 9px 0;
+      }
+      .mobile-order-items-panel.is-open{display:grid;gap:6px}
+      .mobile-order-item-line{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;min-width:0;color:#514940;font-size:10px;line-height:1.35}
+      .mobile-order-item-line .item-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
       .mobile-order-item-line strong{font-weight:800;color:#29231e}
-      .mobile-order-items-more{color:#8a8177;font-size:9px;line-height:1.3}
+      .mobile-order-item-qty{flex:0 0 auto;color:#746b61;font-weight:700;white-space:nowrap}
       @media(max-width:700px){
         #ordersSection .section-head{margin-bottom:16px}
         #ordersSection .section-head h2{font-size:27px}
@@ -42,16 +56,53 @@
         #ordersSection .tablewrap tbody tr:not(.empty)>td:nth-child(5)::before{content:'PAYMENT';display:block;margin-bottom:3px;color:#8a8177;font-size:8px;font-weight:800;letter-spacing:.12em}
         #ordersSection .tablewrap tbody tr:not(.empty)>td:nth-child(6)::before{content:'WORKFLOW';display:block;margin-bottom:5px;color:#8a8177;font-size:8px;font-weight:800;letter-spacing:.12em}
         #ordersSection .tablewrap tbody tr.empty{display:block!important;padding:22px!important}
-        #ordersSection .mobile-order-items-summary{max-width:calc(100vw - 105px);}
-        #ordersSection .mobile-order-item-line{font-size:10px;}
+        #ordersSection .mobile-order-items-toggle{font-size:10px;min-height:38px}
+        #ordersSection .mobile-order-items-panel{font-size:10px}
       }
     `;
     document.head.appendChild(style);
   }
 
+  function addAccordion(row, orderItems) {
+    const itemsCell = row.querySelector('td:nth-child(3)');
+    if (!itemsCell || itemsCell.querySelector('.mobile-order-items-toggle')) return;
+
+    const totalCount = orderItems.reduce((sum, item) => sum + Number(item.quantity || item.qty || 0), 0);
+    const fallbackCount = Number((itemsCell.textContent || '').match(/\d+/)?.[0] || 0);
+    const itemCount = totalCount || fallbackCount || orderItems.length;
+    const id = `mobile-items-${Math.random().toString(36).slice(2,10)}`;
+
+    const lines = orderItems.map(item => {
+      const name = item.product_name || item.name || 'Product';
+      const quantity = Number(item.quantity || item.qty || 0);
+      return `<div class="mobile-order-item-line"><span class="item-name"><strong>${esc(name)}</strong></span><span class="mobile-order-item-qty">× ${quantity}</span></div>`;
+    }).join('');
+
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'mobile-order-items-toggle';
+    button.setAttribute('aria-expanded', 'false');
+    button.setAttribute('aria-controls', id);
+    button.innerHTML = `<span>View ${itemCount} items</span><span class="items-chevron" aria-hidden="true">⌄</span>`;
+
+    const panel = document.createElement('div');
+    panel.id = id;
+    panel.className = 'mobile-order-items-panel';
+    panel.innerHTML = lines || `<div class="mobile-order-item-line"><span class="item-name">Item details available in Inspect</span></div>`;
+
+    button.addEventListener('click', () => {
+      const open = button.getAttribute('aria-expanded') === 'true';
+      button.setAttribute('aria-expanded', String(!open));
+      panel.classList.toggle('is-open', !open);
+    });
+
+    itemsCell.appendChild(button);
+    itemsCell.appendChild(panel);
+  }
+
   async function enrichRows() {
     const body = document.getElementById('ordersBody');
-    if (!body) return;
+    if (!body || !db) return;
     const rows = [...body.querySelectorAll('tr')].filter(row => !row.classList.contains('mobile-order-items-enriched') && !row.hidden && row.querySelector('.row-actions'));
     if (!rows.length) return;
 
@@ -65,35 +116,23 @@
     try {
       const { data: items, error: itemError } = await db.from('order_items').select('*').in('order_id', ids);
       if (itemError) throw itemError;
-      const productIds = [...new Set((items || []).map(item => item.product_id).filter(Boolean).map(String))];
-      let products = [];
-      if (productIds.length) {
-        const result = await db.from('products').select('id,name').in('id', productIds);
-        if (!result.error) products = result.data || [];
-      }
-      const productMap = new Map(products.map(product => [String(product.id), product]));
+
+      const grouped = new Map();
+      (items || []).forEach(item => {
+        const key = String(item.order_id);
+        if (!grouped.has(key)) grouped.set(key, []);
+        grouped.get(key).push(item);
+      });
 
       rows.forEach(row => {
         const button = row.querySelector('.workflow-button[onclick*="openOrderWorkflow"], .row-actions button[onclick*="openOrderWorkflow"]');
         const match = button?.getAttribute('onclick')?.match(/openOrderWorkflow\(['"]([^'"]+)['"]\)/);
         const orderId = match?.[1];
-        const orderItems = (items || []).filter(item => String(item.order_id) === String(orderId));
-        const itemsCell = row.querySelector('td:nth-child(3)');
-        if (!itemsCell) return;
-
-        const visibleItems = orderItems.slice(0, 4).map(item => {
-          const product = productMap.get(String(item.product_id));
-          const name = item.product_name || item.name || product?.name || 'Product';
-          const quantity = Number(item.quantity || item.qty || 0);
-          return `<span class="mobile-order-item-line"><strong>${esc(name)}</strong> × ${quantity}</span>`;
-        });
-        const remaining = orderItems.length - visibleItems.length;
-        const summary = `<div class="mobile-order-items-summary">${visibleItems.join('')}${remaining > 0 ? `<span class="mobile-order-items-more">+${remaining} more · Inspect for full breakdown</span>` : ''}</div>`;
-        itemsCell.insertAdjacentHTML('beforeend', summary);
+        addAccordion(row, grouped.get(String(orderId)) || []);
         row.classList.add('mobile-order-items-enriched');
       });
     } catch (error) {
-      console.warn('Mobile order item summary could not be loaded:', error);
+      console.warn('Mobile order item accordion could not be loaded:', error);
     }
   }
 
