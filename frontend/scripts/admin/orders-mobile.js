@@ -91,9 +91,10 @@
     itemsCell.replaceChildren(button, panel);
   }
 
-  // The canonical renderer can finish after this enhancement script and can
-  // briefly put its compact name list back into the Items cell. Sanitize that
-  // cell immediately without requiring the database to be initialized yet.
+  // Always create the mobile accordion trigger when the canonical renderer
+  // has supplied a numeric item count such as "10". The previous guard
+  // returned early for numeric-only cells, which caused the View N items
+  // control to disappear completely.
   function sanitizeRows() {
     const body = document.getElementById('ordersBody');
     if (!body) return;
@@ -102,7 +103,7 @@
       const cell = row.querySelector('td:nth-child(3)');
       if (!cell || cell.querySelector('.mobile-order-items-toggle')) return;
       const text = (cell.textContent || '').replace(/\s+/g, ' ').trim();
-      if (!text || /^\d+$/.test(text)) return;
+      if (!text) return;
       const count = Number(text.match(/\d+/)?.[0] || 0);
       const id = `mobile-items-${Math.random().toString(36).slice(2,10)}`;
       const button = document.createElement('button');
