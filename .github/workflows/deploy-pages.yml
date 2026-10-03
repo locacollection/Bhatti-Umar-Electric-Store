@@ -32,6 +32,20 @@ jobs:
       - name: Validate frontend
         run: node tests/runtime-smoke.cjs
 
+      - name: Inject mobile order UI
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          targets = [Path('frontend/admin/index.html'), Path('frontend/super-admin.html')]
+          for path in targets:
+              text = path.read_text(encoding='utf-8')
+              marker = 'scripts/admin/orders-mobile.js'
+              if marker not in text:
+                  tag = '<script src="' + ('../' if path.parts[-2] == 'admin' else '') + 'scripts/admin/orders-mobile.js?v=20261003-orders-mobile-1"></script>'
+                  text = text.replace('</body>', tag + '</body>')
+                  path.write_text(text, encoding='utf-8')
+          PY
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
