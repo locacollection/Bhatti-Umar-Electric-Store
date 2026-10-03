@@ -1,4 +1,24 @@
 (()=>{
+  // Compatibility layer: the archive-delete RPC was failing in the live client.
+  // Use the secured admin DELETE policy for archived orders instead, while keeping
+  // the existing RPC API surface unchanged for the rest of the Studio.
+  try{
+    const client=window.BHATTI?.db||window.db;
+    if(client?.rpc && !client.__bhattiArchiveDeleteCompat){
+      const originalRpc=client.rpc.bind(client);
+      client.rpc=async function(fn,args){
+        if(fn==='admin_permanently_delete_archived_order' && args?.p_archive_id){
+          const id=String(args.p_archive_id);
+          const {data,error}=await client.from('orders').delete().eq('id',id).not('archived_at','is',null).select('*').maybeSingle();
+          if(error) return {data:null,error};
+          if(!data) return {data:null,error:{message:'Archived order was not deleted. It may already have been removed or is not archived.'}};
+          return {data,error:null};
+        }
+        return originalRpc(fn,args);
+      };
+      client.__bhattiArchiveDeleteCompat=true;
+    }
+  }catch(error){console.warn('Archive delete compatibility layer could not initialize:',error)}
   const $=id=>document.getElementById(id);
   const clean=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
   let archivedOrders=[];
