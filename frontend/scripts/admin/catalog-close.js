@@ -104,10 +104,99 @@
     } catch(error){console.warn('Shared administrator dashboard could not initialize:',error);}
   };
 
+  const installOrderDetailThumbnails = () => {
+    if (document.getElementById('bhattiOrderThumbCss')) return;
+    const style = document.createElement('style');
+    style.id = 'bhattiOrderThumbCss';
+    style.textContent = `
+      .order-detail-items-title{margin:20px 0 10px;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#766b61}
+      .order-line-items.order-line-items-rich{display:grid;gap:10px;margin-top:8px}
+      .order-line-items-rich .item{display:grid;grid-template-columns:56px minmax(0,1fr) auto;align-items:center;gap:12px;padding:10px;border:1px solid rgba(39,31,24,.09);border-radius:14px;background:#fffaf4}
+      .order-line-items-rich .item-thumb{width:56px;height:56px;border-radius:10px;object-fit:cover;background:#f1ece5;border:1px solid rgba(39,31,24,.08);display:block}
+      .order-line-items-rich .item-info{min-width:0;display:grid;gap:4px}
+      .order-line-items-rich .item-name{font-weight:800;color:#29231e;line-height:1.25;overflow-wrap:anywhere}
+      .order-line-items-rich .item-meta{font-size:11px;color:#766b61}
+      .order-line-items-rich .item-total{font-weight:800;color:#29231e;white-space:nowrap}
+      .order-line-items-rich .item-placeholder{display:grid;place-items:center;width:56px;height:56px;border-radius:10px;background:#f1ece5;color:#998e84;font-size:18px;font-weight:800}
+      @media(max-width:700px){
+        #modal.open .order-detail-items-title{margin-top:16px}
+        #modal.open .order-line-items-rich .item{grid-template-columns:50px minmax(0,1fr) auto;gap:9px;padding:9px}
+        #modal.open .order-line-items-rich .item-thumb,#modal.open .order-line-items-rich .item-placeholder{width:50px;height:50px}
+        #modal.open .order-line-items-rich .item-name{font-size:12px}
+        #modal.open .order-line-items-rich .item-meta{font-size:10px}
+        #modal.open .order-line-items-rich .item-total{font-size:12px}
+      }
+    `;
+    document.head.appendChild(style);
+  };
+
+  const installOrderDetailOverride = () => {
+    installOrderDetailThumbnails();
+    const db = window.BHATTI?.db;
+    if (!db || typeof window.viewOrder !== 'function') return;
+    if (window.__bhattiThumbnailOrderViewInstalled) return;
+    window.__bhattiThumbnailOrderViewInstalled = true;
+
+    const originalViewOrder = window.viewOrder;
+    window.viewOrder = async function(id) {
+      try {
+        const { data: order, error: orderError } = await db.from('orders').select('*').eq('id', id).maybeSingle();
+        if (orderError || !order) { originalViewOrder(id); return; }
+
+        const [{ data: itemRows, error: itemError }, { data: profile }] = await Promise.all([
+          db.from('order_items').select('*').eq('order_id', id),
+          order.user_id ? db.from('profiles').select('full_name,email,phone').eq('id', order.user_id).maybeSingle() : Promise.resolve({data:null})
+        ]);
+        const items = itemError ? [] : (itemRows || []);
+        const productIds = [...new Set(items.map(item => item.product_id).filter(Boolean).map(String))];
+        let productMap = new Map();
+        if (productIds.length) {
+          const { data: productRows } = await db.from('products').select('id,image_url,name,category,sku').in('id', productIds);
+          productMap = new Map((productRows || []).map(product => [String(product.id), product]));
+        }
+
+        const escValue = value => String(value ?? '').replace(/[&<>\"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+        const moneyValue = value => 'PKR ' + Number(value || 0).toLocaleString('en-PK');
+        const slug = value => String(value || 'unknown').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+        const statusBadge = value => `<span class="status-chip order-${slug(value)}">${escValue(value || 'Pending')}</span>`;
+        const paymentBadge = value => `<span class="status-chip payment-${slug(value)}">${escValue(value || 'Unpaid')}</span>`;
+        const customerName = profile?.full_name || order.customer_name || 'Customer';
+        const customerEmail = order.customer_email || profile?.email || order.email || 'Not provided';
+        const customerPhone = order.customer_phone || profile?.phone || order.phone || 'Not provided';
+        const address = order.address_line || order.address || 'Not provided';
+        const city = order.city || 'Not provided';
+        const cancelled = order.status === 'Cancelled' ? `<div class="cancellation-detail"><p class="kicker">Cancellation</p><div class="grid"><div class="detail"><span>Cancelled by</span>${escValue(order.cancelled_by || 'Not recorded')}</div><div class="detail"><span>Reason</span>${escValue(order.cancel_reason || 'Not recorded')}</div>${order.internal_note ? `<div class="detail" style="grid-column:1/-1"><span>Internal note</span>${escValue(order.internal_note)}</div>` : ''}</div></div>` : '';
+        const fallbackImage = '../assets/product-placeholder.svg';
+        const lineItems = items.map(item => {
+          const product = productMap.get(String(item.product_id));
+          const name = item.product_name || item.name || product?.name || 'Product';
+          const quantity = Number(item.quantity || item.qty || 0);
+          const unitPrice = Number(item.unit_price || item.price || 0);
+          const total = unitPrice * quantity;
+          const image = item.image_url || item.thumbnail_url || product?.image_url || fallbackImage;
+          const imageMarkup = image ? `<img class="item-thumb" src="${escValue(image)}" alt="" loading="lazy" onerror="this.onerror=null;this.src='${fallbackImage}'">` : '<span class="item-placeholder">□</span>';
+          return `<div class="item"><span class="item-thumb-wrap">${imageMarkup}</span><div class="item-info"><span class="item-name">${escValue(name)}</span><span class="item-meta">${quantity} × ${moneyValue(unitPrice)}${product?.category ? ` · ${escValue(product.category)}` : ''}</span></div><b class="item-total">${moneyValue(total)}</b></div>`;
+        }).join('');
+
+        const body = document.getElementById('modalBody');
+        const title = document.getElementById('modalTitle');
+        if (!body || !title) { originalViewOrder(id); return; }
+        title.textContent = order.order_number || order.order_no || order.id;
+        body.innerHTML = `<div class="order-detail-workflow"><div><small>Fulfilment</small>${statusBadge(order.status)}</div><div><small>Payment</small>${paymentBadge(order.payment_status)}</div><div class="order-detail-actions"><button class="smallbtn workflow-button" onclick="openOrderWorkflow('${escValue(order.id)}')">Manage workflow</button><button class="smallbtn danger-action" onclick="openArchiveOrder('${escValue(order.id)}')">Archive order</button></div></div><div class="grid"><div class="detail"><span>Customer</span>${escValue(customerName)}</div><div class="detail"><span>Phone</span>${escValue(customerPhone)}</div><div class="detail"><span>Email</span>${escValue(customerEmail)}</div><div class="detail"><span>City</span>${escValue(city)}</div><div class="detail"><span>Payment method</span>${escValue(order.payment_method || 'COD')}</div><div class="detail"><span>Last workflow update</span>${new Date(order.status_updated_at || order.created_at).toLocaleString('en-PK')}</div><div class="detail" style="grid-column:1/-1"><span>Address</span>${escValue(address)}</div></div>${cancelled}<div class="order-detail-items-title">Items · ${items.reduce((sum,item)=>sum+Number(item.quantity||item.qty||0),0)}</div><div class="order-line-items order-line-items-rich">${lineItems || '<div class="empty">No order items found.</div>'}</div><div class="total"><span>Total</span><b>${moneyValue(order.total)}</b></div>`;
+        document.getElementById('modal').classList.add('open');
+        document.body.classList.add('modal-lock');
+      } catch (error) {
+        console.warn('Thumbnail order detail could not be rendered:', error);
+        originalViewOrder(id);
+      }
+    };
+  };
+
   const init = () => {
     installMobileModalGuard();
     installArchiveDialogGuard();
     installSharedStudio();
+    installOrderDetailOverride();
     const form=document.getElementById('productForm');
     const dialog=document.getElementById('productEditor');
     if(!form||!dialog)return;
