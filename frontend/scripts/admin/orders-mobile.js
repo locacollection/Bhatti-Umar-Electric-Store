@@ -1,28 +1,20 @@
 (() => {
   'use strict';
-  const db = window.BHATTI?.db;
 
   const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const getDb = () => window.BHATTI?.db || null;
 
   function installStyle() {
     if (document.getElementById('bhattiMobileOrdersStyle')) return;
     const style = document.createElement('style');
     style.id = 'bhattiMobileOrdersStyle';
     style.textContent = `
-      .mobile-order-items-toggle{
-        width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;
-        margin-top:7px;padding:9px 11px;border:1px solid rgba(51,40,31,.10);border-radius:10px;
-        background:rgba(249,246,239,.72);color:#29231e;font:inherit;font-size:10px;font-weight:800;
-        text-align:left;cursor:pointer;transition:background .18s ease,border-color .18s ease;
-      }
+      .mobile-order-items-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:7px;padding:9px 11px;border:1px solid rgba(51,40,31,.10);border-radius:10px;background:rgba(249,246,239,.72);color:#29231e;font:inherit;font-size:10px;font-weight:800;text-align:left;cursor:pointer;transition:background .18s ease,border-color .18s ease}
       .mobile-order-items-toggle:hover{background:#fff;border-color:rgba(168,126,60,.28)}
       .mobile-order-items-toggle:focus-visible{outline:2px solid #d7a52a;outline-offset:2px}
       .mobile-order-items-toggle .items-chevron{font-size:12px;line-height:1;transition:transform .18s ease}
       .mobile-order-items-toggle[aria-expanded="true"] .items-chevron{transform:rotate(180deg)}
-      .mobile-order-items-panel{
-        display:none;margin-top:5px;padding:8px 10px;border-left:2px solid rgba(168,126,60,.45);
-        background:rgba(249,246,239,.48);border-radius:0 9px 9px 0;
-      }
+      .mobile-order-items-panel{display:none;margin-top:5px;padding:8px 10px;border-left:2px solid rgba(168,126,60,.45);background:rgba(249,246,239,.48);border-radius:0 9px 9px 0}
       .mobile-order-items-panel.is-open{display:grid;gap:6px}
       .mobile-order-item-line{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;min-width:0;color:#514940;font-size:10px;line-height:1.35}
       .mobile-order-item-line .item-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -96,14 +88,47 @@
       panel.classList.toggle('is-open', !open);
     });
 
-    // The canonical renderer may already have inserted item names into this
-    // cell. Replace the entire cell contents so the collapsed order card stays
-    // compact: only the item count is shown until the operator expands it.
     itemsCell.replaceChildren(button, panel);
   }
 
-  async function enrichRows() {
+  // The canonical renderer can finish after this enhancement script and can
+  // briefly put its compact name list back into the Items cell. Sanitize that
+  // cell immediately without requiring the database to be initialized yet.
+  function sanitizeRows() {
     const body = document.getElementById('ordersBody');
+    if (!body) return;
+    [...body.querySelectorAll('tr')].forEach(row => {
+      if (row.hidden || !row.querySelector('.row-actions')) return;
+      const cell = row.querySelector('td:nth-child(3)');
+      if (!cell || cell.querySelector('.mobile-order-items-toggle')) return;
+      const text = (cell.textContent || '').replace(/\s+/g, ' ').trim();
+      if (!text || /^\d+$/.test(text)) return;
+      const count = Number(text.match(/\d+/)?.[0] || 0);
+      const id = `mobile-items-${Math.random().toString(36).slice(2,10)}`;
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'mobile-order-items-toggle';
+      button.setAttribute('aria-expanded', 'false');
+      button.setAttribute('aria-controls', id);
+      button.innerHTML = `<span>View ${count || 'all'} items</span><span class="items-chevron" aria-hidden="true">⌄</span>`;
+      const panel = document.createElement('div');
+      panel.id = id;
+      panel.className = 'mobile-order-items-panel';
+      panel.innerHTML = '<div class="mobile-order-item-line"><span class="item-name">Open to view item names and quantities.</span></div>';
+      button.addEventListener('click', () => {
+        const open = button.getAttribute('aria-expanded') === 'true';
+        button.setAttribute('aria-expanded', String(!open));
+        panel.classList.toggle('is-open', !open);
+        if (!open) enrichRows();
+      });
+      cell.replaceChildren(button, panel);
+    });
+  }
+
+  async function enrichRows() {
+    sanitizeRows();
+    const body = document.getElementById('ordersBody');
+    const db = getDb();
     if (!body || !db) return;
     const rows = [...body.querySelectorAll('tr')].filter(row => !row.hidden && row.querySelector('.row-actions'));
     if (!rows.length) return;
@@ -118,19 +143,17 @@
     try {
       const { data: items, error: itemError } = await db.from('order_items').select('*').in('order_id', ids);
       if (itemError) throw itemError;
-
       const grouped = new Map();
       (items || []).forEach(item => {
         const key = String(item.order_id);
         if (!grouped.has(key)) grouped.set(key, []);
         grouped.get(key).push(item);
       });
-
       rows.forEach(row => {
         const button = row.querySelector('.workflow-button[onclick*="openOrderWorkflow"], .row-actions button[onclick*="openOrderWorkflow"]');
         const match = button?.getAttribute('onclick')?.match(/openOrderWorkflow\(['"]([^'"]+)['"]\)/);
         const orderId = match?.[1];
-        addAccordion(row, grouped.get(String(orderId)) || []);
+        if (orderId) addAccordion(row, grouped.get(String(orderId)) || []);
       });
     } catch (error) {
       console.warn('Mobile order item accordion could not be loaded:', error);
@@ -139,15 +162,16 @@
 
   function start() {
     installStyle();
+    sanitizeRows();
     enrichRows();
     const body = document.getElementById('ordersBody');
     if (!body) return;
     let timer = null;
     new MutationObserver(() => {
       clearTimeout(timer);
-      timer = setTimeout(enrichRows, 80);
+      timer = setTimeout(() => { sanitizeRows(); enrichRows(); }, 30);
     }).observe(body, {childList:true, subtree:true});
-    setInterval(enrichRows, 1500);
+    setInterval(() => { sanitizeRows(); enrichRows(); }, 700);
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, {once:true});
