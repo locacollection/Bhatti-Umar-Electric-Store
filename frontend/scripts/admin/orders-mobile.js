@@ -65,7 +65,7 @@
 
   function addAccordion(row, orderItems) {
     const itemsCell = row.querySelector('td:nth-child(3)');
-    if (!itemsCell || itemsCell.querySelector('.mobile-order-items-toggle')) return;
+    if (!itemsCell) return;
 
     const totalCount = orderItems.reduce((sum, item) => sum + Number(item.quantity || item.qty || 0), 0);
     const fallbackCount = Number((itemsCell.textContent || '').match(/\d+/)?.[0] || 0);
@@ -96,14 +96,16 @@
       panel.classList.toggle('is-open', !open);
     });
 
-    itemsCell.appendChild(button);
-    itemsCell.appendChild(panel);
+    // The canonical renderer may already have inserted item names into this
+    // cell. Replace the entire cell contents so the collapsed order card stays
+    // compact: only the item count is shown until the operator expands it.
+    itemsCell.replaceChildren(button, panel);
   }
 
   async function enrichRows() {
     const body = document.getElementById('ordersBody');
     if (!body || !db) return;
-    const rows = [...body.querySelectorAll('tr')].filter(row => !row.classList.contains('mobile-order-items-enriched') && !row.hidden && row.querySelector('.row-actions'));
+    const rows = [...body.querySelectorAll('tr')].filter(row => !row.hidden && row.querySelector('.row-actions'));
     if (!rows.length) return;
 
     const ids = rows.map(row => {
@@ -129,7 +131,6 @@
         const match = button?.getAttribute('onclick')?.match(/openOrderWorkflow\(['"]([^'"]+)['"]\)/);
         const orderId = match?.[1];
         addAccordion(row, grouped.get(String(orderId)) || []);
-        row.classList.add('mobile-order-items-enriched');
       });
     } catch (error) {
       console.warn('Mobile order item accordion could not be loaded:', error);
@@ -146,7 +147,7 @@
       clearTimeout(timer);
       timer = setTimeout(enrichRows, 80);
     }).observe(body, {childList:true, subtree:true});
-    setInterval(enrichRows, 5000);
+    setInterval(enrichRows, 1500);
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, {once:true});
