@@ -4,11 +4,6 @@ on:
     branches: [main]
   workflow_dispatch:
 
-# One Pages deployment at a time for the main storefront.
-# A newer run cancels an older in-progress deployment instead of
-# leaving GitHub Pages blocked by a stale deployment.
-# Re-deploy reverted main state.
-# Account UI deployment trigger: 2026-09-28
 concurrency:
   group: bhatti-github-pages-main
   cancel-in-progress: true
@@ -17,6 +12,9 @@ permissions:
   contents: read
   pages: write
   id-token: write
+
+env:
+  BHATTI_ORDER_UI_VERSION: 20261003-orders-mobile-3
 
 jobs:
   deploy:
@@ -32,20 +30,20 @@ jobs:
       - name: Validate frontend
         run: node tests/runtime-smoke.cjs
 
-      - name: Inject mobile order UI
+      - name: Inject definitive mobile order UI
         run: |
           python3 - <<'PY'
           from pathlib import Path
+          import re
           targets = [Path('frontend/admin/index.html'), Path('frontend/super-admin.html')]
           for path in targets:
               text = path.read_text(encoding='utf-8')
-              markers = [
-                  ('scripts/admin/orders-mobile.js', '<script src="' + ('../' if path.parts[-2] == 'admin' else '') + 'scripts/admin/orders-mobile.js?v=20261003-orders-mobile-2"></script>'),
-                  ('scripts/admin/orders-render-fix.js', '<script src="' + ('../' if path.parts[-2] == 'admin' else '') + 'scripts/admin/orders-render-fix.js?v=20261003-orders-render-1"></script>')
-              ]
-              for marker, tag in markers:
-                  if marker not in text:
-                      text = text.replace('</body>', tag + '</body>')
+              prefix = '../' if path.parent.name == 'admin' else ''
+              tag = f'<script src="{prefix}scripts/admin/orders-mobile-v2.js?v=20261003-orders-mobile-3"></script>'
+              if 'scripts/admin/orders-mobile-v2.js' not in text:
+                  text = text.replace('</body>', tag + '</body>')
+              else:
+                  text = re.sub(r'<script[^>]+scripts/admin/orders-mobile-v2\.js[^>]*></script>', tag, text)
               path.write_text(text, encoding='utf-8')
           PY
 
