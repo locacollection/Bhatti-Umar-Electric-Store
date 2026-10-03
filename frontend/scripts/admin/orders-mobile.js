@@ -4,18 +4,16 @@
   if (!db) return;
 
   const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const money = value => 'PKR ' + Number(value || 0).toLocaleString('en-PK');
 
   function installStyle() {
     if (document.getElementById('bhattiMobileOrdersStyle')) return;
     const style = document.createElement('style');
     style.id = 'bhattiMobileOrdersStyle';
     style.textContent = `
-      .mobile-order-preview{display:flex!important;align-items:center;gap:12px;min-width:0}
-      .mobile-order-preview img{width:68px;height:68px;flex:0 0 68px;object-fit:cover;border-radius:12px;border:1px solid rgba(39,31,24,.1);background:#f5efe7}
-      .mobile-order-preview .mobile-order-product{min-width:0}
-      .mobile-order-preview strong{display:block;font-size:13px;line-height:1.25;color:#27221d}
-      .mobile-order-preview span{display:block;margin-top:4px;color:#786f66;font-size:10px;line-height:1.4}
+      .mobile-order-items-summary{display:grid;gap:3px;margin-top:5px;max-width:100%}
+      .mobile-order-item-line{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#514940;font-size:10px;line-height:1.35}
+      .mobile-order-item-line strong{font-weight:800;color:#29231e}
+      .mobile-order-items-more{color:#8a8177;font-size:9px;line-height:1.3}
       @media(max-width:700px){
         #ordersSection .section-head{margin-bottom:16px}
         #ordersSection .section-head h2{font-size:27px}
@@ -44,6 +42,8 @@
         #ordersSection .tablewrap tbody tr:not(.empty)>td:nth-child(5)::before{content:'PAYMENT';display:block;margin-bottom:3px;color:#8a8177;font-size:8px;font-weight:800;letter-spacing:.12em}
         #ordersSection .tablewrap tbody tr:not(.empty)>td:nth-child(6)::before{content:'WORKFLOW';display:block;margin-bottom:5px;color:#8a8177;font-size:8px;font-weight:800;letter-spacing:.12em}
         #ordersSection .tablewrap tbody tr.empty{display:block!important;padding:22px!important}
+        #ordersSection .mobile-order-items-summary{max-width:calc(100vw - 105px);}
+        #ordersSection .mobile-order-item-line{font-size:10px;}
       }
     `;
     document.head.appendChild(style);
@@ -52,7 +52,7 @@
   async function enrichRows() {
     const body = document.getElementById('ordersBody');
     if (!body) return;
-    const rows = [...body.querySelectorAll('tr')].filter(row => !row.classList.contains('mobile-order-enriched') && !row.hidden && row.querySelector('.row-actions'));
+    const rows = [...body.querySelectorAll('tr')].filter(row => !row.classList.contains('mobile-order-items-enriched') && !row.hidden && row.querySelector('.row-actions'));
     if (!rows.length) return;
 
     const ids = rows.map(row => {
@@ -68,30 +68,32 @@
       const productIds = [...new Set((items || []).map(item => item.product_id).filter(Boolean).map(String))];
       let products = [];
       if (productIds.length) {
-        const result = await db.from('products').select('id,name,image_url,category').in('id', productIds);
+        const result = await db.from('products').select('id,name').in('id', productIds);
         if (!result.error) products = result.data || [];
       }
       const productMap = new Map(products.map(product => [String(product.id), product]));
-      const fallback = location.pathname.includes('/admin/') ? '../assets/product-placeholder.svg' : 'assets/product-placeholder.svg';
 
       rows.forEach(row => {
         const button = row.querySelector('.workflow-button[onclick*="openOrderWorkflow"], .row-actions button[onclick*="openOrderWorkflow"]');
         const match = button?.getAttribute('onclick')?.match(/openOrderWorkflow\(['"]([^'"]+)['"]\)/);
         const orderId = match?.[1];
         const orderItems = (items || []).filter(item => String(item.order_id) === String(orderId));
-        const first = orderItems[0];
-        const product = first ? productMap.get(String(first.product_id)) : null;
-        const name = product?.name || first?.product_name || 'Order items';
-        const count = orderItems.reduce((sum, item) => sum + Number(item.quantity || item.qty || 0), 0);
-        const image = product?.image_url || fallback;
-        const firstCell = row.querySelector('td:first-child');
-        if (!firstCell) return;
-        firstCell.classList.add('mobile-order-preview');
-        firstCell.innerHTML = `<img src="${esc(image)}" alt="${esc(name)}" loading="lazy" onerror="this.onerror=null;this.src='${fallback}'"><div class="mobile-order-product"><strong>${esc(name)}</strong><span>${count || orderItems.length || 0} item${(count || orderItems.length || 0) === 1 ? '' : 's'} · ${esc(first?.sku || product?.category || 'Electrical supply')}</span><span>${first?.unit_price != null ? esc(money(first.unit_price)) + ' each' : 'Open Inspect for full item breakdown'}</span></div>`;
-        row.classList.add('mobile-order-enriched');
+        const itemsCell = row.querySelector('td:nth-child(3)');
+        if (!itemsCell) return;
+
+        const visibleItems = orderItems.slice(0, 4).map(item => {
+          const product = productMap.get(String(item.product_id));
+          const name = item.product_name || item.name || product?.name || 'Product';
+          const quantity = Number(item.quantity || item.qty || 0);
+          return `<span class="mobile-order-item-line"><strong>${esc(name)}</strong> × ${quantity}</span>`;
+        });
+        const remaining = orderItems.length - visibleItems.length;
+        const summary = `<div class="mobile-order-items-summary">${visibleItems.join('')}${remaining > 0 ? `<span class="mobile-order-items-more">+${remaining} more · Inspect for full breakdown</span>` : ''}</div>`;
+        itemsCell.insertAdjacentHTML('beforeend', summary);
+        row.classList.add('mobile-order-items-enriched');
       });
     } catch (error) {
-      console.warn('Mobile order thumbnails could not be loaded:', error);
+      console.warn('Mobile order item summary could not be loaded:', error);
     }
   }
 
