@@ -39,11 +39,14 @@ jobs:
           targets = [Path('frontend/admin/index.html'), Path('frontend/super-admin.html')]
           for path in targets:
               text = path.read_text(encoding='utf-8')
-              marker = 'scripts/admin/orders-mobile.js'
-              if marker not in text:
-                  tag = '<script src="' + ('../' if path.parts[-2] == 'admin' else '') + 'scripts/admin/orders-mobile.js?v=20261003-orders-mobile-1"></script>'
-                  text = text.replace('</body>', tag + '</body>')
-                  path.write_text(text, encoding='utf-8')
+              markers = [
+                  ('scripts/admin/orders-mobile.js', '<script src="' + ('../' if path.parts[-2] == 'admin' else '') + 'scripts/admin/orders-mobile.js?v=20261003-orders-mobile-1"></script>'),
+                  ('scripts/admin/orders-render-fix.js', '<script src="' + ('../' if path.parts[-2] == 'admin' else '') + 'scripts/admin/orders-render-fix.js?v=20261003-orders-render-1"></script>')
+              ]
+              for marker, tag in markers:
+                  if marker not in text:
+                      text = text.replace('</body>', tag + '</body>')
+              path.write_text(text, encoding='utf-8')
           PY
 
       - name: Setup Pages
