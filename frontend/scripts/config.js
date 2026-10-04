@@ -1,5 +1,4 @@
 window.BHATTI = window.BHATTI || {};
-
 BHATTI.esc = BHATTI.escape = value => String(value ?? "").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 BHATTI.money = n => "PKR " + Number(n || 0).toLocaleString("en-PK");
 BHATTI.SUPABASE_URL = "https://ewldqjmyijfhrdenwqfn.supabase.co";
@@ -20,10 +19,8 @@ BHATTI.syncStudioOrders = async function syncStudioOrders(){
     const liveIds=new Set(liveRows.map(row=>String(row.id)));
     const liveNumbers=new Set(liveRows.map(row=>String(row.order_number||'')).filter(Boolean));
     const body=document.getElementById('ordersBody');
-
     if(liveRows.length){
       studioOrderZeroConfirmations=0;
-      /* Reconcile only after a successful non-empty live query. */
       body?.querySelectorAll('tr').forEach(row=>{
         const orderCell=row.querySelector('td:first-child');
         const key=String(orderCell?.querySelector('b')?.textContent||'').trim();
@@ -33,18 +30,11 @@ BHATTI.syncStudioOrders = async function syncStudioOrders(){
         row.setAttribute('aria-hidden',String(!isLive));
       });
       const visible=body?.querySelectorAll('tr:not([hidden]) .row-actions')?.length||0;
-      if(body && visible===0){
-        /* Core may have rendered between the query and this reconciliation. */
-        return {live:liveRows,archived:archived||[]};
-      }
+      if(body && visible===0) return {live:liveRows,archived:archived||[]};
     }else{
-      /* Never clear a freshly rendered order on the first transient zero result. */
       studioOrderZeroConfirmations++;
-      if(studioOrderZeroConfirmations>=2 && body){
-        body.innerHTML='<tr><td colspan="7" class="empty">No live orders.</td></tr>';
-      }
+      if(studioOrderZeroConfirmations>=2 && body) body.innerHTML='<tr><td colspan="7" class="empty">No live orders.</td></tr>';
     }
-
     const count=document.getElementById('orderCount');
     if(count)count.textContent=`${liveRows.length} live · ${liveRows.length} total`;
     const side=document.getElementById('sideOrderCount');
@@ -59,10 +49,7 @@ BHATTI.syncStudioOrders = async function syncStudioOrders(){
     const syncLabel=document.getElementById('topSyncLabel');
     if(syncLabel)syncLabel.textContent=`Live · ${liveRows.length} orders`;
     return {live:liveRows,archived:archived||[]};
-  }catch(error){
-    console.warn('Studio live-order synchronization check failed:',error);
-    return null;
-  }
+  }catch(error){console.warn('Studio live-order synchronization check failed:',error);return null;}
 };
 
 function installStudioIntegrityFixes(){
@@ -96,33 +83,21 @@ function installStudioIntegrityFixes(){
   let archiveSelection=new Set();
   let archiveActionBusy=false;
   let archiveToastTimer=null;
-
-  const notifyOnce=(message,options={})=>{
-    clearTimeout(archiveToastTimer);
-    archiveToastTimer=setTimeout(()=>window.adminNotify?.(message,options),80);
-  };
-
+  const notifyOnce=(message,options={})=>{clearTimeout(archiveToastTimer);archiveToastTimer=setTimeout(()=>window.adminNotify?.(message,options),80)};
   const getArchiveId=card=>String(card?.querySelector('[data-inspect-archive]')?.dataset.inspectArchive||card?.querySelector('[data-delete-archive]')?.dataset.deleteArchive||'');
-
   const renderArchiveBulkToolbar=()=>{
-    const section=document.getElementById('archiveSection');
-    if(!section)return;
+    const section=document.getElementById('archiveSection'); if(!section)return;
     let toolbar=document.getElementById('archiveBulkToolbar');
     if(!toolbar){
-      toolbar=document.createElement('div');
-      toolbar.id='archiveBulkToolbar';
+      toolbar=document.createElement('div'); toolbar.id='archiveBulkToolbar';
       toolbar.innerHTML='<span class="archive-bulk-status" id="archiveBulkStatus">No archived orders selected</span><button type="button" class="btn alt" id="archiveSelectMultiple">☐ Select multiple</button><button type="button" class="btn alt" id="archiveSelectAll">☐ Select all</button><button type="button" class="btn danger-action archive-delete-selected" id="archiveDeleteSelected" disabled>Delete selected</button>';
-      const body=document.getElementById('archiveBody');
-      body?.parentNode?.insertBefore(toolbar,body);
+      const body=document.getElementById('archiveBody'); body?.parentNode?.insertBefore(toolbar,body);
     }
     const selectedCount=archiveSelection.size;
     const cards=[...document.querySelectorAll('#archiveBody .archive-card')];
     const visibleIds=cards.map(getArchiveId).filter(Boolean);
     const allSelected=visibleIds.length>0&&visibleIds.every(id=>archiveSelection.has(id));
-    const selectAll=document.getElementById('archiveSelectAll');
-    const selectMultiple=document.getElementById('archiveSelectMultiple');
-    const deleteSelected=document.getElementById('archiveDeleteSelected');
-    const status=document.getElementById('archiveBulkStatus');
+    const selectAll=document.getElementById('archiveSelectAll'); const selectMultiple=document.getElementById('archiveSelectMultiple'); const deleteSelected=document.getElementById('archiveDeleteSelected'); const status=document.getElementById('archiveBulkStatus');
     if(status)status.textContent=selectedCount?`${selectedCount} archived order${selectedCount===1?'':'s'} selected`:'No archived orders selected';
     if(selectMultiple)selectMultiple.textContent=selectedCount?'☑ Selection mode on':'☐ Select multiple';
     if(selectAll){selectAll.textContent=allSelected?'☑ Deselect all':'☐ Select all';selectAll.setAttribute('aria-pressed',String(allSelected));}
@@ -131,79 +106,46 @@ function installStudioIntegrityFixes(){
       const id=getArchiveId(card); if(!id)return;
       card.classList.toggle('archive-selected',archiveSelection.has(id));
       let wrap=card.querySelector('.archive-select-wrap');
-      if(!wrap){
-        wrap=document.createElement('label');wrap.className='archive-select-wrap';
-        wrap.innerHTML='<input type="checkbox" class="archive-select-check" aria-label="Select archived order"><span>Select archived order</span>';
-        const first=card.firstElementChild; if(first)card.insertBefore(wrap,first); else card.appendChild(wrap);
-      }
-      const checkbox=wrap.querySelector('input');
-      checkbox.checked=archiveSelection.has(id);
-      checkbox.dataset.archiveId=id;
+      if(!wrap){wrap=document.createElement('label');wrap.className='archive-select-wrap';wrap.innerHTML='<input type="checkbox" class="archive-select-check" aria-label="Select archived order"><span>Select archived order</span>';const first=card.firstElementChild;if(first)card.insertBefore(wrap,first);else card.appendChild(wrap)}
+      const checkbox=wrap.querySelector('input'); checkbox.checked=archiveSelection.has(id); checkbox.dataset.archiveId=id;
     });
   };
-
-  const addArchiveDeleteControls=()=>{
-    document.querySelectorAll('#archiveBody .archive-card').forEach(card=>{
-      if(card.querySelector('[data-delete-archive]'))return;
-      const inspect=card.querySelector('[data-inspect-archive]');
-      const actions=card.querySelector('.archive-actions');
-      if(!inspect||!actions)return;
-      const button=document.createElement('button');button.type='button';button.className='smallbtn archive-delete-button danger-action';button.dataset.deleteArchive=inspect.dataset.inspectArchive;button.textContent='Delete permanently';actions.appendChild(button);
-    });
-    renderArchiveBulkToolbar();
-  };
-
+  const addArchiveDeleteControls=()=>{document.querySelectorAll('#archiveBody .archive-card').forEach(card=>{if(card.querySelector('[data-delete-archive]'))return;const inspect=card.querySelector('[data-inspect-archive]');const actions=card.querySelector('.archive-actions');if(!inspect||!actions)return;const button=document.createElement('button');button.type='button';button.className='smallbtn archive-delete-button danger-action';button.dataset.deleteArchive=inspect.dataset.inspectArchive;button.textContent='Delete permanently';actions.appendChild(button)});renderArchiveBulkToolbar()};
   const deleteArchived=async id=>{
-    if(!id||archiveActionBusy)return false;
-    try{const{error}=await BHATTI.db.rpc('admin_permanently_delete_archived_order',{p_archive_id:id});if(error)throw error;archiveSelection.delete(String(id));return true}catch(error){notifyOnce(error.message||'The archived order could not be deleted.',{title:'Deletion failed',tone:'error'});return false}
+    if(!id)return false;
+    try{const{error}=await BHATTI.db.rpc('admin_permanently_delete_archived_order',{p_archive_id:id});if(error)throw error;archiveSelection.delete(String(id));return true}
+    catch(error){notifyOnce(error.message||'The archived order could not be deleted.',{title:'Deletion failed',tone:'error'});return false}
   };
-
   const deleteSelectedArchives=async()=>{
     if(archiveActionBusy||!archiveSelection.size)return;
     const ids=[...archiveSelection];
     const confirmed=typeof window.confirmAction==='function'?await window.confirmAction({eyebrow:'Permanent deletion',title:`Delete ${ids.length} archived order${ids.length===1?'':'s'}?`,message:'This permanently removes the selected archive records and cannot be undone.',confirmLabel:'Delete forever'}):window.confirm(`Delete ${ids.length} archived order${ids.length===1?'':'s'} permanently?`);
     if(!confirmed)return;
     archiveActionBusy=true;renderArchiveBulkToolbar();
-    try{
-      let failed=0;
-      for(const id of ids){const ok=await deleteArchived(id);if(!ok)failed++;}
-      if(typeof window.loadArchivedOrders==='function')await window.loadArchivedOrders({quiet:true});
-      renderArchiveBulkToolbar();
-      notifyOnce(failed?`${ids.length-failed} deleted; ${failed} could not be deleted.`:`${ids.length} archived order${ids.length===1?'':'s'} permanently deleted.`,{title:'Archive updated',tone:failed?'error':'success'});
-    }finally{archiveActionBusy=false;renderArchiveBulkToolbar();}
+    try{let failed=0;for(const id of ids){const ok=await deleteArchived(id);if(!ok)failed++}if(typeof window.loadArchivedOrders==='function')await window.loadArchivedOrders({quiet:true});renderArchiveBulkToolbar();notifyOnce(failed?`${ids.length-failed} deleted; ${failed} could not be deleted.`:`${ids.length} archived order${ids.length===1?'':'s'} permanently deleted.`,{title:'Archive updated',tone:failed?'error':'success'})}
+    finally{archiveActionBusy=false;renderArchiveBulkToolbar()}
   };
-
   document.addEventListener('click',event=>{
     const selectMultiple=event.target.closest('#archiveSelectMultiple');
-    if(selectMultiple){event.preventDefault();event.stopImmediatePropagation();const checks=document.querySelectorAll('#archiveBody .archive-select-check');const visible=[...checks];if(!archiveSelection.size){visible.forEach(c=>archiveSelection.add(String(c.dataset.archiveId||'')))}else{archiveSelection.clear()}renderArchiveBulkToolbar();return;}
+    if(selectMultiple){event.preventDefault();event.stopImmediatePropagation();const checks=document.querySelectorAll('#archiveBody .archive-select-check');const visible=[...checks];if(!archiveSelection.size)visible.forEach(c=>archiveSelection.add(String(c.dataset.archiveId||'')));else archiveSelection.clear();renderArchiveBulkToolbar();return}
     const selectAll=event.target.closest('#archiveSelectAll');
-    if(selectAll){event.preventDefault();event.stopImmediatePropagation();const ids=[...document.querySelectorAll('#archiveBody .archive-card')].map(getArchiveId).filter(Boolean);const allSelected=ids.length>0&&ids.every(id=>archiveSelection.has(id));if(allSelected)archiveSelection.clear();else ids.forEach(id=>archiveSelection.add(id));renderArchiveBulkToolbar();return;}
+    if(selectAll){event.preventDefault();event.stopImmediatePropagation();const ids=[...document.querySelectorAll('#archiveBody .archive-card')].map(getArchiveId).filter(Boolean);const allSelected=ids.length>0&&ids.every(id=>archiveSelection.has(id));if(allSelected)archiveSelection.clear();else ids.forEach(id=>archiveSelection.add(id));renderArchiveBulkToolbar();return}
     const bulkDelete=event.target.closest('#archiveDeleteSelected');
-    if(bulkDelete){event.preventDefault();event.stopImmediatePropagation();deleteSelectedArchives();return;}
+    if(bulkDelete){event.preventDefault();event.stopImmediatePropagation();deleteSelectedArchives();return}
     const check=event.target.closest('.archive-select-check');
-    if(check){event.stopPropagation();const id=String(check.dataset.archiveId||'');if(check.checked)archiveSelection.add(id);else archiveSelection.delete(id);renderArchiveBulkToolbar();return;}
+    if(check){event.stopPropagation();const id=String(check.dataset.archiveId||'');if(check.checked)archiveSelection.add(id);else archiveSelection.delete(id);renderArchiveBulkToolbar();return}
     const remove=event.target.closest('[data-delete-archive]');
-    if(remove){event.preventDefault();event.stopImmediatePropagation();const id=remove.dataset.deleteArchive;const run=async()=>{const confirmed=typeof window.confirmAction==='function'?await window.confirmAction({eyebrow:'Permanent deletion',title:'Delete archived order?',message:'This permanently removes the archived order record and cannot be undone.',confirmLabel:'Delete forever'}):window.confirm('Delete this archived order permanently?');if(!confirmed)return;archiveActionBusy=true;renderArchiveBulkToolbar();const ok=await deleteArchived(id);if(ok&&typeof window.loadArchivedOrders==='function')await window.loadArchivedOrders({quiet:true});archiveActionBusy=false;renderArchiveBulkToolbar();if(ok)notifyOnce('Archived order permanently deleted.',{title:'Archive updated',tone:'success'})};run();return;}
+    if(remove){event.preventDefault();event.stopImmediatePropagation();const id=remove.dataset.deleteArchive;const run=async()=>{const confirmed=typeof window.confirmAction==='function'?await window.confirmAction({eyebrow:'Permanent deletion',title:'Delete archived order?',message:'This permanently removes the archived order record and cannot be undone.',confirmLabel:'Delete forever'}):window.confirm('Delete this archived order permanently?');if(!confirmed)return;archiveActionBusy=true;renderArchiveBulkToolbar();const ok=await deleteArchived(id);if(ok&&typeof window.loadArchivedOrders==='function')await window.loadArchivedOrders({quiet:true});archiveActionBusy=false;renderArchiveBulkToolbar();if(ok)notifyOnce('Archived order permanently deleted.',{title:'Archive updated',tone:'success'})};run();return}
   },true);
-
   if(archiveBody)new MutationObserver(()=>{addArchiveDeleteControls()}).observe(archiveBody,{childList:true,subtree:true});
   addArchiveDeleteControls();
-
   const editProduct=new URLSearchParams(window.location.search).get('editProduct');
   if(editProduct&&document.getElementById('productEditor')){
-    BHATTI.db.from('products').select('id,name').eq('id',editProduct).maybeSingle().then(({data})=>{
-      const targetName=String(data?.name||'').trim().toLowerCase();if(!targetName)return;
-      let attempts=0;const timer=setInterval(()=>{attempts++;document.querySelector('.side-nav .tab[data-tab="products"]')?.click();const cards=[...document.querySelectorAll('#productsBody .catalog-card')];const card=cards.find(item=>item.textContent.toLowerCase().includes(targetName));const edit=card&&[...card.querySelectorAll('button,a')].find(el=>/edit/i.test(`${el.textContent||''} ${el.getAttribute('aria-label')||''} ${el.title||''}`));if(edit){edit.click();clearInterval(timer)}else if(attempts>=150)clearInterval(timer)},100);
-    }).catch(error=>console.warn('Preview edit target lookup failed:',error));
+    BHATTI.db.from('products').select('id,name').eq('id',editProduct).maybeSingle().then(({data})=>{const targetName=String(data?.name||'').trim().toLowerCase();if(!targetName)return;let attempts=0;const timer=setInterval(()=>{attempts++;document.querySelector('.side-nav .tab[data-tab="products"]')?.click();const cards=[...document.querySelectorAll('#productsBody .catalog-card')];const card=cards.find(item=>item.textContent.toLowerCase().includes(targetName));const edit=card&&[...card.querySelectorAll('button,a')].find(el=>/edit/i.test(`${el.textContent||''} ${el.getAttribute('aria-label')||''} ${el.title||''}`));if(edit){edit.click();clearInterval(timer)}else if(attempts>=150)clearInterval(timer)},100)}).catch(error=>console.warn('Preview edit target lookup failed:',error));
   }
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',installStudioIntegrityFixes,{once:true});else installStudioIntegrityFixes();
-
 if(document.getElementById('ordersBody')){
-  const reconcile=()=>setTimeout(()=>BHATTI.syncStudioOrders(),450);
-  window.addEventListener('load',reconcile,{once:true});
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden)reconcile()});
-  setInterval(reconcile,30000);
-  const observerTarget=document.getElementById('ordersBody');
-  if(observerTarget){let timer=null;new MutationObserver(()=>{clearTimeout(timer);timer=setTimeout(()=>BHATTI.syncStudioOrders(),350)}).observe(observerTarget,{childList:true,subtree:true});}
+  const reconcile=()=>setTimeout(()=>BHATTI.syncStudioOrders(),450); window.addEventListener('load',reconcile,{once:true}); document.addEventListener('visibilitychange',()=>{if(!document.hidden)reconcile()}); setInterval(reconcile,30000);
+  const observerTarget=document.getElementById('ordersBody'); if(observerTarget){let timer=null;new MutationObserver(()=>{clearTimeout(timer);timer=setTimeout(()=>BHATTI.syncStudioOrders(),350)}).observe(observerTarget,{childList:true,subtree:true})}
 }
