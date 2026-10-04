@@ -16,6 +16,7 @@ permissions:
 env:
   BHATTI_ORDER_UI_VERSION: 20261004-orders-mobile-5
   BHATTI_MOBILE_POLISH_VERSION: 20261004-mobile-polish-2
+  BHATTI_ARCHIVE_DELETE_VERSION: 20261004-archive-delete-1
 
 jobs:
   deploy:
@@ -40,11 +41,13 @@ jobs:
           for path in targets:
               text = path.read_text(encoding='utf-8')
               prefix = '../' if path.parent.name == 'admin' else ''
+              archive_delete_tag = f'<script src="{prefix}scripts/admin/archive-delete-guard.js?v=20261004-archive-delete-1"></script>'
               order_tag = f'<script src="{prefix}scripts/admin/orders-mobile.js?v=20261004-orders-mobile-5"></script>'
               polish_tag = f'<script src="{prefix}scripts/admin/mobile-polish.js?v=20261004-mobile-polish-2"></script>'
               text = re.sub(r'<script[^>]+scripts/admin/orders-mobile-v2\\.js[^>]*></script>\\s*', '', text)
               text = re.sub(r'<script[^>]+scripts/admin/orders-mobile\\.js[^>]*></script>\\s*', '', text)
               text = re.sub(r'<script[^>]+scripts/admin/mobile-polish\\.js[^>]*></script>\\s*', '', text)
+              text = text.replace('</head>', archive_delete_tag + '</head>', 1)
               text = text.replace('</body>', order_tag + polish_tag + '</body>')
               path.write_text(text, encoding='utf-8')
           PY
