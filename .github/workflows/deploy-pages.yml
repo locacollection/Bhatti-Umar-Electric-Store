@@ -15,6 +15,7 @@ permissions:
 
 env:
   BHATTI_ORDER_UI_VERSION: 20261004-orders-mobile-5
+  BHATTI_MOBILE_POLISH_VERSION: 20261004-mobile-polish-1
 
 jobs:
   deploy:
@@ -30,7 +31,7 @@ jobs:
       - name: Validate frontend
         run: node tests/runtime-smoke.cjs
 
-      - name: Inject canonical mobile order UI
+      - name: Inject canonical mobile admin UI
         run: |
           python3 - <<'PY'
           from pathlib import Path
@@ -39,10 +40,12 @@ jobs:
           for path in targets:
               text = path.read_text(encoding='utf-8')
               prefix = '../' if path.parent.name == 'admin' else ''
-              tag = f'<script src="{prefix}scripts/admin/orders-mobile.js?v=20261004-orders-mobile-5"></script>'
+              order_tag = f'<script src="{prefix}scripts/admin/orders-mobile.js?v=20261004-orders-mobile-5"></script>'
+              polish_tag = f'<script src="{prefix}scripts/admin/mobile-polish.js?v=20261004-mobile-polish-1"></script>'
               text = re.sub(r'<script[^>]+scripts/admin/orders-mobile-v2\\.js[^>]*></script>\\s*', '', text)
               text = re.sub(r'<script[^>]+scripts/admin/orders-mobile\\.js[^>]*></script>\\s*', '', text)
-              text = text.replace('</body>', tag + '</body>')
+              text = re.sub(r'<script[^>]+scripts/admin/mobile-polish\\.js[^>]*></script>\\s*', '', text)
+              text = text.replace('</body>', order_tag + polish_tag + '</body>')
               path.write_text(text, encoding='utf-8')
           PY
 
