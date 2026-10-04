@@ -14,10 +14,10 @@
       .mobile-order-items-toggle:focus-visible{outline:2px solid #d7a52a;outline-offset:2px}
       .mobile-order-items-toggle .items-chevron{font-size:12px;line-height:1;transition:transform .18s ease}
       .mobile-order-items-toggle[aria-expanded="true"] .items-chevron{transform:rotate(180deg)}
-      .mobile-order-items-panel{display:none;margin-top:5px;padding:8px 10px;border-left:2px solid rgba(168,126,60,.45);background:rgba(249,246,239,.48);border-radius:0 9px 9px 0;max-height:150px;overflow-y:auto}
-      .mobile-order-items-panel.is-open{display:grid;gap:6px}
-      .mobile-order-item-line{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0;color:#514940;font-size:10px;line-height:1.35}
-      .mobile-order-item-line .item-name{min-width:0;max-width:calc(100% - 38px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+      .mobile-order-items-panel{display:none;margin-top:5px;padding:9px 10px;border-left:2px solid rgba(168,126,60,.45);background:rgba(249,246,239,.48);border-radius:0 9px 9px 0;max-height:260px;overflow-y:auto}
+      .mobile-order-items-panel.is-open{display:grid;gap:7px}
+      .mobile-order-item-line{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:8px;min-width:0;color:#514940;font-size:10px;line-height:1.4}
+      .mobile-order-item-line .item-name{min-width:0;white-space:normal;overflow-wrap:anywhere;word-break:normal}
       .mobile-order-item-line strong{font-weight:800;color:#29231e}
       .mobile-order-item-qty{flex:0 0 auto;color:#746b61;font-weight:700;white-space:nowrap}
       @media(max-width:700px){
@@ -71,8 +71,6 @@
     const fallbackCount = Number((itemsCell.textContent || '').match(/\d+/)?.[0] || 0);
     const itemCount = totalCount || fallbackCount || orderItems.length;
 
-    // Important: never replace an existing accordion. Doing that on a timer
-    // was closing the menu immediately after the customer opened it.
     let button = itemsCell.querySelector('.mobile-order-items-toggle');
     let panel = itemsCell.querySelector('.mobile-order-items-panel');
 
