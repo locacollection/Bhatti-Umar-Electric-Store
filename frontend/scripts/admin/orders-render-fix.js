@@ -3,6 +3,15 @@
   const db = window.BHATTI?.db;
   if (!db || !window.BHATTI) return;
 
+  // Prevent the Orders count from briefly inheriting a value from the archive
+  // while the live-order query is still loading. The count is revealed only
+  // after this live-order synchronization has established the canonical value.
+  const countElement = document.getElementById('orderCount');
+  if (countElement) {
+    countElement.style.visibility = 'hidden';
+    countElement.setAttribute('aria-busy', 'true');
+  }
+
   // The previous integrity sync was allowed to hide rendered rows by comparing
   // DOM text with database IDs. On mobile that comparison can fail even when
   // the database correctly reports one live order. This sync is read-only:
@@ -29,7 +38,11 @@
       }
 
       const count = document.getElementById('orderCount');
-      if (count) count.textContent = `${liveRows.length} live · ${liveRows.length} total`;
+      if (count) {
+        count.textContent = `${liveRows.length} live · ${liveRows.length} total`;
+        count.style.visibility = 'visible';
+        count.removeAttribute('aria-busy');
+      }
       const side = document.getElementById('sideOrderCount');
       if (side) side.textContent = liveRows.length;
 
@@ -59,6 +72,12 @@
       return { live: liveRows, archived: archived || [] };
     } catch (error) {
       console.warn('Safe studio order sync failed:', error);
+      // Do not leave the count invisible if synchronization fails.
+      const count = document.getElementById('orderCount');
+      if (count) {
+        count.style.visibility = 'visible';
+        count.removeAttribute('aria-busy');
+      }
       return null;
     }
   };
