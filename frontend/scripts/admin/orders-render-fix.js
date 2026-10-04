@@ -130,11 +130,19 @@
     document.getElementById('paymentFilter')?.addEventListener('change',renderLiveOrders);
   }
 
-  // The live path owns future refreshes and the canonical render functions.
+  // Live Orders owns the refresh/render entry points. Archive loading is allowed only while its tab is active.
   window.loadLiveOrders = loadLiveOrders;
   window.load = loadLiveOrders;
   window.renderOrders = renderLiveOrders;
   window.renderStats = renderLiveStats;
+  const existingArchiveLoader = window.loadArchivedOrders;
+  if (typeof existingArchiveLoader === 'function') {
+    window.loadArchivedOrders = async function isolatedArchiveLoader(options) {
+      const section = document.getElementById('archiveSection');
+      if (section && section.style.display === 'none') return;
+      return existingArchiveLoader(options);
+    };
+  }
   bhatti.syncStudioOrders = async () => {await loadLiveOrders({quiet:true});return {live:liveOrders};};
 
   function start() {
