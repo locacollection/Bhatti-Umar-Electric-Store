@@ -14,10 +14,10 @@
       .mobile-order-items-toggle:focus-visible{outline:2px solid #d7a52a;outline-offset:2px}
       .mobile-order-items-toggle .items-chevron{font-size:12px;line-height:1;transition:transform .18s ease}
       .mobile-order-items-toggle[aria-expanded="true"] .items-chevron{transform:rotate(180deg)}
-      .mobile-order-items-panel{display:none;margin-top:5px;padding:8px 10px;border-left:2px solid rgba(168,126,60,.45);background:rgba(249,246,239,.48);border-radius:0 9px 9px 0}
+      .mobile-order-items-panel{display:none;margin-top:5px;padding:8px 10px;border-left:2px solid rgba(168,126,60,.45);background:rgba(249,246,239,.48);border-radius:0 9px 9px 0;max-height:150px;overflow-y:auto}
       .mobile-order-items-panel.is-open{display:grid;gap:6px}
-      .mobile-order-item-line{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;min-width:0;color:#514940;font-size:10px;line-height:1.35}
-      .mobile-order-item-line .item-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+      .mobile-order-item-line{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0;color:#514940;font-size:10px;line-height:1.35}
+      .mobile-order-item-line .item-name{min-width:0;max-width:calc(100% - 38px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
       .mobile-order-item-line strong{font-weight:800;color:#29231e}
       .mobile-order-item-qty{flex:0 0 auto;color:#746b61;font-weight:700;white-space:nowrap}
       @media(max-width:700px){
@@ -55,6 +55,14 @@
     document.head.appendChild(style);
   }
 
+  function buildLines(orderItems) {
+    return orderItems.map(item => {
+      const name = item.product_name || item.name || 'Product';
+      const quantity = Number(item.quantity || item.qty || 0);
+      return `<div class="mobile-order-item-line"><span class="item-name" title="${esc(name)}"><strong>${esc(name)}</strong></span><span class="mobile-order-item-qty">× ${quantity}</span></div>`;
+    }).join('');
+  }
+
   function addAccordion(row, orderItems) {
     const itemsCell = row.querySelector('td:nth-child(3)');
     if (!itemsCell) return;
@@ -62,39 +70,40 @@
     const totalCount = orderItems.reduce((sum, item) => sum + Number(item.quantity || item.qty || 0), 0);
     const fallbackCount = Number((itemsCell.textContent || '').match(/\d+/)?.[0] || 0);
     const itemCount = totalCount || fallbackCount || orderItems.length;
-    const id = `mobile-items-${Math.random().toString(36).slice(2,10)}`;
 
-    const lines = orderItems.map(item => {
-      const name = item.product_name || item.name || 'Product';
-      const quantity = Number(item.quantity || item.qty || 0);
-      return `<div class="mobile-order-item-line"><span class="item-name"><strong>${esc(name)}</strong></span><span class="mobile-order-item-qty">× ${quantity}</span></div>`;
-    }).join('');
+    // Important: never replace an existing accordion. Doing that on a timer
+    // was closing the menu immediately after the customer opened it.
+    let button = itemsCell.querySelector('.mobile-order-items-toggle');
+    let panel = itemsCell.querySelector('.mobile-order-items-panel');
 
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'mobile-order-items-toggle';
-    button.setAttribute('aria-expanded', 'false');
-    button.setAttribute('aria-controls', id);
-    button.innerHTML = `<span>View ${itemCount} items</span><span class="items-chevron" aria-hidden="true">⌄</span>`;
+    if (!button || !panel) {
+      const id = `mobile-items-${Math.random().toString(36).slice(2,10)}`;
+      button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'mobile-order-items-toggle';
+      button.setAttribute('aria-expanded', 'false');
+      button.setAttribute('aria-controls', id);
+      button.innerHTML = `<span>View ${itemCount} items</span><span class="items-chevron" aria-hidden="true">⌄</span>`;
 
-    const panel = document.createElement('div');
-    panel.id = id;
-    panel.className = 'mobile-order-items-panel';
+      panel = document.createElement('div');
+      panel.id = id;
+      panel.className = 'mobile-order-items-panel';
+
+      button.addEventListener('click', () => {
+        const open = button.getAttribute('aria-expanded') === 'true';
+        button.setAttribute('aria-expanded', String(!open));
+        panel.classList.toggle('is-open', !open);
+      });
+
+      itemsCell.replaceChildren(button, panel);
+    } else {
+      button.querySelector('span:first-child').textContent = `View ${itemCount} items`;
+    }
+
+    const lines = buildLines(orderItems);
     panel.innerHTML = lines || `<div class="mobile-order-item-line"><span class="item-name">Item details available in Inspect</span></div>`;
-
-    button.addEventListener('click', () => {
-      const open = button.getAttribute('aria-expanded') === 'true';
-      button.setAttribute('aria-expanded', String(!open));
-      panel.classList.toggle('is-open', !open);
-    });
-
-    itemsCell.replaceChildren(button, panel);
   }
 
-  // Always create the mobile accordion trigger when the canonical renderer
-  // has supplied a numeric item count such as "10". The previous guard
-  // returned early for numeric-only cells, which caused the View N items
-  // control to disappear completely.
   function sanitizeRows() {
     const body = document.getElementById('ordersBody');
     if (!body) return;
@@ -127,7 +136,6 @@
   }
 
   async function enrichRows() {
-    sanitizeRows();
     const body = document.getElementById('ordersBody');
     const db = getDb();
     if (!body || !db) return;
@@ -171,8 +179,7 @@
     new MutationObserver(() => {
       clearTimeout(timer);
       timer = setTimeout(() => { sanitizeRows(); enrichRows(); }, 30);
-    }).observe(body, {childList:true, subtree:true});
-    setInterval(() => { sanitizeRows(); enrichRows(); }, 700);
+    }).observe(body, {childList:true});
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, {once:true});
