@@ -48,9 +48,26 @@
         .stat{min-height:102px!important;padding:15px!important;border-radius:17px!important}
         .stat b{margin-top:13px!important;font-size:25px!important}
 
-        .toolbar-actions{gap:8px!important}
+        .toolbar-actions{gap:8px!important;align-items:stretch!important}
         .search-control{min-height:46px!important}
         .toolbar-actions select,.toolbar-actions .btn,.toolbar-actions .search-control{min-height:46px!important}
+
+        /* Mobile filter disclosure: keep the search visible and move secondary
+           filters/actions into a compact dropdown instead of a tall stack. */
+        .bhatti-mobile-disclosure{width:100%;margin:0!important}
+        .bhatti-mobile-disclosure summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:46px;padding:0 14px;border:1px solid rgba(39,31,24,.12);border-radius:12px;background:#fffaf4;color:#352e28;font-size:12px;font-weight:700;cursor:pointer;user-select:none}
+        .bhatti-mobile-disclosure summary::-webkit-details-marker{display:none}
+        .bhatti-mobile-disclosure summary::after{content:'⌄';font-size:18px;line-height:1;transition:transform .2s ease;color:#786f66}
+        .bhatti-mobile-disclosure[open] summary::after{transform:rotate(180deg)}
+        .bhatti-mobile-disclosure .bhatti-disclosure-body{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding-top:8px}
+        .bhatti-mobile-disclosure .bhatti-disclosure-body>*{min-width:0}
+        .bhatti-mobile-disclosure .bhatti-disclosure-body select,.bhatti-mobile-disclosure .bhatti-disclosure-body .btn{width:100%;min-height:46px!important}
+        .bhatti-mobile-disclosure .bhatti-disclosure-body .catalog-filters{display:grid;grid-template-columns:1fr;gap:8px;width:100%}
+        .bhatti-mobile-disclosure .bhatti-disclosure-body .catalog-filters label{min-width:0}
+        .bhatti-mobile-disclosure .bhatti-disclosure-body .catalog-filters input,.bhatti-mobile-disclosure .bhatti-disclosure-body .catalog-filters select{width:100%;min-height:46px}
+        .bhatti-mobile-disclosure .bhatti-disclosure-body .sync-button{grid-column:1/-1}
+        #ordersSection .toolbar-actions>.bhatti-mobile-disclosure .bhatti-disclosure-body,
+        #archiveSection .toolbar-actions>.bhatti-mobile-disclosure .bhatti-disclosure-body{grid-template-columns:1fr}
 
         /* Inventory/catalog cards: visual-first 3-column phone grid. */
         #inventorySection .inventory-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
@@ -113,6 +130,43 @@
     });
   }
 
+  function addDisclosure(container, label, nodes) {
+    if (!container || container.querySelector(':scope > .bhatti-mobile-disclosure')) return;
+    const details = document.createElement('details');
+    details.className = 'bhatti-mobile-disclosure';
+    const summary = document.createElement('summary');
+    summary.textContent = label;
+    const body = document.createElement('div');
+    body.className = 'bhatti-disclosure-body';
+    nodes.forEach(node => body.appendChild(node));
+    details.appendChild(summary);
+    details.appendChild(body);
+    container.appendChild(details);
+  }
+
+  function enhanceToolbar(toolbar) {
+    if (!toolbar || toolbar.dataset.mobileDisclosureReady === '1') return;
+    const controls = Array.from(toolbar.children).filter(node => node instanceof HTMLElement);
+    const secondary = controls.filter(node => !node.classList.contains('search-control'));
+    if (!secondary.length) return;
+    toolbar.dataset.mobileDisclosureReady = '1';
+    addDisclosure(toolbar, 'Filters & actions', secondary);
+  }
+
+  function enhanceCatalogToolbar(toolbar) {
+    if (!toolbar || toolbar.dataset.mobileDisclosureReady === '1') return;
+    const children = Array.from(toolbar.children).filter(node => node instanceof HTMLElement);
+    if (!children.length) return;
+    toolbar.dataset.mobileDisclosureReady = '1';
+    addDisclosure(toolbar, 'Filters & catalogue actions', children);
+  }
+
+  function enhanceMobileDropdowns() {
+    if (window.matchMedia && !window.matchMedia('(max-width:700px)').matches) return;
+    document.querySelectorAll('.toolbar-actions').forEach(enhanceToolbar);
+    document.querySelectorAll('.catalog-toolbar').forEach(enhanceCatalogToolbar);
+  }
+
   function keepDialogsUsable() {
     document.querySelectorAll('dialog').forEach(dialog => {
       if (!dialog.dataset.mobilePolished) {
@@ -128,9 +182,11 @@
   function start() {
     installStyle();
     enhanceInventory();
+    enhanceMobileDropdowns();
     keepDialogsUsable();
     const observer = new MutationObserver(() => {
       enhanceInventory();
+      enhanceMobileDropdowns();
       keepDialogsUsable();
     });
     observer.observe(document.body, {childList:true, subtree:true});
