@@ -20,6 +20,7 @@ env:
   BHATTI_ORDER_COUNT_FIX_VERSION: 20261004-order-count-2
   BHATTI_NO_AUTOFOCUS_VERSION: 20261004-no-autofocus-1
   BHATTI_STUDIO_PATH_REPAIR_VERSION: 20261004-path-repair-1
+  BHATTI_ORDER_CATALOGUE_REPAIR_VERSION: 20261004-order-catalogue-repair-1
 
 jobs:
   deploy:
@@ -50,6 +51,7 @@ jobs:
               polish_tag = f'<script src="{prefix}scripts/admin/mobile-polish.js?v=20261004-mobile-polish-2"></script>'
               order_count_fix_tag = f'<script src="{prefix}scripts/admin/orders-render-fix.js?v=20261004-order-count-2"></script>'
               repair_tag = f'<script src="{prefix}scripts/admin/studio-path-repair.js?v=20261004-path-repair-1"></script>'
+              order_catalogue_repair_tag = f'<script src="{prefix}scripts/admin/orders-catalogue-repair.js?v=20261004-order-catalogue-repair-1"></script>'
               order_count_boot_style = '<style id="bhatti-order-count-boot">#orderCount{visibility:hidden!important}</style>'
               text = re.sub(r'<script[^>]+scripts/admin/no-autofocus\\.js[^>]*></script>\\s*', '', text)
               text = re.sub(r'<script[^>]+scripts/admin/orders-mobile-v2\\.js[^>]*></script>\\s*', '', text)
@@ -57,8 +59,9 @@ jobs:
               text = re.sub(r'<script[^>]+scripts/admin/mobile-polish\\.js[^>]*></script>\\s*', '', text)
               text = re.sub(r'<script[^>]+scripts/admin/orders-render-fix\\.js[^>]*></script>\\s*', '', text)
               text = re.sub(r'<script[^>]+scripts/admin/studio-path-repair\\.js[^>]*></script>\\s*', '', text)
+              text = re.sub(r'<script[^>]+scripts/admin/orders-catalogue-repair\\.js[^>]*></script>\\s*', '', text)
               text = text.replace('</head>', focus_tag + archive_delete_tag + order_count_boot_style + '</head>', 1)
-              text = text.replace('</body>', order_tag + polish_tag + order_count_fix_tag + repair_tag + '</body>')
+              text = text.replace('</body>', order_tag + polish_tag + order_count_fix_tag + repair_tag + order_catalogue_repair_tag + '</body>')
               path.write_text(text, encoding='utf-8')
           PY
 
