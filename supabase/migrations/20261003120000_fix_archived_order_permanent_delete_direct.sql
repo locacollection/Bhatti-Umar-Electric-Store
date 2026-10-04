@@ -15,6 +15,13 @@ begin
     raise exception 'Administrator access required';
   end if;
 
+  -- Inventory movements are historical records and intentionally do not cascade
+  -- when an order is permanently deleted. Detach the optional order reference
+  -- first so the historical stock movement remains intact.
+  update public.inventory_movements
+  set order_id = null
+  where order_id = p_archive_id;
+
   delete from public.orders
   where id = p_archive_id
     and archived_at is not null
