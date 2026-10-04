@@ -1,24 +1,4 @@
 (()=>{
-  // Compatibility layer: the archive-delete RPC was failing in the live client.
-  // Use the secured admin DELETE policy for archived orders instead, while keeping
-  // the existing RPC API surface unchanged for the rest of the Studio.
-  try{
-    const client=window.BHATTI?.db||window.db;
-    if(client?.rpc && !client.__bhattiArchiveDeleteCompat){
-      const originalRpc=client.rpc.bind(client);
-      client.rpc=async function(fn,args){
-        if(fn==='admin_permanently_delete_archived_order' && args?.p_archive_id){
-          const id=String(args.p_archive_id);
-          const {data,error}=await client.from('orders').delete().eq('id',id).not('archived_at','is',null).select('*').maybeSingle();
-          if(error) return {data:null,error};
-          if(!data) return {data:null,error:{message:'Archived order was not deleted. It may already have been removed or is not archived.'}};
-          return {data,error:null};
-        }
-        return originalRpc(fn,args);
-      };
-      client.__bhattiArchiveDeleteCompat=true;
-    }
-  }catch(error){console.warn('Archive delete compatibility layer could not initialize:',error)}
   const $=id=>document.getElementById(id);
   const clean=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
   let archivedOrders=[];
@@ -45,7 +25,7 @@
   async function bulkDeleteArchived(ids){
     if(!ids.length)return;
     const approved=await confirmAction({eyebrow:'Permanent deletion',title:`Delete ${ids.length} archived order${ids.length===1?'':'s'}?`,message:'These archive records will be permanently erased and cannot be recovered.',confirmLabel:'Delete forever'});if(!approved)return;
-    try{if(!await isCurrentUserAdmin())throw new Error('Your admin session has expired.');for(const id of ids){const{error}=await db.rpc('admin_permanently_delete_archived_order',{p_archive_id:id});if(error)throw error}archivedOrders=archivedOrders.filter(record=>!ids.includes(String(record.id)));renderArchivedOrders();await BHATTI.syncStudioOrders?.();adminNotify(`${ids.length} archived order${ids.length===1?'':'s'} deleted.`,{title:'Archive updated'})}catch(error){adminNotify(error.message||'Selected archive records could not be deleted.',{title:'Bulk deletion failed',tone:'error'})}
+    try{if(!await isCurrentUserAdmin())throw new Error('Your admin session has expired.');let deleted=0;for(const id of ids){const{data,error}=await db.rpc('admin_permanently_delete_archived_order',{p_archive_id:id});if(error)throw error;if(data)deleted++}archivedOrders=archivedOrders.filter(record=>!ids.includes(String(record.id)));renderArchivedOrders();await BHATTI.syncStudioOrders?.();adminNotify(`${deleted} archived order${deleted===1?'':'s'} deleted.`,{title:'Archive updated'})}catch(error){adminNotify(error.message||'Selected archive records could not be deleted.',{title:'Bulk deletion failed',tone:'error'})}
   }
   async function loadArchivedOrders({quiet=false}={}){
     if(!$('archiveBody'))return;
