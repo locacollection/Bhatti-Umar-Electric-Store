@@ -14,7 +14,7 @@ permissions:
   id-token: write
 
 env:
-  BHATTI_ORDER_UI_VERSION: 20261004-orders-mobile-4
+  BHATTI_ORDER_UI_VERSION: 20261004-orders-mobile-5
 
 jobs:
   deploy:
@@ -39,9 +39,9 @@ jobs:
           for path in targets:
               text = path.read_text(encoding='utf-8')
               prefix = '../' if path.parent.name == 'admin' else ''
-              tag = f'<script src="{prefix}scripts/admin/orders-mobile.js?v=20261004-orders-mobile-4"></script>'
-              text = re.sub(r'<script[^>]+scripts/admin/orders-mobile-v2\.js[^>]*></script>\s*', '', text)
-              text = re.sub(r'<script[^>]+scripts/admin/orders-mobile\.js[^>]*></script>\s*', '', text)
+              tag = f'<script src="{prefix}scripts/admin/orders-mobile.js?v=20261004-orders-mobile-5"></script>'
+              text = re.sub(r'<script[^>]+scripts/admin/orders-mobile-v2\\.js[^>]*></script>\\s*', '', text)
+              text = re.sub(r'<script[^>]+scripts/admin/orders-mobile\\.js[^>]*></script>\\s*', '', text)
               text = text.replace('</body>', tag + '</body>')
               path.write_text(text, encoding='utf-8')
           PY
