@@ -7,6 +7,8 @@
   let liveOrders = [];
   let liveItems = [];
   let requestToken = 0;
+  let lastLiveSyncAt = 0;
+  let liveSyncInFlight = null;
 
   const esc = value => String(value ?? '').replace(/[&<>\"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]));
   const money = value => bhatti.money ? bhatti.money(value) : `PKR ${Number(value || 0).toLocaleString('en-PK')}`;
@@ -143,12 +145,22 @@
       return existingArchiveLoader(options);
     };
   }
-  bhatti.syncStudioOrders = async () => {await loadLiveOrders({quiet:true});return {live:liveOrders};};
+  bhatti.syncStudioOrders = async ({force = false} = {}) => {
+    const section = document.getElementById('ordersSection');
+    const now = Date.now();
+    if (!force && section?.dataset.liveOrdersReady === 'true' && (now - lastLiveSyncAt) < 5000) return {live: liveOrders, deduped: true};
+    if (liveSyncInFlight) return liveSyncInFlight;
+    liveSyncInFlight = loadLiveOrders({quiet:true}).then(() => {
+      lastLiveSyncAt = Date.now();
+      return {live: liveOrders};
+    }).finally(() => { liveSyncInFlight = null; });
+    return liveSyncInFlight;
+  };
 
   function start() {
     installIsolationStyle();
     bindEvents();
-    loadLiveOrders({quiet:true});
+    loadLiveOrders({quiet:true}).then(() => { lastLiveSyncAt = Date.now(); });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded',start,{once:true}); else start();
 })();
