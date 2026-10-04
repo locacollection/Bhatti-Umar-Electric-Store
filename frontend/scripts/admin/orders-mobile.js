@@ -14,10 +14,10 @@
       .mobile-order-items-toggle:focus-visible{outline:2px solid #d7a52a;outline-offset:2px}
       .mobile-order-items-toggle .items-chevron{font-size:12px;line-height:1;transition:transform .18s ease}
       .mobile-order-items-toggle[aria-expanded="true"] .items-chevron{transform:rotate(180deg)}
-      .mobile-order-items-panel{display:none;margin-top:5px;padding:9px 10px;border-left:2px solid rgba(168,126,60,.45);background:rgba(249,246,239,.48);border-radius:0 9px 9px 0;max-height:260px;overflow-y:auto}
+      .mobile-order-items-panel{display:none;margin-top:5px;padding:9px 10px;border-left:2px solid rgba(168,126,60,.45);background:rgba(249,246,239,.48);border-radius:0 9px 9px 0;max-height:260px;overflow-y:auto;overflow-x:hidden;box-sizing:border-box}
       .mobile-order-items-panel.is-open{display:grid;gap:7px}
       .mobile-order-item-line{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:8px;min-width:0;color:#514940;font-size:10px;line-height:1.4}
-      .mobile-order-item-line .item-name{min-width:0;white-space:normal;overflow-wrap:anywhere;word-break:normal}
+      .mobile-order-item-line .item-name{min-width:0;max-width:none;white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;word-break:normal}
       .mobile-order-item-line strong{font-weight:800;color:#29231e}
       .mobile-order-item-qty{flex:0 0 auto;color:#746b61;font-weight:700;white-space:nowrap}
       @media(max-width:700px){
@@ -49,7 +49,10 @@
         #ordersSection .tablewrap tbody tr:not(.empty)>td:nth-child(6)::before{content:'WORKFLOW';display:block;margin-bottom:5px;color:#8a8177;font-size:8px;font-weight:800;letter-spacing:.12em}
         #ordersSection .tablewrap tbody tr.empty{display:block!important;padding:22px!important}
         #ordersSection .mobile-order-items-toggle{font-size:10px;min-height:38px}
-        #ordersSection .mobile-order-items-panel{font-size:10px}
+        #ordersSection .mobile-order-items-panel{font-size:10px;max-height:260px;width:100%!important}
+        #ordersSection .mobile-order-item-line{font-size:11px;line-height:1.45}
+        #ordersSection .mobile-order-item-line .item-name{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;max-width:none!important}
+        #ordersSection .tablewrap tbody tr:not(.empty)>td:nth-child(3):has(.mobile-order-items-toggle[aria-expanded="true"]){grid-column:1/-1!important}
       }
     `;
     document.head.appendChild(style);
